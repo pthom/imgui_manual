@@ -8,13 +8,15 @@ set(fplus_dir ${CMAKE_CURRENT_LIST_DIR}/../external/FunctionalPlus/include)
 set(imgui_markdown_dir ${CMAKE_CURRENT_LIST_DIR}/../external/imgui_markdown)
 
 hello_imgui_add_app(implot_demo
-    hello_implot_demo.cpp
+    HelloImplotDemo.cpp
     LibrarySources.cpp
     LibrarySources.h
     ImGuiExt.cpp
     ImGuiExt.h
     MarkdownHelper.cpp
     MarkdownHelper.h
+    HyperlinkHelper.cpp
+    HyperlinkHelper.h
     ${implot_dir}/implot.h
     ${implot_dir}/implot.cpp
     ${implot_dir}/implot_demo.cpp

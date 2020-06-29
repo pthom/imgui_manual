@@ -11,10 +11,10 @@ std::vector<LibrarySources> thisLibrarySources()
             "implot", "ImPlot", "https://github.com/epezent/implot",
                     {
                             "README.md",
+                            "LICENSE",
                             "implot_demo.cpp",
                             "implot.h",
                             "implot.cpp",
-                            "LICENSE",
                     }
         }
     };
@@ -28,17 +28,45 @@ std::vector<LibrarySources> otherSources()
                     "ImGuiColorTextEdit", "ImGuiColorTextEdit", "https://github.com/BalazsJako/ImGuiColorTextEdit",
                     {
                             "README.md",
+                            "LICENSE",
                             "TextEditor.h",
                             "TextEditor.cpp",
-                            "LICENSE",
                             "CONTRIBUTING",
                     }
             },
             {
-                    ".", "This Demo", "",
+                    "imgui_markdown", "imgui_markdown", "https://github.com/juliettef/imgui_markdown",
                     {
-                            "CMakeLists.txt",
-                            "demo.cpp",
+                            "README.md",
+                            "imgui_markdown.h",
+                            "License.txt",
+                    }
+            },
+            {
+                    "hello_imgui", "Hello ImGui", "https://github.com/pthom/hello_imgui",
+                    {
+                            "README.md",
+                            "LICENSE",
+                            "hello_imgui.h",
+                            "hello_imgui_api.md"
+                    }
+            },
+
+            {
+                    "implot_demo", "This Demo", "https://github.com/pthom/implot_demo",
+                    {
+                            "Readme.md",
+                            "LICENSE",
+                            "HelloImplotDemo.cpp",
+                            "LibrarySources.h",
+                            "LibrarySources.cpp",
+//                            "CMakeLists.txt",
+//                            "MarkdownHelper.h",
+//                            "MarkdownHelper.cpp",
+//                            "HyperlinkHelper.cpp",
+//                            "HyperlinkHelper.h",
+//                            "ImGuiExt.cpp",
+//                            "ImGuiExt.h",
                     }
             }
     };

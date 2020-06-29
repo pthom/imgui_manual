@@ -1,23 +1,16 @@
 #include "ImGuiExt.h"
 #include "imgui.h"
 #include "hello_imgui.h"
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#endif
+#include "HyperlinkHelper.h"
 
 namespace ImGuiExt
 {
     void Hyperlink(const std::string &url)
     {
-#ifdef __EMSCRIPTEN__
         std::string linkLabel = std::string(ICON_FA_LINK) + " ##" + url;
-    if (ImGui::Button(linkLabel.c_str()))
-    {
-        std::string js_command = "window.open(\"" + url + "\");";
-        emscripten_run_script(js_command.c_str());
-    }
-    ImGui::SameLine();
-#endif
+        if (ImGui::Button(linkLabel.c_str()))
+            HyperlinkHelper::OpenUrl(url);
+        ImGui::SameLine();
         auto blue = ImVec4(0.3f, 0.5f, 1.f, 1.f);
         ImGui::TextColored(blue, "%s", url.c_str());
     }

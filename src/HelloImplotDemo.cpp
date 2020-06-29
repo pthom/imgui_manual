@@ -6,6 +6,7 @@
 #include "MarkdownHelper.h"
 #include <fplus/fplus.hpp>
 
+
 struct AppState
 {
     AnnotatedSourceCode annotatedSourceCode = ReadSelectedLibrarySource("implot/implot_demo.cpp");
@@ -36,9 +37,9 @@ bool guiSelectLibrarySource(
                 *selectedLibrarySource = ReadSelectedLibrarySource(currentSourcePath);
                 changed = true;
             }
-            ImGui::SameLine();
+            ImGuiExt::SameLine_IfPossible(400.f);
         }
-        ImGui::SameLine(ImGui::GetIO().DisplaySize.x - 300.f );
+        ImGui::SameLine(ImGui::GetIO().DisplaySize.x - 350.f );
         ImGuiExt::Hyperlink(librarySource.url);
     }
     return changed;
@@ -57,6 +58,7 @@ void menuEditorTheme(TextEditor &editor) {
         ImGui::EndMenu();
     }
 }
+
 
 void guiSourceCategories(AppState &appState) {
     if (ImGui::Checkbox("Show other sources", &appState.showAllSources))
@@ -120,7 +122,7 @@ int main(int, char **)
 
     // Split the screen in two parts
     runnerParams.dockingParams.dockingSplits = {
-        { "MainDockSpace", "CodeSpace", ImGuiDir_Up, 0.5 },
+        //{ "MainDockSpace", "CodeSpace", ImGuiDir_Up, 0.5 },
     };
 
     // Dockable windows definitions
@@ -138,7 +140,8 @@ int main(int, char **)
     HelloImGui::DockableWindow codeDock;
     {
         codeDock.label = "Code";
-        codeDock.dockSpaceName = "CodeSpace";
+        //codeDock.dockSpaceName = "CodeSpace";
+        codeDock.dockSpaceName = "MainDockSpace";
         codeDock.GuiFonction = [&editor, &appState,&SetupEditor] {
             if (guiSelectLibrarySource(appState.librarySources, &(appState.annotatedSourceCode)))
                 SetupEditor();
@@ -162,7 +165,6 @@ int main(int, char **)
 
     // Set app dockable windows
     runnerParams.dockingParams.dockableWindows = { implotDock, codeDock };
-
 
     HelloImGui::Run(runnerParams);
     return 0;
