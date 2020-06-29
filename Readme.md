@@ -51,3 +51,7 @@ Build and run
 make -j 4
 ./src/implot_demo
 ````
+
+
+### Note
+This demo is based on [Hello ImGui](https://github.com/pthom/hello_imgui).
