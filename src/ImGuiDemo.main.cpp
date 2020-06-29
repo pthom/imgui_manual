@@ -1,18 +1,38 @@
 #include "hello_imgui/hello_imgui.h"
-#include "implot.h"
+#include "imgui.h"
 #include "ImGuiExt.h"
 #include "TextEditor.h"
 #include "LibrarySources.h"
 #include "MarkdownHelper.h"
+#include "HyperlinkHelper.h"
 #include <fplus/fplus.hpp>
+
 
 
 struct AppState
 {
-    AnnotatedSourceCode annotatedSourceCode = ReadSelectedLibrarySource("implot/implot_demo.cpp");
+    AnnotatedSourceCode annotatedSourceCode = ReadSelectedLibrarySource("imgui/imgui_demo.cpp");
     std::vector<LibrarySources> librarySources = thisLibrarySources();
-    bool showAllSources = false;
+    bool showAllLibraries = false;
+    bool showThisLibrarySources = false;
+    bool openSourceCodeInBrowser = false;
+    TextEditor editor;
 };
+AppState gAppState;
+
+void DemoCallback(int line_number)
+{
+    if (fplus::is_suffix_of(std::string("imgui_demo.cpp"), gAppState.annotatedSourceCode.sourcePath))
+    {
+        if (gAppState.openSourceCodeInBrowser)
+        {
+            std::string url = "https://github.com/ocornut/imgui/blob/docking/imgui_demo.cpp#L"
+              + std::to_string(line_number);
+            HyperlinkHelper::OpenUrl(url);
+        }
+        gAppState.editor.SetCursorPosition({line_number, 0});
+    }
+}
 
 
 bool guiSelectLibrarySource(
@@ -20,7 +40,11 @@ bool guiSelectLibrarySource(
         AnnotatedSourceCode *selectedLibrarySource)
 {
     bool changed = false;
-
+    ImGui::Checkbox("Show code links in external browser", &gAppState.openSourceCodeInBrowser);
+    ImGui::SameLine();
+    ImGui::Checkbox("All sources", &gAppState.showThisLibrarySources);
+    if (!gAppState.showThisLibrarySources)
+        return false;
     for (const auto & librarySource: librarySources)
     {
         ImGui::Text("%s", librarySource.name.c_str());
@@ -61,9 +85,9 @@ void menuEditorTheme(TextEditor &editor) {
 
 
 void guiSourceCategories(AppState &appState) {
-    if (ImGui::Checkbox("Show other sources", &appState.showAllSources))
+    if (ImGui::Checkbox("Other libraries sources", &appState.showAllLibraries))
     {
-        if (appState.showAllSources)
+        if (appState.showAllLibraries)
             appState.librarySources = allSources();
         else
             appState.librarySources = thisLibrarySources();
@@ -94,16 +118,14 @@ void setEditorAnnotatedSource(const AnnotatedSourceCode& annotatedSourceCode, Te
 
 int main(int, char **)
 {
-    AppState appState;
-
-    TextEditor editor;
-    editor.SetPalette(TextEditor::GetLightPalette());
+    auto & appState = gAppState;
+    appState.editor.SetPalette(TextEditor::GetLightPalette());
 
     auto lang = TextEditor::LanguageDefinition::CPlusPlus();
-    editor.SetLanguageDefinition(lang);
+    appState.editor.SetLanguageDefinition(lang);
 
-    auto SetupEditor = [&editor, &appState]() {
-        setEditorAnnotatedSource(appState.annotatedSourceCode, editor);
+    auto SetupEditor = [&appState]() {
+        setEditorAnnotatedSource(appState.annotatedSourceCode, appState.editor);
     };
 
     SetupEditor();
@@ -122,17 +144,17 @@ int main(int, char **)
 
     // Split the screen in two parts
     runnerParams.dockingParams.dockingSplits = {
-        //{ "MainDockSpace", "CodeSpace", ImGuiDir_Up, 0.5 },
+        { "MainDockSpace", "CodeSpace", ImGuiDir_Right, 0.5 },
     };
 
     // Dockable windows definitions
     HelloImGui::DockableWindow implotDock;
     {
-        implotDock.label = "ImPlot Demo";
-        implotDock.dockSpaceName = "MainDockSpace";
+        implotDock.label = "Dear ImGui Demo";
+        implotDock.dockSpaceName = "CodeSpace";
         implotDock.GuiFonction = [&implotDock] {
             if (implotDock.isVisible)
-                ImPlot::ShowDemoWindow(nullptr);
+                ImGui::ShowDemoWindow(nullptr);
         };
         implotDock.callBeginEnd = false;
     };
@@ -142,22 +164,22 @@ int main(int, char **)
         codeDock.label = "Code";
         //codeDock.dockSpaceName = "CodeSpace";
         codeDock.dockSpaceName = "MainDockSpace";
-        codeDock.GuiFonction = [&editor, &appState,&SetupEditor] {
+        codeDock.GuiFonction = [&appState,&SetupEditor] {
             if (guiSelectLibrarySource(appState.librarySources, &(appState.annotatedSourceCode)))
                 SetupEditor();
             guiSourceCategories(appState);
-            guiCodeRegions(appState.annotatedSourceCode.linesWithNotes, editor);
+            guiCodeRegions(appState.annotatedSourceCode.linesWithNotes, appState.editor);
 
             if (fplus::is_suffix_of(std::string(".md"), appState.annotatedSourceCode.sourcePath))
                 MarkdownHelper::Markdown(appState.annotatedSourceCode.sourceCode);
             else
-                editor.Render(appState.annotatedSourceCode.sourcePath.c_str());
+                appState.editor.Render(appState.annotatedSourceCode.sourcePath.c_str());
         };
     }
 
     // Menu
-    runnerParams.callbacks.ShowMenus = [&editor]() {
-        menuEditorTheme(editor);
+    runnerParams.callbacks.ShowMenus = [&appState]() {
+        menuEditorTheme(appState.editor);
     };
 
     // Fonts
@@ -165,6 +187,8 @@ int main(int, char **)
 
     // Set app dockable windows
     runnerParams.dockingParams.dockableWindows = { implotDock, codeDock };
+
+    gImGuiDemoCallback = DemoCallback;
 
     HelloImGui::Run(runnerParams);
     return 0;

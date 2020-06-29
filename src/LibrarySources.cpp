@@ -8,13 +8,21 @@ std::vector<LibrarySources> thisLibrarySources()
     return
     {
         {
-            "implot", "ImPlot", "https://github.com/epezent/implot",
+            "imgui", "Dear ImGui", "https://github.com/ocornut/imgui",
                     {
                             "README.md",
-                            "LICENSE",
-                            "implot_demo.cpp",
-                            "implot.h",
-                            "implot.cpp",
+                            "FAQ.md",
+                            "LICENSE.txt",
+                            "imgui_demo.cpp",
+                            "imgui.h",
+                            "imgui.cpp",
+                            "imconfig.h",
+                            "imgui_draw.cpp",
+                            "imgui_internal.h",
+                            "imgui_widgets.cpp",
+                            "imstb_rectpack.h",
+                            "imstb_textedit.h",
+                            "imstb_truetype.h",
                     }
         }
     };
@@ -83,7 +91,7 @@ LinesWithNotes findCollapsingHeaderRegions(const std::string &sourceCode)
 {
     LinesWithNotes r;
 
-    static std::string regionToken = "ImGui::CollapsingHeader";
+    static std::string regionToken = "DemoCode(";
 
     auto extractCollapsingHeaderName = [](const std::string &codeLine) {
         // if codeLine == "if (ImGui::CollapsingHeader("Line Plots")) {"

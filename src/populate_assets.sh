@@ -6,6 +6,7 @@ THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $THIS_DIR/../external || exit 1
 SRC_DIR=$THIS_DIR
 EXTERNAL_DIR=$THIS_DIR/../external
+IMGUI_DIR=$THIS_DIR/../external/hello_imgui/external/imgui/
 
 echo "THIS_DIR=$THIS_DIR"
 #exit 0
@@ -58,3 +59,14 @@ cp -f $SRC_DIR/*.* .
 cp $SRC_DIR/../Readme.md .
 cp $SRC_DIR/../LICENSE .
 cd ..
+
+
+if [ ! -d imgui ]; then
+  mkdir imgui
+fi
+cd imgui
+cp $IMGUI_DIR/* .
+cp $IMGUI_DIR/docs/README.md .
+cp $IMGUI_DIR/docs/FAQ.md .
+cd ..
+echo "IMGUI_DIR=$IMGUI_DIR"
