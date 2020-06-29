@@ -5,28 +5,42 @@ int main()
 {
     HelloImGui::RunnerParams runnerParams;
 
-    runnerParams.imGuiWindowParams.defaultImGuiWindowType =
-            HelloImGui::DefaultImGuiWindowType::ProvideFullScreenDockSpace;
+    // App window params
     runnerParams.appWindowParams.windowTitle = "implot demo";
     runnerParams.appWindowParams.windowSize = { 1200, 800};
+
+    // ImGui window params
+    runnerParams.imGuiWindowParams.defaultImGuiWindowType =
+            HelloImGui::DefaultImGuiWindowType::ProvideFullScreenDockSpace;
     runnerParams.imGuiWindowParams.showMenuBar = true;
+    runnerParams.imGuiWindowParams.showStatusBar = true;
 
-    auto showImPlot = [] {
-      ImPlot::ShowDemoWindow(nullptr);
-    };
-    auto showCode = [] {
-      ImGui::Text("Code goes here");
-    };
-
+    // Split the screen in two parts
     runnerParams.dockingParams.dockingSplits =
     {
-        { "MainDockSpace", "RightSpace", ImGuiDir_Right, 0.5 },
+            { "MainDockSpace", "RightSpace", ImGuiDir_Right, 0.5 },
     };
-    runnerParams.dockingParams.dockableWindows =
+
+    // Dockable windows
+    HelloImGui::DockableWindow implotDock;
     {
-        { "ImPlot Demo", "MainDockSpace", showImPlot },
-        { "Code", "RightSpace", showCode },
+        implotDock.label = "ImPlot Demo";
+        implotDock.dockSpaceName = "MainDockSpace";
+        implotDock.GuiFonction = [&implotDock] {
+          ImPlot::ShowDemoWindow(&implotDock.isVisible);
+        };
     };
+
+    HelloImGui::DockableWindow codeDock;
+    {
+        codeDock.label = "Code";
+        codeDock.dockSpaceName = "RightSpace";
+        codeDock.GuiFonction = [] {
+          ImGui::Text("Code goes here");
+        };
+    }
+
+    runnerParams.dockingParams.dockableWindows = { implotDock, codeDock };
 
     HelloImGui::Run(runnerParams);
 }
