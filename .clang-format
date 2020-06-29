@@ -35,7 +35,7 @@ BreakConstructorInitializers: BeforeColon
 BreakInheritanceList: BeforeColon
 ColumnLimit: 0
 CompactNamespaces: false
-ContinuationIndentWidth: 8
+ContinuationIndentWidth: 4
 IndentCaseLabels: true
 IndentPPDirectives: None
 IndentWidth: 4
