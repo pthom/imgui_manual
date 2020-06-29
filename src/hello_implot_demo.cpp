@@ -3,6 +3,15 @@
 #include "ImGuiExt.h"
 #include "TextEditor.h"
 #include "LibrarySources.h"
+#include "MarkdownHelper.h"
+#include <fplus/fplus.hpp>
+
+struct AppState
+{
+    AnnotatedSourceCode annotatedSourceCode = ReadSelectedLibrarySource("implot/implot_demo.cpp");
+    std::vector<LibrarySources> librarySources = thisLibrarySources();
+    bool showAllSources = false;
+};
 
 
 bool guiSelectLibrarySource(
@@ -34,15 +43,6 @@ bool guiSelectLibrarySource(
     }
     return changed;
 }
-
-struct AppState
-{
-    AnnotatedSourceCode annotatedSourceCode = ReadSelectedLibrarySource("implot/implot_demo.cpp");
-    std::vector<LibrarySources> librarySources = thisLibrarySources();
-    bool showAllSources = false;
-};
-
-void guiSourceCategories(AppState &appState);
 
 
 void menuEditorTheme(TextEditor &editor) {
@@ -78,6 +78,7 @@ void guiCodeRegions(const LinesWithNotes &linesWithNotes, TextEditor &editor)
     }
     ImGui::NewLine();
 }
+
 
 void setEditorAnnotatedSource(const AnnotatedSourceCode& annotatedSourceCode, TextEditor& editor)
 {
@@ -143,14 +144,21 @@ int main(int, char **)
                 SetupEditor();
             guiSourceCategories(appState);
             guiCodeRegions(appState.annotatedSourceCode.linesWithNotes, editor);
-            editor.Render(appState.annotatedSourceCode.sourcePath.c_str());
+
+            if (fplus::is_suffix_of(std::string(".md"), appState.annotatedSourceCode.sourcePath))
+                MarkdownHelper::Markdown(appState.annotatedSourceCode.sourceCode);
+            else
+                editor.Render(appState.annotatedSourceCode.sourcePath.c_str());
         };
     }
 
-    //
+    // Menu
     runnerParams.callbacks.ShowMenus = [&editor]() {
         menuEditorTheme(editor);
     };
+
+    // Fonts
+    runnerParams.callbacks.LoadAdditionalFonts = MarkdownHelper::LoadFonts;
 
     // Set app dockable windows
     runnerParams.dockingParams.dockableWindows = { implotDock, codeDock };
@@ -159,6 +167,3 @@ int main(int, char **)
     HelloImGui::Run(runnerParams);
     return 0;
 }
-
-
-

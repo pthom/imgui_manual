@@ -10,3 +10,6 @@
 [submodule "external/FunctionalPlus"]
 	path = external/FunctionalPlus
 	url = https://github.com/Dobiasd/FunctionalPlus.git
+[submodule "external/imgui_markdown"]
+	path = external/imgui_markdown
+	url = https://github.com/juliettef/imgui_markdown.git
