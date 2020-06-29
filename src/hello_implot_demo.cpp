@@ -1,77 +1,10 @@
 #include "hello_imgui/hello_imgui.h"
 #include "implot.h"
 #include "TextEditor.h"
-#include <vector>
-#include <string>
-
-struct LibrarySources
-{
-    std::string path;
-    std::string name;
-    std::string url;
-    std::vector<std::string> sources;
-};
-
-std::vector<LibrarySources> gLibrarySources {
-        {
-                "implot", "ImPlot", "https://github.com/epezent/implot",
-                {
-                        "README.md",
-                        "implot_demo.cpp",
-                        "implot.h",
-                        "implot.cpp",
-                        "LICENSE",
-                }
-        }
-};
-
-std::vector<LibrarySources> gOtherSources {
-    {
-        "ImGuiColorTextEdit", "ImGuiColorTextEdit", "https://github.com/BalazsJako/ImGuiColorTextEdit",
-        {
-            "README.md",
-            "TextEditor.h",
-            "TextEditor.cpp",
-            "LICENSE",
-            "CONTRIBUTING",
-        }
-    },
-    {
-        ".", "This Demo", "",
-        {
-            "CMakeLists.txt",
-            "demo.cpp",
-        }
-    }
-};
-
-std::vector<LibrarySources> gAllSources = []{
-    std::vector<LibrarySources> r;
-    // c++ equivalent of r = concat(gLibrarySources, gOtherSources) . Sigh...
-    r.insert(r.end(), gLibrarySources.begin(), gLibrarySources.end());
-    r.insert(r.end(), gOtherSources.begin(), gOtherSources.end());
-    return r;
-}();
-
-struct SelectedLibrarySource
-{
-    std::string sourcePath;
-    std::string sourceCode;
-};
-
-SelectedLibrarySource ReadSelectedLibrarySource(const std::string sourcePath)
-{
-    std::string assetPath = std::string("code/") + sourcePath;
-    auto assetData = HelloImGui::LoadAssetFileData(assetPath.c_str());
-    assert(assetData.data != nullptr);
-
-    SelectedLibrarySource r;
-    r.sourcePath = sourcePath;
-    r.sourceCode = std::string((const char *) assetData.data);
-    HelloImGui::FreeAssetFileData(&assetData);
-    return r;
-}
-
+#include "LibrarySources.h"
+#ifdef __EMSCRIPTEN__
+#include <emscripten.h>
+#endif
 
 bool Gui_SelectLibrarySource(
         const std::vector<LibrarySources>& librarySources,
@@ -96,6 +29,18 @@ bool Gui_SelectLibrarySource(
             }
             ImGui::SameLine();
         }
+        ImGui::SameLine(ImGui::GetIO().DisplaySize.x - 300.f );
+#ifdef __EMSCRIPTEN__
+        std::string linkLabel = std::string(ICON_FA_LINK) + " ##" + librarySource.url;
+        if (ImGui::Button(linkLabel.c_str()))
+        {
+            std::string js_command = "window.open(\"" + librarySource.url + "\");";
+            emscripten_run_script(js_command.c_str());
+        }
+        ImGui::SameLine();
+#endif
+        auto blue = ImVec4(0.3f, 0.5f, 1.f, 1.f);
+        ImGui::TextColored(blue, "%s", librarySource.url.c_str()); ImGui::SameLine();
         ImGui::NewLine();
     }
     return changed;
@@ -104,7 +49,7 @@ bool Gui_SelectLibrarySource(
 struct AppState
 {
     SelectedLibrarySource selectedLibrarySource = ReadSelectedLibrarySource("implot/implot_demo.cpp");
-    std::vector<LibrarySources> librarySources = gLibrarySources;
+    std::vector<LibrarySources> librarySources = thisLibrarySources();
     bool showAllSources = false;
 };
 
@@ -117,7 +62,17 @@ int main(int, char **)
 
     auto lang = TextEditor::LanguageDefinition::CPlusPlus();
     editor.SetLanguageDefinition(lang);
-    editor.SetText(appState.selectedLibrarySource.sourceCode);
+
+    auto SetupEditor = [&editor, &appState]() {
+        editor.SetText(appState.selectedLibrarySource.sourceCode);
+        std::unordered_set<int> lineNumbers;
+        for (auto kv : appState.selectedLibrarySource.linesWithNotes)
+            lineNumbers.insert(kv.first);
+        editor.SetBreakpoints(lineNumbers);
+        //editor.SetErrorMarkers(appState.selectedLibrarySource.markers);
+    };
+
+    SetupEditor();
 
     HelloImGui::RunnerParams runnerParams;
 
@@ -152,16 +107,23 @@ int main(int, char **)
     {
         codeDock.label = "Code";
         codeDock.dockSpaceName = "CodeSpace";
-        codeDock.GuiFonction = [&editor, &appState] {
+        codeDock.GuiFonction = [&editor, &appState,&SetupEditor] {
             if (Gui_SelectLibrarySource(appState.librarySources, &(appState.selectedLibrarySource)))
-                editor.SetText(appState.selectedLibrarySource.sourceCode);
+                SetupEditor();
             if (ImGui::Checkbox("Show other sources", &appState.showAllSources))
             {
                 if (appState.showAllSources)
-                    appState.librarySources = gAllSources;
+                    appState.librarySources = allSources();
                 else
-                    appState.librarySources = gLibrarySources;
+                    appState.librarySources = thisLibrarySources();
             }
+            for (const auto & lineWithNote : appState.selectedLibrarySource.linesWithNotes) {
+                if (ImGui::Button(lineWithNote.second.c_str()))
+                    ;
+                ImGui::SameLine();
+            }
+            ImGui::NewLine();
+
             editor.Render(appState.selectedLibrarySource.sourcePath.c_str());
         };
     }
