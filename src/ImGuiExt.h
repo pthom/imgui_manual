@@ -1,16 +1,8 @@
-//
-// Created by Pascal Thomet on 29/06/2020.
-//
+#pragma once
+#include <string>
 
-#ifndef MY_APP_IMGUIEXT_H
-#define MY_APP_IMGUIEXT_H
-
-
-
-class ImGuiExt {
-
-};
-
-
-
-#endif //MY_APP_IMGUIEXT_H
+namespace ImGuiExt
+{
+    void Hyperlink(const std::string &url);
+    void SameLine_IfPossible(float minRightMargin = 60.f);
+}
