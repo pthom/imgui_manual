@@ -57,7 +57,7 @@ std::vector<LibrarySources> otherSources()
                     {
                             "Readme.md",
                             "LICENSE",
-                            "HelloImplotDemo.cpp",
+                            "ImplotDemo.main.cpp",
                             "LibrarySources.h",
                             "LibrarySources.cpp",
 //                            "CMakeLists.txt",
