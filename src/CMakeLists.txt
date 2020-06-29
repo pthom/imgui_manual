@@ -1,4 +1,9 @@
-# Step 2: include hello_imgui_add_app
 include(hello_imgui_add_app)
-# Step 4: declare your app
-hello_imgui_add_app(hello hello.cpp)
+set(implot_dir ${CMAKE_CURRENT_LIST_DIR}/../external/implot)
+hello_imgui_add_app(implot_demo
+    demo.cpp
+    ${implot_dir}/implot.h
+    ${implot_dir}/implot.cpp
+    ${implot_dir}/implot_demo.cpp
+    )
+target_include_directories(implot_demo PRIVATE ${implot_dir})
