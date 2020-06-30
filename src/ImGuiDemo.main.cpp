@@ -13,6 +13,7 @@ struct AppState
     AnnotatedSourceCode otherLibsSourceCode = ReadAnnotatedSource("imgui/README.md");
     std::vector<LibrarySources> librarySources = thisLibrarySources();
     bool showAllLibraries = false;
+    LinesWithNotes imguiDemoLinesWithNote;
     TextEditor editorOtherLibs;
     TextEditor editorImGuiDemo;
 };
@@ -87,22 +88,28 @@ void guiSourceCategories(AppState &appState)
 }
 
 
-void guiCodeRegions(const LinesWithNotes &linesWithNotes, TextEditor &editor)
+void guiDemoCodeRegions(const LinesWithNotes &linesWithNotes, TextEditor &editor)
 {
-    ImGui::TextDisabled("(?)");
-    ImGui::SameLine();
+    bool showTooltip = false;
+    ImGui::Text("Search demos"); ImGui::SameLine();
     if (ImGui::IsItemHovered())
+        showTooltip = true;
+    ImGui::TextDisabled("?"); ImGui::SameLine();
+    if (ImGui::IsItemHovered())
+        showTooltip = true;
+    if (showTooltip)
     {
         ImGui::BeginTooltip();
         ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
         ImGui::TextUnformatted("Filter usage:\n"
-                               "  \"\"         display all lines\n"
-                               "  \"xxx\"      display lines containing \"xxx\"\n"
-                               "  \"xxx,yyy\"  display lines containing \"xxx\" or \"yyy\"\n"
-                               "  \"-xxx\"     hide lines containing \"xxx\"");
+                               "  \"\"         display all\n"
+                               "  \"xxx\"      display items containing \"xxx\"\n"
+                               "  \"xxx,yyy\"  display items containing \"xxx\" or \"yyy\"\n"
+                               "  \"-xxx\"     hide items containing \"xxx\"");
         ImGui::PopTextWrapPos();
         ImGui::EndTooltip();
     }
+
 
     static ImGuiTextFilter filter;
     filter.Draw();
@@ -113,7 +120,7 @@ void guiCodeRegions(const LinesWithNotes &linesWithNotes, TextEditor &editor)
             if (filter.PassFilter(lineWithNote.second.c_str()))
             {
                 if (ImGui::Button(lineWithNote.second.c_str()))
-                    editor.SetCursorPosition({lineWithNote.first, 0});
+                    editor.SetCursorPosition({lineWithNote.first, 0}, 3);
                 ImGuiExt::SameLine_IfPossible();
             }
         }
@@ -133,7 +140,8 @@ void setEditorAnnotatedSource(const AnnotatedSourceCode& annotatedSourceCode, Te
 
 void setupEditorImGuiDemo()
 {
-    static AnnotatedSourceCode annotatedSourceCode = ReadAnnotatedSource("imgui/imgui_demo.cpp");
+    static auto annotatedSourceCode = ReadAnnotatedSource("imgui/imgui_demo.cpp");
+    gAppState.imguiDemoLinesWithNote = annotatedSourceCode.linesWithNotes;
     auto & editor = gAppState.editorImGuiDemo;
     editor.SetPalette(TextEditor::GetLightPalette());
     editor.SetText(annotatedSourceCode.sourceCode);
@@ -150,6 +158,7 @@ void setupEditorOtherLibraries()
 
 void guiImguiDemoCode()
 {
+    guiDemoCodeRegions(gAppState.imguiDemoLinesWithNote, gAppState.editorImGuiDemo);
     gAppState.editorImGuiDemo.Render("imgui_demo.cpp");
 }
 
@@ -158,7 +167,6 @@ void guiOtherLibrariesCode(AppState& appState)
     guiSourceCategories(appState);
     if (guiSelectLibrarySource(appState.librarySources, &(appState.otherLibsSourceCode)))
         setupEditorOtherLibraries();
-    guiCodeRegions(appState.otherLibsSourceCode.linesWithNotes, appState.editorOtherLibs);
 
     if (fplus::is_suffix_of(std::string(".md"), appState.otherLibsSourceCode.sourcePath))
         MarkdownHelper::Markdown(appState.otherLibsSourceCode.sourceCode);
