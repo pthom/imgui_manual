@@ -2,6 +2,14 @@
 #include <fplus/fplus.hpp>
 #include "LibrarySources.h"
 
+namespace {
+    auto make_string_vec = [](const std::string &s) -> std::vector<std::string> {
+        std::vector<std::string> r = fplus::split('\n', false, s);
+        r = fplus::transform(fplus::trim_whitespace<std::string>, r);
+        return r;
+    };
+}
+
 
 std::vector<LibrarySources> thisLibrarySources()
 {
@@ -9,21 +17,21 @@ std::vector<LibrarySources> thisLibrarySources()
     {
         {
             "imgui", "Dear ImGui", "https://github.com/ocornut/imgui",
-                    {
-                            "README.md",
-                            "FAQ.md",
-                            "LICENSE.txt",
-                            "imgui_demo.cpp",
-                            "imgui.h",
-                            "imgui.cpp",
-                            "imconfig.h",
-                            "imgui_draw.cpp",
-                            "imgui_internal.h",
-                            "imgui_widgets.cpp",
-                            "imstb_rectpack.h",
-                            "imstb_textedit.h",
-                            "imstb_truetype.h",
-                    }
+            make_string_vec(R"(
+                README.md
+                FAQ.md
+                LICENSE.txt
+                imgui_demo.cpp
+                imgui.h
+                imgui.cpp
+                imconfig.h
+                imgui_draw.cpp
+                imgui_internal.h
+                imgui_widgets.cpp
+                imstb_rectpack.h
+                imstb_textedit.h
+                imstb_truetype.h
+            )")
         }
     };
 }
@@ -32,51 +40,60 @@ std::vector<LibrarySources> otherSources()
 {
     return
     {
-            {
-                    "ImGuiColorTextEdit", "ImGuiColorTextEdit", "https://github.com/BalazsJako/ImGuiColorTextEdit",
-                    {
-                            "README.md",
-                            "LICENSE",
-                            "TextEditor.h",
-                            "TextEditor.cpp",
-                            "CONTRIBUTING",
-                    }
-            },
-            {
-                    "imgui_markdown", "imgui_markdown", "https://github.com/juliettef/imgui_markdown",
-                    {
-                            "README.md",
-                            "imgui_markdown.h",
-                            "License.txt",
-                    }
-            },
-            {
-                    "hello_imgui", "Hello ImGui", "https://github.com/pthom/hello_imgui",
-                    {
-                            "README.md",
-                            "LICENSE",
-                            "hello_imgui.h",
-                            "hello_imgui_api.md"
-                    }
-            },
-
-            {
-                    "implot_demo", "This Demo", "https://github.com/pthom/implot_demo",
-                    {
-                            "Readme.md",
-                            "LICENSE",
-                            "ImplotDemo.main.cpp",
-                            "LibrarySources.h",
-                            "LibrarySources.cpp",
-//                            "CMakeLists.txt",
-//                            "MarkdownHelper.h",
-//                            "MarkdownHelper.cpp",
-//                            "HyperlinkHelper.cpp",
-//                            "HyperlinkHelper.h",
-//                            "ImGuiExt.cpp",
-//                            "ImGuiExt.h",
-                    }
-            }
+        {
+            "ImGuiColorTextEdit", "ImGuiColorTextEdit", "https://github.com/BalazsJako/ImGuiColorTextEdit",
+            make_string_vec(R"(
+                README.md
+                LICENSE
+                CONTRIBUTING
+                TextEditor.h
+                TextEditor.cpp
+            )")
+         },
+        {
+            "imgui_markdown", "imgui_markdown", "https://github.com/juliettef/imgui_markdown",
+            make_string_vec(R"(
+                README.md
+                License.txt
+                imgui_markdown.h
+            )")
+        },
+        {
+            "hello_imgui", "Hello ImGui", "https://github.com/pthom/hello_imgui",
+            make_string_vec(R"(
+                README.md
+                LICENSE
+                hello_imgui.h
+                hello_imgui_api.md
+                runner_params.h
+                app_window_params.h
+                imgui_window_params.h
+                runner_callbacks.h
+                docking_params.h
+                hello_imgui_assets.h
+                hello_imgui_error.h
+                icons_font_awesome.h
+                imgui_default_settings.h
+            )")
+        },
+        {
+            "implot_demo", "This Demo", "https://github.com/pthom/implot_demo",
+            make_string_vec(R"(
+                CMakeLists.txt
+                HyperlinkHelper.cpp
+                HyperlinkHelper.h
+                ImGuiDemo.main.cpp
+                ImGuiExt.cpp
+                ImGuiExt.h
+                LICENSE
+                LibrarySources.cpp
+                LibrarySources.h
+                MarkdownHelper.cpp
+                MarkdownHelper.h
+                Readme.md
+                populate_assets.sh
+            )")
+        }
     };
 }
 
@@ -87,14 +104,14 @@ std::vector<LibrarySources> allSources()
 }
 
 
-LinesWithNotes findCollapsingHeaderRegions(const std::string &sourceCode)
+LinesWithNotes findDemoCodeRegions(const std::string &sourceCode)
 {
     LinesWithNotes r;
 
     static std::string regionToken = "DemoCode(";
 
-    auto extractCollapsingHeaderName = [](const std::string &codeLine) {
-        // if codeLine == "if (ImGui::CollapsingHeader("Line Plots")) {"
+    auto extractDemoCodeName = [](const std::string &codeLine) {
+        // if codeLine == "DemoCode("Line Plots")) {"
         // then return
         // "Line Plots"
         auto tokens = fplus::split('"', true, codeLine);
@@ -109,7 +126,7 @@ LinesWithNotes findCollapsingHeaderRegions(const std::string &sourceCode)
     {
         const std::string& line = lines[line_number];
         if (line.find(regionToken) != std::string::npos)
-            r[(int)(line_number + 1)] = extractCollapsingHeaderName(line);
+            r[(int)(line_number + 1)] = extractDemoCodeName(line);
     }
     return r;
 }
@@ -123,7 +140,7 @@ AnnotatedSourceCode ReadSelectedLibrarySource(const std::string sourcePath)
     AnnotatedSourceCode r;
     r.sourcePath = sourcePath;
     r.sourceCode = std::string((const char *) assetData.data);
-    r.linesWithNotes = findCollapsingHeaderRegions(r.sourceCode);
+    r.linesWithNotes = findDemoCodeRegions(r.sourceCode);
     HelloImGui::FreeAssetFileData(&assetData);
     return r;
 }

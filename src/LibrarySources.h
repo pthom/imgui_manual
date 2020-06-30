@@ -25,5 +25,5 @@ struct AnnotatedSourceCode
 };
 
 
-// (private) LinesWithNotes findCollapsingHeaderRegions(const std::string &sourceCode);
+// (private) LinesWithNotes findDemoCodeRegions(const std::string &sourceCode);
 AnnotatedSourceCode ReadSelectedLibrarySource(const std::string sourcePath);
