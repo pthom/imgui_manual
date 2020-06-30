@@ -15,3 +15,6 @@
 	url = https://github.com/juliettef/imgui_markdown.git
 [submodule "ImGuiColorTextEdit"]
 	url = https://github.com/pthom/ImGuiColorTextEdit.git
+[submodule "external/imgui"]
+	path = external/imgui
+	url = https://github.com/pthom/imgui.git
