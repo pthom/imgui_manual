@@ -12,7 +12,7 @@ namespace {
 }
 
 
-std::vector<LibrarySources> thisLibrarySources()
+std::vector<LibrarySources> imguiSources()
 {
     return
     {
@@ -37,7 +37,7 @@ std::vector<LibrarySources> thisLibrarySources()
     };
 }
 
-std::vector<LibrarySources> otherSources()
+std::vector<LibrarySources> thisDemoSources()
 {
     return
     {
@@ -76,7 +76,14 @@ std::vector<LibrarySources> otherSources()
                 icons_font_awesome.h
                 imgui_default_settings.h
             )")
-        },
+        }
+    };
+}
+
+std::vector<LibrarySources> otherLibrariesSources()
+{
+    return
+    {
         {
             "ImGuiColorTextEdit", "ImGuiColorTextEdit", "https://github.com/BalazsJako/ImGuiColorTextEdit",
             make_string_vec(R"(
@@ -86,7 +93,7 @@ std::vector<LibrarySources> otherSources()
                 TextEditor.h
                 TextEditor.cpp
             )")
-         },
+        },
         {
             "imgui_markdown", "imgui_markdown", "https://github.com/juliettef/imgui_markdown",
             make_string_vec(R"(
@@ -95,13 +102,17 @@ std::vector<LibrarySources> otherSources()
                 imgui_markdown.h
             )")
         },
+        {
+                "fplus", "FunctionalPlus", "https://github.com/Dobiasd/FunctionalPlus",
+                make_string_vec(R"(
+                    README.md
+                    LICENSE
+                    CONTRIBUTING.md
+                    INSTALL.md
+                    fplus.hpp
+            )")
+        },
     };
-}
-
-
-std::vector<LibrarySources> allSources()
-{
-    return fplus::append(thisLibrarySources(), otherSources());
 }
 
 
@@ -132,16 +143,24 @@ LinesWithNotes findDemoCodeRegions(const std::string &sourceCode)
     return r;
 }
 
-AnnotatedSourceCode ReadAnnotatedSource(const std::string sourcePath)
+Source ReadSource(const std::string sourcePath)
 {
     std::string assetPath = std::string("code/") + sourcePath;
     auto assetData = HelloImGui::LoadAssetFileData(assetPath.c_str());
     assert(assetData.data != nullptr);
 
-    AnnotatedSourceCode r;
+    Source r;
     r.sourcePath = sourcePath;
     r.sourceCode = std::string((const char *) assetData.data);
-    r.linesWithNotes = findDemoCodeRegions(r.sourceCode);
     HelloImGui::FreeAssetFileData(&assetData);
+    return r;
+}
+
+
+AnnotatedSourceCode ReadAnnotatedSource(const std::string sourcePath)
+{
+    AnnotatedSourceCode r;
+    r.source = ReadSource(sourcePath);
+    r.linesWithNotes = findDemoCodeRegions(r.source.sourceCode);
     return r;
 }

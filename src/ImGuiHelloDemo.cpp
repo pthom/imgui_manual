@@ -7,189 +7,207 @@
 #include "HyperlinkHelper.h"
 #include <fplus/fplus.hpp>
 
+static std::string gImGuiRepoUrl = "https://github.com/pthom/imgui/blob/DemoCode/imgui_demo.cpp";
 
-struct AppState
-{
-    AnnotatedSourceCode otherLibsSourceCode = ReadAnnotatedSource("imgui/README.md");
-    std::vector<LibrarySources> librarySources = thisLibrarySources();
-    bool showAllLibraries = false;
-    LinesWithNotes imguiDemoLinesWithNote;
-    TextEditor editorOtherLibs;
-    TextEditor editorImGuiDemo;
-};
-AppState gAppState;
-
-
-
-void DemoCallback(int line_number)
+TextEditor *gEditorImGuiDemo = nullptr;
+void implImGuiDemoCallbackDemoCallback(int line_number)
 {
     int cursorLineOnPage = 3;
-    gAppState.editorImGuiDemo.SetCursorPosition({line_number, 0}, cursorLineOnPage);
+    gEditorImGuiDemo->SetCursorPosition({line_number, 0}, cursorLineOnPage);
 }
 
 
-bool guiSelectLibrarySource(
-        const std::vector<LibrarySources>& librarySources,
-        AnnotatedSourceCode *selectedLibrarySource)
+void menuEditorTheme(const std::vector<TextEditor *> editors)
 {
-    bool changed = false;
-    for (const auto & librarySource: librarySources)
-    {
-        ImGui::Text("%s", librarySource.name.c_str());
-        ImGui::SameLine(ImGui::GetWindowSize().x - 350.f );
-        ImGuiExt::Hyperlink(librarySource.url);
-        for (const auto & source: librarySource.sources)
-        {
-            std::string currentSourcePath = librarySource.path + "/" + source;
-            bool isSelected = (currentSourcePath == selectedLibrarySource->sourcePath);
-            std::string buttonLabel = source + "##" + librarySource.path;
-            if (isSelected)
-                ImGui::TextDisabled("%s", source.c_str());
-            else if (ImGui::Button(buttonLabel.c_str()))
-            {
-                *selectedLibrarySource = ReadAnnotatedSource(currentSourcePath);
-                changed = true;
-            }
-            ImGuiExt::SameLine_IfPossible(80.f);
-        }
-        ImGui::NewLine();
-        ImGui::Separator();
-    }
-    return changed;
-}
-
-
-void menuEditorTheme(TextEditor &editor) {
     if (ImGui::BeginMenu("Editor"))
     {
         if (ImGui::MenuItem("Dark palette"))
-            editor.SetPalette(TextEditor::GetDarkPalette());
+            for (auto editor: editors)
+                editor->SetPalette(TextEditor::GetDarkPalette());
         if (ImGui::MenuItem("Light palette"))
-            editor.SetPalette(TextEditor::GetLightPalette());
+            for (auto editor: editors)
+                editor->SetPalette(TextEditor::GetLightPalette());
         if (ImGui::MenuItem("Retro blue palette"))
-            editor.SetPalette(TextEditor::GetRetroBluePalette());
+            for (auto editor: editors)
+                editor->SetPalette(TextEditor::GetRetroBluePalette());
         ImGui::EndMenu();
     }
 }
 
 
-void guiSourceCategories(AppState &appState)
+TextEditor factorCppEditor()
 {
-    if (ImGui::Checkbox("Other libraries sources", &appState.showAllLibraries))
-    {
-        if (appState.showAllLibraries)
-            appState.librarySources = allSources();
-        else
-            appState.librarySources = thisLibrarySources();
-    }
-}
-
-
-void guiDemoCodeRegions(const LinesWithNotes &linesWithNotes, TextEditor &editor)
-{
-    bool showTooltip = false;
-    ImGui::Text("Search demos"); ImGui::SameLine();
-    if (ImGui::IsItemHovered())
-        showTooltip = true;
-    ImGui::TextDisabled("?"); ImGui::SameLine();
-    if (ImGui::IsItemHovered())
-        showTooltip = true;
-    if (showTooltip)
-    {
-        ImGui::BeginTooltip();
-        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-        ImGui::TextUnformatted("Filter usage:\n"
-                               "  \"\"         display all\n"
-                               "  \"xxx\"      display items containing \"xxx\"\n"
-                               "  \"xxx,yyy\"  display items containing \"xxx\" or \"yyy\"\n"
-                               "  \"-xxx\"     hide items containing \"xxx\"");
-        ImGui::PopTextWrapPos();
-        ImGui::EndTooltip();
-    }
-
-
-    static ImGuiTextFilter filter;
-    filter.Draw();
-    if (strlen(filter.InputBuf) >= 3)
-    {
-        for (const auto & lineWithNote : linesWithNotes)
-        {
-            if (filter.PassFilter(lineWithNote.second.c_str()))
-            {
-                if (ImGui::Button(lineWithNote.second.c_str()))
-                    editor.SetCursorPosition({lineWithNote.first, 0}, 3);
-                ImGuiExt::SameLine_IfPossible();
-            }
-        }
-        ImGui::NewLine();
-    }
-}
-
-
-void setEditorAnnotatedSource(const AnnotatedSourceCode& annotatedSourceCode, TextEditor& editor)
-{
-    editor.SetText(annotatedSourceCode.sourceCode);
-    std::unordered_set<int> lineNumbers;
-    for (auto kv : annotatedSourceCode.linesWithNotes)
-        lineNumbers.insert(kv.first);
-    editor.SetBreakpoints(lineNumbers);
-}
-
-void setupEditorImGuiDemo()
-{
-    static auto annotatedSourceCode = ReadAnnotatedSource("imgui/imgui_demo.cpp");
-    gAppState.imguiDemoLinesWithNote = annotatedSourceCode.linesWithNotes;
-    auto & editor = gAppState.editorImGuiDemo;
+    TextEditor editor;
     editor.SetPalette(TextEditor::GetLightPalette());
-    editor.SetText(annotatedSourceCode.sourceCode);
-    std::unordered_set<int> lineNumbers;
-    for (auto kv : annotatedSourceCode.linesWithNotes)
-        lineNumbers.insert(kv.first);
-    editor.SetBreakpoints(lineNumbers);
+    editor.SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
+    return editor;
 }
 
-void setupEditorOtherLibraries()
+
+class LibrariesCodeBrowser
 {
-    setEditorAnnotatedSource(gAppState.otherLibsSourceCode, gAppState.editorOtherLibs);
+public:
+    LibrariesCodeBrowser(
+            const std::vector<LibrarySources>& librarySources,
+            std::string currentSourcePath
+            ) :
+              mLibrarySources(librarySources)
+            , mCurrentSource(ReadSource(currentSourcePath))
+            , mEditor(factorCppEditor())
+    {
+        mEditor.SetText(mCurrentSource.sourceCode);
+    }
+
+    void gui()
+    {
+        if (guiSelectLibrarySource())
+            mEditor.SetText(mCurrentSource.sourceCode);
+
+        if (fplus::is_suffix_of(std::string(".md"), mCurrentSource.sourcePath))
+            MarkdownHelper::Markdown(mCurrentSource.sourceCode);
+        else
+            mEditor.Render(mCurrentSource.sourcePath.c_str());
+    }
+private:
+    bool guiSelectLibrarySource()
+    {
+        bool changed = false;
+        for (const auto & librarySource: mLibrarySources)
+        {
+            ImGui::Text("%s", librarySource.name.c_str());
+            ImGui::SameLine(ImGui::GetWindowSize().x - 350.f );
+            ImGuiExt::Hyperlink(librarySource.url);
+            for (const auto & source: librarySource.sources)
+            {
+                std::string currentSourcePath = librarySource.path + "/" + source;
+                bool isSelected = (currentSourcePath == mCurrentSource.sourcePath);
+                std::string buttonLabel = source + "##" + librarySource.path;
+                if (isSelected)
+                    ImGui::TextDisabled("%s", source.c_str());
+                else if (ImGui::Button(buttonLabel.c_str()))
+                {
+                    mCurrentSource = ReadSource(currentSourcePath);
+                    changed = true;
+                }
+                ImGuiExt::SameLine_IfPossible(80.f);
+            }
+            ImGui::NewLine();
+            ImGui::Separator();
+        }
+        return changed;
+    }
+
+private:
+    std::vector<LibrarySources> mLibrarySources;
+    Source mCurrentSource;
+    TextEditor mEditor;
 };
 
-void guiImguiDemoCode()
-{
-    guiDemoCodeRegions(gAppState.imguiDemoLinesWithNote, gAppState.editorImGuiDemo);
 
-    if (ImGui::Button("View on github at this line"))
+class ImGuiDemoBrowser
+{
+public:
+    ImGuiDemoBrowser() :
+          mAnnotatedSource(ReadAnnotatedSource("imgui/imgui_demo.cpp"))
+        , mEditor(factorCppEditor())
     {
-        std::string url = "https://github.com/pthom/imgui/blob/DemoCode/imgui_demo.cpp#L"
-                          + std::to_string(gAppState.editorImGuiDemo.GetCursorPosition().mLine);
-        HyperlinkHelper::OpenUrl(url);
+        setEditorAnnotatedSource();
     }
 
-    gAppState.editorImGuiDemo.Render("imgui_demo.cpp");
-}
+    void gui()
+    {
+        guiDemoCodeTags();
+        guiGithubButton();
+        mEditor.Render("imgui_demo.cpp");
+    }
 
-void guiOtherLibrariesCode(AppState& appState)
+    TextEditor * _GetTextEditorPtr() {
+        return &mEditor;
+    }
+private:
+    void guiGithubButton()
+    {
+        if (ImGui::Button("View on github at this line"))
+        {
+            std::string url = gImGuiRepoUrl + "#L"
+                              + std::to_string(mEditor.GetCursorPosition().mLine);
+            HyperlinkHelper::OpenUrl(url);
+        }
+    }
+
+
+    void guiDemoCodeTags()
+    {
+        bool showTooltip = false;
+        ImGui::Text("Search demos"); ImGui::SameLine();
+        if (ImGui::IsItemHovered())
+            showTooltip = true;
+        ImGui::TextDisabled("?"); ImGui::SameLine();
+        if (ImGui::IsItemHovered())
+            showTooltip = true;
+        if (showTooltip)
+        {
+            ImGui::BeginTooltip();
+            ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+            ImGui::TextUnformatted("Filter usage:\n"
+                                   "  \"\"         display all\n"
+                                   "  \"xxx\"      display items containing \"xxx\"\n"
+                                   "  \"xxx,yyy\"  display items containing \"xxx\" or \"yyy\"\n"
+                                   "  \"-xxx\"     hide items containing \"xxx\"");
+            ImGui::PopTextWrapPos();
+            ImGui::EndTooltip();
+        }
+
+
+        static ImGuiTextFilter filter;
+        filter.Draw();
+        if (strlen(filter.InputBuf) >= 3)
+        {
+            for (const auto & lineWithNote : mAnnotatedSource.linesWithNotes)
+            {
+                if (filter.PassFilter(lineWithNote.second.c_str()))
+                {
+                    if (ImGui::Button(lineWithNote.second.c_str()))
+                        mEditor.SetCursorPosition({lineWithNote.first, 0}, 3);
+                    ImGuiExt::SameLine_IfPossible();
+                }
+            }
+            ImGui::NewLine();
+        }
+    }
+
+    void setEditorAnnotatedSource()
+    {
+        mEditor.SetText(mAnnotatedSource.source.sourceCode);
+        std::unordered_set<int> lineNumbers;
+        for (auto kv : mAnnotatedSource.linesWithNotes)
+            lineNumbers.insert(kv.first);
+        mEditor.SetBreakpoints(lineNumbers);
+    }
+
+
+    AnnotatedSourceCode mAnnotatedSource;
+    TextEditor mEditor;
+};
+
+
+struct AppState
 {
-    guiSourceCategories(appState);
-    if (guiSelectLibrarySource(appState.librarySources, &(appState.otherLibsSourceCode)))
-        setupEditorOtherLibraries();
-
-    if (fplus::is_suffix_of(std::string(".md"), appState.otherLibsSourceCode.sourcePath))
-        MarkdownHelper::Markdown(appState.otherLibsSourceCode.sourceCode);
-    else
-        appState.editorOtherLibs.Render(appState.otherLibsSourceCode.sourcePath.c_str());
-}
+    std::map<std::string, LibrariesCodeBrowser> librariesCodeBrowsers =
+        {
+            { "imguiSources", {imguiSources(), "imgui/imgui.cpp"} },
+            { "thisDemoSources", {thisDemoSources(), "imgui_hellodemo/Readme.md"} },
+            { "otherLibrariesSources", {otherLibrariesSources(), ""} },
+        };
+};
 
 
 
 int main(int, char **)
 {
-    gAppState.editorOtherLibs.SetPalette(TextEditor::GetLightPalette());
+    ImGuiDemoBrowser imGuiDemoBrowser;
 
-    auto lang = TextEditor::LanguageDefinition::CPlusPlus();
-    gAppState.editorOtherLibs.SetLanguageDefinition(lang);
-    gAppState.editorImGuiDemo.SetLanguageDefinition(lang);
-    setupEditorOtherLibraries();
-    setupEditorImGuiDemo();
+    gEditorImGuiDemo = imGuiDemoBrowser._GetTextEditorPtr();
 
     HelloImGui::RunnerParams runnerParams;
 
@@ -224,19 +242,19 @@ int main(int, char **)
     {
         dock_imguiDemoCode.label = "imgui_demo code";
         dock_imguiDemoCode.dockSpaceName = "CodeSpace";
-        dock_imguiDemoCode.GuiFonction = guiImguiDemoCode;
+        dock_imguiDemoCode.GuiFonction = [&imGuiDemoBrowser]{ imGuiDemoBrowser.gui(); };
     };
 
-    HelloImGui::DockableWindow dock_code;
-    {
-        dock_code.label = "All sources";
-        dock_code.dockSpaceName = "CodeSpace";
-        dock_code.GuiFonction = [] { guiOtherLibrariesCode(gAppState); };
-    }
+//    HelloImGui::DockableWindow dock_code;
+//    {
+//        dock_code.label = "All sources";
+//        dock_code.dockSpaceName = "CodeSpace";
+//        dock_code.GuiFonction = [] { guiOtherLibrariesCode(gAppState); };
+//    }
 
     // Menu
     runnerParams.callbacks.ShowMenus = []() {
-        menuEditorTheme(gAppState.editorOtherLibs);
+        //menuEditorTheme();
     };
 
     // Fonts
@@ -246,12 +264,11 @@ int main(int, char **)
     runnerParams.dockingParams.dockableWindows = {
             dock_imguiDemoCode,
             dock_imguiDemoWindow,
-            dock_code,
+            //dock_code,
     };
 
-    gImGuiDemoCallback = DemoCallback;
+    gImGuiDemoCallback = implImGuiDemoCallbackDemoCallback;
 
     HelloImGui::Run(runnerParams);
     return 0;
 }
-

@@ -64,4 +64,13 @@ cp $IMGUI_DIR/* .
 cp $IMGUI_DIR/docs/README.md .
 cp $IMGUI_DIR/docs/FAQ.md .
 cd ..
-echo "IMGUI_DIR=$IMGUI_DIR"
+
+if [ ! -d fplus ]; then
+  mkdir fplus
+fi
+cd fplus
+fplus_dir=$EXTERNAL_DIR/FunctionalPlus
+cp $fplus_dir/*.md .
+cp $fplus_dir/LICENSE .
+cp $fplus_dir/include/fplus/fplus.hpp .
+cd ..
