@@ -1,9 +1,6 @@
 [submodule "external/hello_imgui"]
 	path = external/hello_imgui
 	url = https://github.com/pthom/hello_imgui.git
-[submodule "external/implot"]
-	path = external/implot
-	url = https://github.com/epezent/implot.git
 [submodule "external/ImGuiColorTextEdit"]
 	path = external/ImGuiColorTextEdit
 	url = https://github.com/BalazsJako/ImGuiColorTextEdit.git
