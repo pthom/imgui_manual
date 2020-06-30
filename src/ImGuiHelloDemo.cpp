@@ -116,6 +116,12 @@ public:
 
     void gui()
     {
+        std::string help =
+"This is the code of imgui_demo.cpp. It is the best way to learn about Dear ImGui! \n"
+"On the left, you can see a demo that showcases all the widgets and features of ImGui: "
+"Click on the \"Code\" buttons to see their code and learn about them. \n"
+"Alternatively, you can also search for some features (try searching for \"widgets\", \"layout\", \"drag\", etc)";
+        ImGui::TextWrapped("%s", help.c_str());
         guiDemoCodeTags();
         guiGithubButton();
         mEditor.Render("imgui_demo.cpp");
@@ -191,6 +197,32 @@ private:
 };
 
 
+// Show ImGui Readme.md
+class ImGuiReadmeBrowser
+{
+public:
+    ImGuiReadmeBrowser() : mSource(ReadSource("imgui/README.md")) {}
+    void gui() {
+        MarkdownHelper::Markdown(mSource.sourceCode);
+    }
+private:
+    Source mSource;
+};
+
+// Show doc in imgui.cpp
+class ImGuiCppDocBrowser
+{
+public:
+    ImGuiCppDocBrowser();
+    void gui()
+    {
+
+    }
+private:
+    Source mSource;
+    TextEditor mEditor;
+};
+
 struct AppState
 {
     std::map<std::string, LibrariesCodeBrowser> librariesCodeBrowsers =
@@ -208,6 +240,10 @@ int main(int, char **)
     ImGuiDemoBrowser imGuiDemoBrowser;
 
     gEditorImGuiDemo = imGuiDemoBrowser._GetTextEditorPtr();
+
+    std::vector<TextEditor *> allEditors {
+        imGuiDemoBrowser._GetTextEditorPtr()
+    };
 
     HelloImGui::RunnerParams runnerParams;
 
@@ -245,16 +281,20 @@ int main(int, char **)
         dock_imguiDemoCode.GuiFonction = [&imGuiDemoBrowser]{ imGuiDemoBrowser.gui(); };
     };
 
-//    HelloImGui::DockableWindow dock_code;
-//    {
-//        dock_code.label = "All sources";
-//        dock_code.dockSpaceName = "CodeSpace";
-//        dock_code.GuiFonction = [] { guiOtherLibrariesCode(gAppState); };
-//    }
+    HelloImGui::DockableWindow dock_imguiReadme;
+    {
+        dock_imguiReadme.label = "ImGui - Readme";
+        dock_imguiReadme.dockSpaceName = "CodeSpace";
+        dock_imguiReadme.GuiFonction = []{
+            static ImGuiReadmeBrowser w;
+            w.gui();
+        };
+    };
+
 
     // Menu
-    runnerParams.callbacks.ShowMenus = []() {
-        //menuEditorTheme();
+    runnerParams.callbacks.ShowMenus = [&allEditors]() {
+        menuEditorTheme(allEditors);
     };
 
     // Fonts
@@ -264,6 +304,7 @@ int main(int, char **)
     runnerParams.dockingParams.dockableWindows = {
             dock_imguiDemoCode,
             dock_imguiDemoWindow,
+            dock_imguiReadme
             //dock_code,
     };
 

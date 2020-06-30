@@ -15,7 +15,10 @@ std::vector<LibrarySources> imguiSources();
 std::vector<LibrarySources> thisDemoSources();
 std::vector<LibrarySources> otherLibrariesSources();
 
-using LinesWithNotes = std::map<int, std::string>;
+using LinesWithNotes = std::map<
+    int,          // source code line number
+    std::string   // tag present on this line
+    >;
 
 struct Source
 {

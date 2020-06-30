@@ -116,7 +116,7 @@ std::vector<LibrarySources> otherLibrariesSources()
 }
 
 
-LinesWithNotes findDemoCodeRegions(const std::string &sourceCode)
+LinesWithNotes findImGuiDemoCodeLines(const std::string &sourceCode)
 {
     LinesWithNotes r;
 
@@ -161,6 +161,6 @@ AnnotatedSourceCode ReadAnnotatedSource(const std::string sourcePath)
 {
     AnnotatedSourceCode r;
     r.source = ReadSource(sourcePath);
-    r.linesWithNotes = findDemoCodeRegions(r.source.sourceCode);
+    r.linesWithNotes = findImGuiDemoCodeLines(r.source.sourceCode);
     return r;
 }
