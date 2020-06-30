@@ -140,10 +140,25 @@ public:
         ImGui::TextWrapped("%s", help.c_str());
         guiDemoCodeTags();
         guiGithubButton();
+        guiSave();
         mEditor.Render("imgui_demo.cpp");
     }
 
 private:
+    void guiSave()
+    {
+#ifdef IMGUI_HELLODEMO_CAN_WRITE_IMGUI_DEMO_CPP
+        if (ImGui::Button("Save"))
+        {
+            std::string fileSrc = IMGUI_HELLODEMO_REPO_DIR "/external/imgui/imgui_demo.cpp";
+            std::string fileAssets = IMGUI_HELLODEMO_BIN_DIR "/assets/code/imgui/imgui_demo.cpp";
+            fplus::write_text_file(fileSrc, mEditor.GetText());
+            fplus::write_text_file(fileAssets, mEditor.GetText());
+            mAnnotatedSource = Sources::ReadImGuiDemoCode("imgui/imgui_demo.cpp");
+            setEditorAnnotatedSource(mAnnotatedSource);
+        }
+#endif
+    }
     void guiGithubButton()
     {
         if (ImGui::Button("View on github at this line"))
