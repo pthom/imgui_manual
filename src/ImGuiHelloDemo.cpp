@@ -7,7 +7,7 @@
 #include "HyperlinkHelper.h"
 #include <fplus/fplus.hpp>
 
-static std::string gImGuiRepoUrl = "https://github.com/pthom/imgui/blob/DemoCode/imgui_demo.cpp";
+static std::string gImGuiRepoUrl = "https://github.com/pthom/imgui/blob/DemoCode/";
 
 TextEditor *gEditorImGuiDemo = nullptr;
 void implImGuiDemoCallbackDemoCallback(int line_number)
@@ -32,6 +32,16 @@ void menuEditorTheme(const std::vector<TextEditor *> editors)
                 editor->SetPalette(TextEditor::GetRetroBluePalette());
         ImGui::EndMenu();
     }
+}
+
+
+void setEditorAnnotatedSource(TextEditor & editor, const Sources::AnnotatedSource &annotatedSource)
+{
+    editor.SetText(annotatedSource.source.sourceCode);
+    std::unordered_set<int> lineNumbers;
+    for (auto line : annotatedSource.linesWithTags)
+        lineNumbers.insert(line.lineNumber);
+    editor.SetBreakpoints(lineNumbers);
 }
 
 
@@ -111,7 +121,7 @@ public:
           mAnnotatedSource(Sources::ReadImGuiDemoCode("imgui/imgui_demo.cpp"))
         , mEditor(factorCppEditor())
     {
-        setEditorAnnotatedSource();
+        _setEditorAnnotatedSource();
     }
 
     void gui()
@@ -135,7 +145,7 @@ private:
     {
         if (ImGui::Button("View on github at this line"))
         {
-            std::string url = gImGuiRepoUrl + "#L"
+            std::string url = gImGuiRepoUrl + "imgui_demo.cpp#L"
                               + std::to_string(mEditor.GetCursorPosition().mLine);
             HyperlinkHelper::OpenUrl(url);
         }
@@ -182,17 +192,13 @@ private:
         }
     }
 
-    void setEditorAnnotatedSource()
+    void _setEditorAnnotatedSource()
     {
-        mEditor.SetText(mAnnotatedSource.source.sourceCode);
-        std::unordered_set<int> lineNumbers;
-        for (auto line : mAnnotatedSource.linesWithTags)
-            lineNumbers.insert(line.lineNumber);
-        mEditor.SetBreakpoints(lineNumbers);
+        setEditorAnnotatedSource(mEditor, mAnnotatedSource);
     }
 
 
-    Sources::AnnotatedSourceCode mAnnotatedSource;
+    Sources::AnnotatedSource mAnnotatedSource;
     TextEditor mEditor;
 };
 
@@ -213,13 +219,49 @@ private:
 class ImGuiCppDocBrowser
 {
 public:
-    ImGuiCppDocBrowser();
+    ImGuiCppDocBrowser()
+        : mAnnotatedSource(Sources::ReadImGuiCppDoc("imgui/imgui.cpp"))
+        , mEditor(factorCppEditor())
+    {
+        setEditorAnnotatedSource(mEditor, mAnnotatedSource);
+    }
     void gui()
     {
-
+        ImGui::Text("The doc for Dear ImGui is simply stored inside imgui.cpp");
+        guiTags();
+        guiGithubButton();
+        mEditor.Render("imgui.cpp");
+    }
+    TextEditor *_GetTextEditorPtr() {
+        return &mEditor;
     }
 private:
-    Sources::Source mSource;
+    void guiTags()
+    {
+        for (auto lineWithTag : mAnnotatedSource.linesWithTags)
+        {
+            // tags are of type H1 or H2, and begin with "H1 " or "H2 " (3 characters)
+            std::string title = fplus::drop(3, lineWithTag.tag);
+            bool isHeader1 = (fplus::take(3, lineWithTag.tag) == "H1 ");
+            if (isHeader1)
+            {
+                if (ImGuiExt::ClickableText(title.c_str()))
+                    mEditor.SetCursorPosition({lineWithTag.lineNumber, 0}, 3);
+            }
+        }
+    }
+    void guiGithubButton()
+    {
+        if (ImGui::Button("View on github at this line"))
+        {
+            std::string url = gImGuiRepoUrl + "imgui.cpp#L"
+                              + std::to_string(mEditor.GetCursorPosition().mLine);
+            HyperlinkHelper::OpenUrl(url);
+        }
+    }
+
+
+    Sources::AnnotatedSource mAnnotatedSource;
     TextEditor mEditor;
 };
 
@@ -238,11 +280,13 @@ struct AppState
 int main(int, char **)
 {
     ImGuiDemoBrowser imGuiDemoBrowser;
+    ImGuiCppDocBrowser imGuiCppDocBrowser;
 
     gEditorImGuiDemo = imGuiDemoBrowser._GetTextEditorPtr();
 
     std::vector<TextEditor *> allEditors {
-        imGuiDemoBrowser._GetTextEditorPtr()
+        imGuiDemoBrowser._GetTextEditorPtr(),
+        imGuiCppDocBrowser._GetTextEditorPtr()
     };
 
     HelloImGui::RunnerParams runnerParams;
@@ -291,6 +335,13 @@ int main(int, char **)
         };
     };
 
+    HelloImGui::DockableWindow dock_imGuiCppDocBrowser;
+    {
+        dock_imGuiCppDocBrowser.label = "ImGui - Doc";
+        dock_imGuiCppDocBrowser.dockSpaceName = "CodeSpace";
+        dock_imGuiCppDocBrowser.GuiFonction = [&imGuiCppDocBrowser]{ imGuiCppDocBrowser.gui(); };
+    };
+
 
     // Menu
     runnerParams.callbacks.ShowMenus = [&allEditors]() {
@@ -304,7 +355,8 @@ int main(int, char **)
     runnerParams.dockingParams.dockableWindows = {
             dock_imguiDemoCode,
             dock_imguiDemoWindow,
-            dock_imguiReadme
+            dock_imguiReadme,
+            dock_imGuiCppDocBrowser
             //dock_code,
     };
 

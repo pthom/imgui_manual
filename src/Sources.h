@@ -18,7 +18,7 @@ namespace Sources
     };
     using LinesWithTags = std::vector<LineWithTag>;
 
-    struct AnnotatedSourceCode
+    struct AnnotatedSource
     {
         Source source;
         LinesWithTags linesWithTags;
@@ -37,5 +37,6 @@ namespace Sources
     std::vector<Library> otherLibraries();
 
     Source ReadSource(const std::string sourcePath);
-    AnnotatedSourceCode ReadImGuiDemoCode(const std::string& sourcePath);
+    AnnotatedSource ReadImGuiDemoCode(const std::string& sourcePath);
+    AnnotatedSource ReadImGuiCppDoc(const std::string& sourcePath);
 }

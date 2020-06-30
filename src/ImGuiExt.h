@@ -5,4 +5,5 @@ namespace ImGuiExt
 {
     void Hyperlink(const std::string &url);
     void SameLine_IfPossible(float minRightMargin = 60.f);
+    bool ClickableText(const std::string &txt);
 }

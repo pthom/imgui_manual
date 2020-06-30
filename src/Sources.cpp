@@ -2,6 +2,8 @@
 #include <fplus/fplus.hpp>
 #include "Sources.h"
 
+using namespace std::literals;
+
 namespace {
     auto make_string_vec = [](const std::string &s) -> std::vector<std::string> {
         std::vector<std::string> r = fplus::split('\n', false, s);
@@ -119,6 +121,69 @@ std::vector<Library> otherLibraries()
 }
 
 
+std::string lowerCaseExceptFirstLetter(const std::string &s)
+{
+    auto r = fplus::to_upper_case(fplus::take(1, s)) +  fplus::to_lower_case(fplus::drop(1, s));
+    return r;
+}
+
+std::string upperCaseQAndA(const std::string &s)
+{
+    if (fplus::take(3, s) == "Q&a")
+        return "Q&A"s + fplus::drop(3, s);
+    else
+        return s;
+}
+
+std::string lowerCaseTitle(const std::string& s)
+{
+    auto words = fplus::split(' ', true, s);
+    words = fplus::transform(lowerCaseExceptFirstLetter, words);
+    auto title = fplus::join(" "s, words);
+    title = upperCaseQAndA(title);
+    return title;
+}
+
+LinesWithTags findImGuiCppDoc(const std::string &sourceCode)
+{
+    LinesWithTags r;
+    /*
+      H1 titles look like this
+      MISSION STATEMENT
+      =================
+      H2 titles look like this
+      READ FIRST
+     ----------
+   */
+    auto lines = fplus::split('\n', true, sourceCode);
+
+    // Given two lines, we can check whether they are a header
+    // and return 0 (not header) , 1 ("H1") or 2 ("H2")
+    auto isHeaderLine = [](const std::pair<std::string, std::string> &linePair) {
+        int r = 0;
+        if (fplus::is_prefix_of("===="s, fplus::trim_whitespace(linePair.second)))
+            r = 1;
+        if (fplus::is_prefix_of("----"s, fplus::trim_whitespace(linePair.second)))
+            r = 2;
+        return r;
+    };
+
+    for (auto idx_lines : fplus::enumerate(fplus::overlapping_pairs(lines)))
+    {
+        int lineNumber = (int)idx_lines.first + 1;
+        auto line_pair = idx_lines.second;
+        int headerWeight = isHeaderLine(line_pair);
+        std::string tag = fplus::trim_whitespace(line_pair.first);
+        tag = lowerCaseTitle(tag);
+        if (headerWeight == 1)
+            r.push_back({lineNumber, "H1 "s + tag});
+        if (headerWeight == 2)
+            r.push_back({lineNumber, "H2 "s + tag});
+    }
+    return r;
+}
+
+
 LinesWithTags findImGuiDemoCodeLines(const std::string &sourceCode)
 {
     LinesWithTags r;
@@ -160,12 +225,18 @@ Source ReadSource(const std::string sourcePath)
 }
 
 
-AnnotatedSourceCode ReadImGuiDemoCode(const std::string& sourcePath)
+AnnotatedSource ReadImGuiDemoCode(const std::string& sourcePath)
 {
-    AnnotatedSourceCode r;
+    AnnotatedSource r;
     r.source = ReadSource(sourcePath);
     r.linesWithTags = findImGuiDemoCodeLines(r.source.sourceCode);
     return r;
 }
 
+AnnotatedSource ReadImGuiCppDoc(const std::string& sourcePath) {
+    AnnotatedSource r;
+    r.source = ReadSource(sourcePath);
+    r.linesWithTags = findImGuiCppDoc(r.source.sourceCode);
+    return r;
+}
 } // namespace Sources
