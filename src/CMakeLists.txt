@@ -7,8 +7,8 @@ set(textedit_dir ${CMAKE_CURRENT_LIST_DIR}/../external/ImGuiColorTextEdit)
 set(fplus_dir ${CMAKE_CURRENT_LIST_DIR}/../external/FunctionalPlus/include)
 set(imgui_markdown_dir ${CMAKE_CURRENT_LIST_DIR}/../external/imgui_markdown)
 
-hello_imgui_add_app(implot_demo
-    ImGuiDemo.main.cpp
+hello_imgui_add_app(imgui_hellodemo
+    ImGuiHelloDemo.cpp
     LibrarySources.cpp
     LibrarySources.h
     ImGuiExt.cpp
@@ -17,12 +17,10 @@ hello_imgui_add_app(implot_demo
     MarkdownHelper.h
     HyperlinkHelper.cpp
     HyperlinkHelper.h
-    ${implot_dir}/implot.h
-    ${implot_dir}/implot.cpp
-    ${implot_dir}/implot_demo.cpp
+    ${imgui_markdown_dir}/imgui_markdown.h
     ${textedit_dir}/TextEditor.h
     ${textedit_dir}/TextEditor.cpp
     )
-target_include_directories(implot_demo PRIVATE
+target_include_directories(imgui_hellodemo PRIVATE
     ${implot_dir} ${textedit_dir} ${fplus_dir} ${imgui_markdown_dir}
 )
