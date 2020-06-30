@@ -1,6 +1,6 @@
 #include "hello_imgui/hello_imgui_assets.h"
 #include <fplus/fplus.hpp>
-#include "LibrarySources.h"
+#include "Sources.h"
 
 namespace {
     auto make_string_vec = [](const std::string &s) -> std::vector<std::string> {
@@ -11,8 +11,11 @@ namespace {
     };
 }
 
+namespace Sources
+{
 
-std::vector<LibrarySources> imguiSources()
+
+std::vector<Library> imguiLibrary()
 {
     return
     {
@@ -37,7 +40,7 @@ std::vector<LibrarySources> imguiSources()
     };
 }
 
-std::vector<LibrarySources> thisDemoSources()
+std::vector<Library> thisDemoLibraries()
 {
     return
     {
@@ -80,7 +83,7 @@ std::vector<LibrarySources> thisDemoSources()
     };
 }
 
-std::vector<LibrarySources> otherLibrariesSources()
+std::vector<Library> otherLibraries()
 {
     return
     {
@@ -116,9 +119,9 @@ std::vector<LibrarySources> otherLibrariesSources()
 }
 
 
-LinesWithNotes findImGuiDemoCodeLines(const std::string &sourceCode)
+LinesWithTags findImGuiDemoCodeLines(const std::string &sourceCode)
 {
-    LinesWithNotes r;
+    LinesWithTags r;
 
     static std::string regionToken = "DemoCode(";
 
@@ -138,7 +141,7 @@ LinesWithNotes findImGuiDemoCodeLines(const std::string &sourceCode)
     {
         const std::string& line = lines[line_number];
         if (line.find(regionToken) != std::string::npos)
-            r[(int)(line_number + 1)] = extractDemoCodeName(line);
+            r.push_back({(int)line_number + 1, extractDemoCodeName(line)});
     }
     return r;
 }
@@ -157,10 +160,12 @@ Source ReadSource(const std::string sourcePath)
 }
 
 
-AnnotatedSourceCode ReadAnnotatedSource(const std::string sourcePath)
+AnnotatedSourceCode ReadImGuiDemoCode(const std::string& sourcePath)
 {
     AnnotatedSourceCode r;
     r.source = ReadSource(sourcePath);
-    r.linesWithNotes = findImGuiDemoCodeLines(r.source.sourceCode);
+    r.linesWithTags = findImGuiDemoCodeLines(r.source.sourceCode);
     return r;
 }
+
+} // namespace Sources

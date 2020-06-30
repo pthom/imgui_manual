@@ -2,7 +2,7 @@
 #include "imgui.h"
 #include "ImGuiExt.h"
 #include "TextEditor.h"
-#include "LibrarySources.h"
+#include "Sources.h"
 #include "MarkdownHelper.h"
 #include "HyperlinkHelper.h"
 #include <fplus/fplus.hpp>
@@ -48,11 +48,11 @@ class LibrariesCodeBrowser
 {
 public:
     LibrariesCodeBrowser(
-            const std::vector<LibrarySources>& librarySources,
+            const std::vector<Sources::Library>& librarySources,
             std::string currentSourcePath
             ) :
               mLibrarySources(librarySources)
-            , mCurrentSource(ReadSource(currentSourcePath))
+            , mCurrentSource(Sources::ReadSource(currentSourcePath))
             , mEditor(factorCppEditor())
     {
         mEditor.SetText(mCurrentSource.sourceCode);
@@ -77,7 +77,7 @@ private:
             ImGui::Text("%s", librarySource.name.c_str());
             ImGui::SameLine(ImGui::GetWindowSize().x - 350.f );
             ImGuiExt::Hyperlink(librarySource.url);
-            for (const auto & source: librarySource.sources)
+            for (const auto & source: librarySource.sourcePaths)
             {
                 std::string currentSourcePath = librarySource.path + "/" + source;
                 bool isSelected = (currentSourcePath == mCurrentSource.sourcePath);
@@ -86,7 +86,7 @@ private:
                     ImGui::TextDisabled("%s", source.c_str());
                 else if (ImGui::Button(buttonLabel.c_str()))
                 {
-                    mCurrentSource = ReadSource(currentSourcePath);
+                    mCurrentSource = Sources::ReadSource(currentSourcePath);
                     changed = true;
                 }
                 ImGuiExt::SameLine_IfPossible(80.f);
@@ -98,8 +98,8 @@ private:
     }
 
 private:
-    std::vector<LibrarySources> mLibrarySources;
-    Source mCurrentSource;
+    std::vector<Sources::Library> mLibrarySources;
+    Sources::Source mCurrentSource;
     TextEditor mEditor;
 };
 
@@ -108,7 +108,7 @@ class ImGuiDemoBrowser
 {
 public:
     ImGuiDemoBrowser() :
-          mAnnotatedSource(ReadAnnotatedSource("imgui/imgui_demo.cpp"))
+          mAnnotatedSource(Sources::ReadImGuiDemoCode("imgui/imgui_demo.cpp"))
         , mEditor(factorCppEditor())
     {
         setEditorAnnotatedSource();
@@ -169,12 +169,12 @@ private:
         filter.Draw();
         if (strlen(filter.InputBuf) >= 3)
         {
-            for (const auto & lineWithNote : mAnnotatedSource.linesWithNotes)
+            for (const auto & lineWithNote : mAnnotatedSource.linesWithTags)
             {
-                if (filter.PassFilter(lineWithNote.second.c_str()))
+                if (filter.PassFilter(lineWithNote.tag.c_str()))
                 {
-                    if (ImGui::Button(lineWithNote.second.c_str()))
-                        mEditor.SetCursorPosition({lineWithNote.first, 0}, 3);
+                    if (ImGui::Button(lineWithNote.tag.c_str()))
+                        mEditor.SetCursorPosition({lineWithNote.lineNumber, 0}, 3);
                     ImGuiExt::SameLine_IfPossible();
                 }
             }
@@ -186,13 +186,13 @@ private:
     {
         mEditor.SetText(mAnnotatedSource.source.sourceCode);
         std::unordered_set<int> lineNumbers;
-        for (auto kv : mAnnotatedSource.linesWithNotes)
-            lineNumbers.insert(kv.first);
+        for (auto line : mAnnotatedSource.linesWithTags)
+            lineNumbers.insert(line.lineNumber);
         mEditor.SetBreakpoints(lineNumbers);
     }
 
 
-    AnnotatedSourceCode mAnnotatedSource;
+    Sources::AnnotatedSourceCode mAnnotatedSource;
     TextEditor mEditor;
 };
 
@@ -201,12 +201,12 @@ private:
 class ImGuiReadmeBrowser
 {
 public:
-    ImGuiReadmeBrowser() : mSource(ReadSource("imgui/README.md")) {}
+    ImGuiReadmeBrowser() : mSource(Sources::ReadSource("imgui/README.md")) {}
     void gui() {
         MarkdownHelper::Markdown(mSource.sourceCode);
     }
 private:
-    Source mSource;
+    Sources::Source mSource;
 };
 
 // Show doc in imgui.cpp
@@ -219,7 +219,7 @@ public:
 
     }
 private:
-    Source mSource;
+    Sources::Source mSource;
     TextEditor mEditor;
 };
 
@@ -227,9 +227,9 @@ struct AppState
 {
     std::map<std::string, LibrariesCodeBrowser> librariesCodeBrowsers =
         {
-            { "imguiSources", {imguiSources(), "imgui/imgui.cpp"} },
-            { "thisDemoSources", {thisDemoSources(), "imgui_hellodemo/Readme.md"} },
-            { "otherLibrariesSources", {otherLibrariesSources(), ""} },
+            { "imguiSources", {Sources::imguiLibrary(),            "imgui/imgui.cpp"} },
+            { "thisDemoSources", {Sources::thisDemoLibraries(),    "imgui_hellodemo/Readme.md"} },
+            { "otherLibrariesSources", {Sources::otherLibraries(), ""} },
         };
 };
 

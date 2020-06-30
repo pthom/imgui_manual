@@ -9,8 +9,8 @@ set(imgui_markdown_dir ${CMAKE_CURRENT_LIST_DIR}/../external/imgui_markdown)
 
 hello_imgui_add_app(imgui_hellodemo
     ImGuiHelloDemo.cpp
-    LibrarySources.cpp
-    LibrarySources.h
+    Sources.cpp
+    Sources.h
     ImGuiExt.cpp
     ImGuiExt.h
     MarkdownHelper.cpp
