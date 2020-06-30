@@ -10,60 +10,67 @@
 static std::string gImGuiRepoUrl = "https://github.com/pthom/imgui/blob/DemoCode/";
 
 TextEditor *gEditorImGuiDemo = nullptr;
+
+// This is a callback that will be called by imgui_demo.cpp
 void implImGuiDemoCallbackDemoCallback(int line_number)
 {
     int cursorLineOnPage = 3;
     gEditorImGuiDemo->SetCursorPosition({line_number, 0}, cursorLineOnPage);
 }
 
+std::vector<TextEditor *> gAllEditors;
 
-void menuEditorTheme(const std::vector<TextEditor *> editors)
+void menuEditorTheme()
 {
     if (ImGui::BeginMenu("Editor"))
     {
         if (ImGui::MenuItem("Dark palette"))
-            for (auto editor: editors)
+            for (auto editor: gAllEditors)
                 editor->SetPalette(TextEditor::GetDarkPalette());
         if (ImGui::MenuItem("Light palette"))
-            for (auto editor: editors)
+            for (auto editor: gAllEditors)
                 editor->SetPalette(TextEditor::GetLightPalette());
         if (ImGui::MenuItem("Retro blue palette"))
-            for (auto editor: editors)
+            for (auto editor: gAllEditors)
                 editor->SetPalette(TextEditor::GetRetroBluePalette());
         ImGui::EndMenu();
     }
 }
 
 
-void setEditorAnnotatedSource(TextEditor & editor, const Sources::AnnotatedSource &annotatedSource)
+class WindowWithEditor
 {
-    editor.SetText(annotatedSource.source.sourceCode);
-    std::unordered_set<int> lineNumbers;
-    for (auto line : annotatedSource.linesWithTags)
-        lineNumbers.insert(line.lineNumber);
-    editor.SetBreakpoints(lineNumbers);
-}
+public:
+    WindowWithEditor()
+    {
+        mEditor.SetPalette(TextEditor::GetLightPalette());
+        mEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
+        gAllEditors.push_back(&mEditor);
+    }
+    void setEditorAnnotatedSource(const Sources::AnnotatedSource &annotatedSource)
+    {
+        mEditor.SetText(annotatedSource.source.sourceCode);
+        std::unordered_set<int> lineNumbers;
+        for (auto line : annotatedSource.linesWithTags)
+            lineNumbers.insert(line.lineNumber);
+        mEditor.SetBreakpoints(lineNumbers);
+    }
 
+    TextEditor * _GetTextEditorPtr() { return &mEditor; }
+protected:
+    TextEditor mEditor;
+};
 
-TextEditor factorCppEditor()
-{
-    TextEditor editor;
-    editor.SetPalette(TextEditor::GetLightPalette());
-    editor.SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
-    return editor;
-}
-
-
-class LibrariesCodeBrowser
+class LibrariesCodeBrowser: public WindowWithEditor
 {
 public:
     LibrariesCodeBrowser(
             const std::vector<Sources::Library>& librarySources,
             std::string currentSourcePath
             ) :
-              mLibrarySources(librarySources)
+              WindowWithEditor()
+            , mLibrarySources(librarySources)
             , mCurrentSource(Sources::ReadSource(currentSourcePath))
-            , mEditor(factorCppEditor())
     {
         mEditor.SetText(mCurrentSource.sourceCode);
     }
@@ -110,18 +117,17 @@ private:
 private:
     std::vector<Sources::Library> mLibrarySources;
     Sources::Source mCurrentSource;
-    TextEditor mEditor;
 };
 
 
-class ImGuiDemoBrowser
+class ImGuiDemoBrowser: public WindowWithEditor
 {
 public:
     ImGuiDemoBrowser() :
-          mAnnotatedSource(Sources::ReadImGuiDemoCode("imgui/imgui_demo.cpp"))
-        , mEditor(factorCppEditor())
+            WindowWithEditor()
+          , mAnnotatedSource(Sources::ReadImGuiDemoCode("imgui/imgui_demo.cpp"))
     {
-        _setEditorAnnotatedSource();
+        setEditorAnnotatedSource(mAnnotatedSource);
     }
 
     void gui()
@@ -137,9 +143,6 @@ public:
         mEditor.Render("imgui_demo.cpp");
     }
 
-    TextEditor * _GetTextEditorPtr() {
-        return &mEditor;
-    }
 private:
     void guiGithubButton()
     {
@@ -192,14 +195,7 @@ private:
         }
     }
 
-    void _setEditorAnnotatedSource()
-    {
-        setEditorAnnotatedSource(mEditor, mAnnotatedSource);
-    }
-
-
     Sources::AnnotatedSource mAnnotatedSource;
-    TextEditor mEditor;
 };
 
 
@@ -216,14 +212,14 @@ private:
 };
 
 // Show doc in imgui.cpp
-class ImGuiCppDocBrowser
+class ImGuiCppDocBrowser: public WindowWithEditor
 {
 public:
     ImGuiCppDocBrowser()
-        : mAnnotatedSource(Sources::ReadImGuiCppDoc("imgui/imgui.cpp"))
-        , mEditor(factorCppEditor())
+        : WindowWithEditor()
+        , mAnnotatedSource(Sources::ReadImGuiCppDoc("imgui/imgui.cpp"))
     {
-        setEditorAnnotatedSource(mEditor, mAnnotatedSource);
+        setEditorAnnotatedSource(mAnnotatedSource);
     }
     void gui()
     {
@@ -231,9 +227,6 @@ public:
         guiTags();
         guiGithubButton();
         mEditor.Render("imgui.cpp");
-    }
-    TextEditor *_GetTextEditorPtr() {
-        return &mEditor;
     }
 private:
     void guiTags()
@@ -260,10 +253,27 @@ private:
         }
     }
 
-
     Sources::AnnotatedSource mAnnotatedSource;
-    TextEditor mEditor;
 };
+
+
+class AboutThisDemo: public WindowWithEditor
+{
+public:
+    AboutThisDemo()
+        : WindowWithEditor()
+        , mLibrariesCodeBrowser(Sources::thisDemoLibraries(), "imgui_hellodemo/ImGuiHelloDemo.cpp")
+    {
+
+    }
+    void gui()
+    {
+        mLibrariesCodeBrowser.gui();
+    }
+private:
+    LibrariesCodeBrowser mLibrariesCodeBrowser;
+};
+
 
 struct AppState
 {
@@ -281,13 +291,9 @@ int main(int, char **)
 {
     ImGuiDemoBrowser imGuiDemoBrowser;
     ImGuiCppDocBrowser imGuiCppDocBrowser;
+    AboutThisDemo aboutThisDemo;
 
     gEditorImGuiDemo = imGuiDemoBrowser._GetTextEditorPtr();
-
-    std::vector<TextEditor *> allEditors {
-        imGuiDemoBrowser._GetTextEditorPtr(),
-        imGuiCppDocBrowser._GetTextEditorPtr()
-    };
 
     HelloImGui::RunnerParams runnerParams;
 
@@ -342,10 +348,16 @@ int main(int, char **)
         dock_imGuiCppDocBrowser.GuiFonction = [&imGuiCppDocBrowser]{ imGuiCppDocBrowser.gui(); };
     };
 
+    HelloImGui::DockableWindow dock_aboutThisDemo;
+    {
+        dock_aboutThisDemo.label = "About this demo";
+        dock_aboutThisDemo.dockSpaceName = "CodeSpace";
+        dock_aboutThisDemo.GuiFonction = [&aboutThisDemo]{ aboutThisDemo.gui(); };
+    };
 
     // Menu
-    runnerParams.callbacks.ShowMenus = [&allEditors]() {
-        menuEditorTheme(allEditors);
+    runnerParams.callbacks.ShowMenus = []() {
+        menuEditorTheme();
     };
 
     // Fonts
@@ -356,7 +368,8 @@ int main(int, char **)
             dock_imguiDemoCode,
             dock_imguiDemoWindow,
             dock_imguiReadme,
-            dock_imGuiCppDocBrowser
+            dock_imGuiCppDocBrowser,
+            dock_aboutThisDemo
             //dock_code,
     };
 

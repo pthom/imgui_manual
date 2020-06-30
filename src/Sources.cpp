@@ -51,37 +51,11 @@ std::vector<Library> thisDemoLibraries()
             make_string_vec(R"(
                 Readme.md
                 LICENSE
-                ImGuiDemo.main.cpp
-                LibrarySources.cpp
-                LibrarySources.h
-                HyperlinkHelper.cpp
-                HyperlinkHelper.h
-                ImGuiExt.cpp
-                ImGuiExt.h
-                MarkdownHelper.cpp
-                MarkdownHelper.h
-                populate_assets.sh
-                CMakeLists.txt
+                ImGuiHelloDemo.cpp
+                Sources.h
+                Sources.cpp
         )")
         },
-        {
-            "hello_imgui", "Hello ImGui", "https://github.com/pthom/hello_imgui",
-            make_string_vec(R"(
-                README.md
-                LICENSE
-                hello_imgui.h
-                hello_imgui_api.md
-                runner_params.h
-                app_window_params.h
-                imgui_window_params.h
-                runner_callbacks.h
-                docking_params.h
-                hello_imgui_assets.h
-                hello_imgui_error.h
-                icons_font_awesome.h
-                imgui_default_settings.h
-            )")
-        }
     };
 }
 
@@ -89,6 +63,15 @@ std::vector<Library> otherLibraries()
 {
     return
     {
+        {
+            "hello_imgui", "Hello ImGui", "https://github.com/pthom/hello_imgui",
+            make_string_vec(R"(
+                README.md
+                LICENSE
+                hello_imgui.h
+                hello_imgui_api.md
+            )")
+        },
         {
             "ImGuiColorTextEdit", "ImGuiColorTextEdit", "https://github.com/BalazsJako/ImGuiColorTextEdit",
             make_string_vec(R"(
