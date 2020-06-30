@@ -18,11 +18,14 @@ fi
 
 cd assets/code
 
-if [ ! -d implot ]; then
-  mkdir implot
+
+if [ ! -d imgui_hellodemo ]; then
+  mkdir imgui_hellodemo
 fi
-cd implot
-cp -f $EXTERNAL_DIR/implot/* .
+cd imgui_hellodemo
+cp -f $SRC_DIR/* .
+cp -f $SRC_DIR/../Readme.md .
+cp -f $SRC_DIR/../LICENSE .
 cd ..
 
 if [ ! -d ImGuiColorTextEdit ]; then
@@ -31,6 +34,7 @@ fi
 cd ImGuiColorTextEdit
 cp -f $EXTERNAL_DIR/ImGuiColorTextEdit/* .
 cd ..
+
 
 if [ ! -d imgui_markdown ]; then
   mkdir imgui_markdown
@@ -49,15 +53,6 @@ cp -f $EXTERNAL_DIR/hello_imgui/src/hello_imgui/*.md .
 cp -f $EXTERNAL_DIR/hello_imgui/LICENSE .
 cp -f $EXTERNAL_DIR/hello_imgui/README.md .
 rm *.src.md
-cd ..
-
-if [ ! -d implot_demo ]; then
-  mkdir implot_demo
-fi
-cd implot_demo
-cp -f $SRC_DIR/*.* .
-cp $SRC_DIR/../Readme.md .
-cp $SRC_DIR/../LICENSE .
 cd ..
 
 
