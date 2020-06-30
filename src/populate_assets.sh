@@ -6,7 +6,7 @@ THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 cd $THIS_DIR/../external || exit 1
 SRC_DIR=$THIS_DIR
 EXTERNAL_DIR=$THIS_DIR/../external
-IMGUI_DIR=$THIS_DIR/../external/hello_imgui/external/imgui/
+IMGUI_DIR=$THIS_DIR/../external/imgui/
 
 echo "THIS_DIR=$THIS_DIR"
 #exit 0
