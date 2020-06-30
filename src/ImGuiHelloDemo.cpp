@@ -257,12 +257,12 @@ private:
 };
 
 
-class AboutThisDemo: public WindowWithEditor
+class ImGuiCodeBrowser: public WindowWithEditor
 {
 public:
-    AboutThisDemo()
+    ImGuiCodeBrowser()
         : WindowWithEditor()
-        , mLibrariesCodeBrowser(Sources::thisDemoLibraries(), "imgui_hellodemo/ImGuiHelloDemo.cpp")
+        , mLibrariesCodeBrowser(Sources::imguiLibrary(), "imgui/imgui.h")
     {
 
     }
@@ -275,14 +275,29 @@ private:
 };
 
 
-struct AppState
+class Acknowledgments: public WindowWithEditor
 {
-    std::map<std::string, LibrariesCodeBrowser> librariesCodeBrowsers =
-        {
-            { "imguiSources", {Sources::imguiLibrary(),            "imgui/imgui.cpp"} },
-            { "thisDemoSources", {Sources::thisDemoLibraries(),    "imgui_hellodemo/Readme.md"} },
-            { "otherLibrariesSources", {Sources::otherLibraries(), ""} },
-        };
+public:
+    Acknowledgments()
+        : WindowWithEditor()
+        , mLibrariesCodeBrowser(Sources::otherLibraries(), "")
+    {
+
+    }
+    void gui()
+    {
+        ImGui::TextWrapped(
+            "This demo was developed using Hello ImGui,"
+            "which provided the emscripten port "
+            "as well as the assets and source code embedding.");
+        ImGuiExt::Hyperlink("https://github.com/pthom/hello_imgui");
+        ImGui::Text("See also its sister demo, for Implot");
+        ImGuiExt::Hyperlink("https://traineq.org/implot_demo/src/implot_demo.html");
+        ImGui::NewLine();
+        mLibrariesCodeBrowser.gui();
+    }
+private:
+    LibrariesCodeBrowser mLibrariesCodeBrowser;
 };
 
 
@@ -291,7 +306,8 @@ int main(int, char **)
 {
     ImGuiDemoBrowser imGuiDemoBrowser;
     ImGuiCppDocBrowser imGuiCppDocBrowser;
-    AboutThisDemo aboutThisDemo;
+    ImGuiCodeBrowser imGuiCodeBrowser;
+    Acknowledgments otherLibraries;
 
     gEditorImGuiDemo = imGuiDemoBrowser._GetTextEditorPtr();
 
@@ -348,11 +364,18 @@ int main(int, char **)
         dock_imGuiCppDocBrowser.GuiFonction = [&imGuiCppDocBrowser]{ imGuiCppDocBrowser.gui(); };
     };
 
-    HelloImGui::DockableWindow dock_aboutThisDemo;
+    HelloImGui::DockableWindow dock_imguiCodeBrowser;
     {
-        dock_aboutThisDemo.label = "About this demo";
-        dock_aboutThisDemo.dockSpaceName = "CodeSpace";
-        dock_aboutThisDemo.GuiFonction = [&aboutThisDemo]{ aboutThisDemo.gui(); };
+        dock_imguiCodeBrowser.label = "ImGui Code";
+        dock_imguiCodeBrowser.dockSpaceName = "CodeSpace";
+        dock_imguiCodeBrowser.GuiFonction = [&imGuiCodeBrowser]{ imGuiCodeBrowser.gui(); };
+    };
+
+    HelloImGui::DockableWindow dock_acknowledgments;
+    {
+        dock_acknowledgments.label = "Acknowledgments";
+        dock_acknowledgments.dockSpaceName = "CodeSpace";
+        dock_acknowledgments.GuiFonction = [&otherLibraries]{ otherLibraries.gui(); };
     };
 
     // Menu
@@ -365,12 +388,12 @@ int main(int, char **)
 
     // Set app dockable windows
     runnerParams.dockingParams.dockableWindows = {
-            dock_imguiDemoCode,
-            dock_imguiDemoWindow,
-            dock_imguiReadme,
-            dock_imGuiCppDocBrowser,
-            dock_aboutThisDemo
-            //dock_code,
+        dock_imguiDemoCode,
+        dock_imguiDemoWindow,
+        dock_imguiReadme,
+        dock_imGuiCppDocBrowser,
+        dock_imguiCodeBrowser,
+        dock_acknowledgments,
     };
 
     gImGuiDemoCallback = implImGuiDemoCallbackDemoCallback;

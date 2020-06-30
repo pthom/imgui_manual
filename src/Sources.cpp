@@ -42,36 +42,10 @@ std::vector<Library> imguiLibrary()
     };
 }
 
-std::vector<Library> thisDemoLibraries()
-{
-    return
-    {
-        {
-            "imgui_hellodemo", "This Demo", "https://github.com/pthom/implot_demo",
-            make_string_vec(R"(
-                Readme.md
-                LICENSE
-                ImGuiHelloDemo.cpp
-                Sources.h
-                Sources.cpp
-        )")
-        },
-    };
-}
-
 std::vector<Library> otherLibraries()
 {
     return
     {
-        {
-            "hello_imgui", "Hello ImGui", "https://github.com/pthom/hello_imgui",
-            make_string_vec(R"(
-                README.md
-                LICENSE
-                hello_imgui.h
-                hello_imgui_api.md
-            )")
-        },
         {
             "ImGuiColorTextEdit", "ImGuiColorTextEdit", "https://github.com/BalazsJako/ImGuiColorTextEdit",
             make_string_vec(R"(
@@ -99,6 +73,25 @@ std::vector<Library> otherLibraries()
                     INSTALL.md
                     fplus.hpp
             )")
+        },
+        {
+            "hello_imgui", "Hello ImGui", "https://github.com/pthom/hello_imgui",
+            make_string_vec(R"(
+                README.md
+                LICENSE
+                hello_imgui.h
+                hello_imgui_api.md
+            )")
+        },
+        {
+            "imgui_hellodemo", "This Demo", "https://github.com/pthom/implot_demo",
+            make_string_vec(R"(
+                Readme.md
+                LICENSE
+                ImGuiHelloDemo.cpp
+                Sources.h
+                Sources.cpp
+        )")
         },
     };
 }
@@ -171,7 +164,7 @@ LinesWithTags findImGuiDemoCodeLines(const std::string &sourceCode)
 {
     LinesWithTags r;
 
-    static std::string regionToken = "DemoCode(";
+    static std::string regionToken = "DemoCode";
 
     auto extractDemoCodeName = [](const std::string &codeLine) {
         // if codeLine == "DemoCode("Line Plots")) {"

@@ -33,7 +33,6 @@ namespace Sources
     };
 
     std::vector<Library> imguiLibrary();
-    std::vector<Library> thisDemoLibraries();
     std::vector<Library> otherLibraries();
 
     Source ReadSource(const std::string sourcePath);

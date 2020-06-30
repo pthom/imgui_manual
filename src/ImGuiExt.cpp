@@ -22,6 +22,8 @@ namespace ImGuiExt
         ImGui::SameLine();
         auto blue = ImVec4(0.3f, 0.5f, 1.f, 1.f);
         ImGui::TextColored(blue, "%s", url.c_str());
+        if (ImGui::IsItemHovered() || ImGui::IsItemFocused())
+            ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
         if (ImGui::IsItemHovered() && ImGui::IsMouseDown(0))
             HyperlinkHelper::OpenUrl(url);
     }
