@@ -17,8 +17,7 @@ namespace ImGuiExt
 
     void SameLine_IfPossible(float minRightMargin)
     {
-        auto lastXPos = ImGui::GetItemRectMax().x;
-        //ImGui::Pos
+        auto lastXPos = ImGui::GetItemRectMax().x - ImGui::GetWindowPos().x;
         auto windowWidth = ImGui::GetWindowSize().x;
         if (lastXPos < windowWidth - minRightMargin )
             ImGui::SameLine();

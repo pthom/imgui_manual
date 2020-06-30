@@ -6,6 +6,7 @@ namespace {
     auto make_string_vec = [](const std::string &s) -> std::vector<std::string> {
         std::vector<std::string> r = fplus::split('\n', false, s);
         r = fplus::transform(fplus::trim_whitespace<std::string>, r);
+        r = fplus::keep_if([](auto s) { return !s.empty();}, r);
         return r;
     };
 }
@@ -41,22 +42,22 @@ std::vector<LibrarySources> otherSources()
     return
     {
         {
-            "ImGuiColorTextEdit", "ImGuiColorTextEdit", "https://github.com/BalazsJako/ImGuiColorTextEdit",
+            "imgui_hellodemo", "This Demo", "https://github.com/pthom/implot_demo",
             make_string_vec(R"(
-                README.md
+                Readme.md
                 LICENSE
-                CONTRIBUTING
-                TextEditor.h
-                TextEditor.cpp
-            )")
-         },
-        {
-            "imgui_markdown", "imgui_markdown", "https://github.com/juliettef/imgui_markdown",
-            make_string_vec(R"(
-                README.md
-                License.txt
-                imgui_markdown.h
-            )")
+                ImGuiDemo.main.cpp
+                LibrarySources.cpp
+                LibrarySources.h
+                HyperlinkHelper.cpp
+                HyperlinkHelper.h
+                ImGuiExt.cpp
+                ImGuiExt.h
+                MarkdownHelper.cpp
+                MarkdownHelper.h
+                populate_assets.sh
+                CMakeLists.txt
+        )")
         },
         {
             "hello_imgui", "Hello ImGui", "https://github.com/pthom/hello_imgui",
@@ -77,23 +78,23 @@ std::vector<LibrarySources> otherSources()
             )")
         },
         {
-            "implot_demo", "This Demo", "https://github.com/pthom/implot_demo",
+            "ImGuiColorTextEdit", "ImGuiColorTextEdit", "https://github.com/BalazsJako/ImGuiColorTextEdit",
             make_string_vec(R"(
-                CMakeLists.txt
-                HyperlinkHelper.cpp
-                HyperlinkHelper.h
-                ImGuiDemo.main.cpp
-                ImGuiExt.cpp
-                ImGuiExt.h
+                README.md
                 LICENSE
-                LibrarySources.cpp
-                LibrarySources.h
-                MarkdownHelper.cpp
-                MarkdownHelper.h
-                Readme.md
-                populate_assets.sh
+                CONTRIBUTING
+                TextEditor.h
+                TextEditor.cpp
             )")
-        }
+         },
+        {
+            "imgui_markdown", "imgui_markdown", "https://github.com/juliettef/imgui_markdown",
+            make_string_vec(R"(
+                README.md
+                License.txt
+                imgui_markdown.h
+            )")
+        },
     };
 }
 
@@ -131,7 +132,7 @@ LinesWithNotes findDemoCodeRegions(const std::string &sourceCode)
     return r;
 }
 
-AnnotatedSourceCode ReadSelectedLibrarySource(const std::string sourcePath)
+AnnotatedSourceCode ReadAnnotatedSource(const std::string sourcePath)
 {
     std::string assetPath = std::string("code/") + sourcePath;
     auto assetData = HelloImGui::LoadAssetFileData(assetPath.c_str());

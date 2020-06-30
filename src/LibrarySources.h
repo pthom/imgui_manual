@@ -26,4 +26,4 @@ struct AnnotatedSourceCode
 
 
 // (private) LinesWithNotes findDemoCodeRegions(const std::string &sourceCode);
-AnnotatedSourceCode ReadSelectedLibrarySource(const std::string sourcePath);
+AnnotatedSourceCode ReadAnnotatedSource(const std::string sourcePath);
