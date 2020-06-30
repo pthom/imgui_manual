@@ -23,9 +23,6 @@ AppState gAppState;
 
 void DemoCallback(int line_number)
 {
-    std::string url = "https://github.com/pthom/imgui/blob/DemoCode/imgui_demo.cpp#L"
-      + std::to_string(line_number);
-    //HyperlinkHelper::OpenUrl(url);
     int cursorLineOnPage = 3;
     gAppState.editorImGuiDemo.SetCursorPosition({line_number, 0}, cursorLineOnPage);
 }
@@ -159,6 +156,14 @@ void setupEditorOtherLibraries()
 void guiImguiDemoCode()
 {
     guiDemoCodeRegions(gAppState.imguiDemoLinesWithNote, gAppState.editorImGuiDemo);
+
+    if (ImGui::Button("View on github at this line"))
+    {
+        std::string url = "https://github.com/pthom/imgui/blob/DemoCode/imgui_demo.cpp#L"
+                          + std::to_string(gAppState.editorImGuiDemo.GetCursorPosition().mLine);
+        HyperlinkHelper::OpenUrl(url);
+    }
+
     gAppState.editorImGuiDemo.Render("imgui_demo.cpp");
 }
 
