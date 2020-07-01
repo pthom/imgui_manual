@@ -31,4 +31,36 @@ namespace ImGuiExt
         if (lastXPos < windowWidth - minRightMargin )
             ImGui::SameLine();
     }
+
+    bool Button_WithEnabledFlag(const char *label, bool enabled, bool sameLineAfter)
+    {
+        if (!enabled)
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImGui::GetStyle().Colors[ImGuiCol_Button]);
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetStyle().Colors[ImGuiCol_Button]);
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
+        }
+        bool clicked = ImGui::Button(label);
+        if (!enabled)
+            ImGui::PopStyleColor(3);
+        if (sameLineAfter)
+            ImGui::SameLine();
+        return enabled ? clicked : false;
+    }
+
+    bool SmallButton_WithEnabledFlag(const char *label, bool enabled, bool sameLineAfter)
+    {
+        if (!enabled)
+        {
+            ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImGui::GetStyle().Colors[ImGuiCol_Button]);
+            ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImGui::GetStyle().Colors[ImGuiCol_Button]);
+            ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
+        }
+        bool clicked = ImGui::SmallButton(label);
+        if (!enabled)
+            ImGui::PopStyleColor(3);
+        if (sameLineAfter)
+            ImGui::SameLine();
+        return enabled ? clicked : false;
+    }
 }
