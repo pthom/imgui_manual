@@ -9,20 +9,17 @@ EXTERNAL_DIR=$THIS_DIR/../external
 IMGUI_DIR=$THIS_DIR/../external/imgui/
 
 echo "THIS_DIR=$THIS_DIR"
-#exit 0
-
 cd $THIS_DIR
 if [ ! -d assets/code ]; then
   mkdir -p assets/code
 fi
-
 cd assets/code
 
 
-if [ ! -d imgui_hellodemo ]; then
-  mkdir imgui_hellodemo
+if [ ! -d imgui_manual ]; then
+  mkdir imgui_manual
 fi
-cd imgui_hellodemo
+cd imgui_manual
 cp -f $SRC_DIR/* .
 cp -f $SRC_DIR/../Readme.md .
 cp -f $SRC_DIR/../LICENSE .
@@ -54,7 +51,6 @@ cp -f $EXTERNAL_DIR/hello_imgui/LICENSE .
 cp -f $EXTERNAL_DIR/hello_imgui/README.md .
 rm *.src.md
 cd ..
-
 
 if [ ! -d imgui ]; then
   mkdir imgui

@@ -89,12 +89,12 @@ std::vector<Library> otherLibraries()
             )")
         },
         {
-            "imgui_hellodemo", "This Demo", "https://github.com/pthom/implot_demo",
+            "imgui_manual", "This manual", "https://github.com/pthom/imgui_manual",
             "Dear ImGui Manual: an interactive manual for ImGui",
             make_string_vec(R"(
                 Readme.md
                 LICENSE
-                ImGuiHelloDemo.cpp
+                ImGuiManual.cpp
                 Sources.h
                 Sources.cpp
         )")
