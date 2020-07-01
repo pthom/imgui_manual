@@ -3,6 +3,7 @@
 #include "ImGuiExt.h"
 #include "TextEditor.h"
 #include "WindowWithEditor.h"
+#include "LibrariesCodeBrowser.h"
 #include "Sources.h"
 #include "MarkdownHelper.h"
 #include "HyperlinkHelper.h"
@@ -22,67 +23,9 @@ void implImGuiDemoCallbackDemoCallback(int line_number)
     gEditorImGuiDemo->SetCursorPosition({line_number, 0}, cursorLineOnPage);
 }
 
-
-class LibrariesCodeBrowser: public WindowWithEditor
-{
-public:
-    LibrariesCodeBrowser(
-            const std::vector<Sources::Library>& librarySources,
-            std::string currentSourcePath
-            ) :
-              WindowWithEditor()
-            , mLibrarySources(librarySources)
-            , mCurrentSource(Sources::ReadSource(currentSourcePath))
-    {
-        mEditor.SetText(mCurrentSource.sourceCode);
-    }
-
-    void gui()
-    {
-        if (guiSelectLibrarySource())
-            mEditor.SetText(mCurrentSource.sourceCode);
-
-        if (fplus::is_suffix_of(std::string(".md"), mCurrentSource.sourcePath))
-            MarkdownHelper::Markdown(mCurrentSource.sourceCode);
-        else
-            RenderEditor(mCurrentSource.sourcePath.c_str());
-    }
-private:
-    bool guiSelectLibrarySource()
-    {
-        bool changed = false;
-        for (const auto & librarySource: mLibrarySources)
-        {
-            ImGui::Text("%s", librarySource.name.c_str());
-            ImGui::SameLine(ImGui::GetWindowSize().x - 350.f );
-            ImGuiExt::Hyperlink(librarySource.url);
-            MarkdownHelper::Markdown(librarySource.shortDoc);
-            for (const auto & source: librarySource.sourcePaths)
-            {
-                std::string currentSourcePath = librarySource.path + "/" + source;
-                bool isSelected = (currentSourcePath == mCurrentSource.sourcePath);
-                std::string buttonLabel = source + "##" + librarySource.path;
-                if (isSelected)
-                    ImGui::TextDisabled("%s", source.c_str());
-                else if (ImGui::Button(buttonLabel.c_str()))
-                {
-                    mCurrentSource = Sources::ReadSource(currentSourcePath);
-                    changed = true;
-                }
-                ImGuiExt::SameLine_IfPossible(80.f);
-            }
-            ImGui::NewLine();
-            ImGui::Separator();
-        }
-        return changed;
-    }
-
-private:
-    std::vector<Sources::Library> mLibrarySources;
-    Sources::Source mCurrentSource;
-};
-
-
+// This is the window that shows imgui_demo.cpp code,
+// with a callback that will point to the correct line number
+// (see implImGuiDemoCallbackDemoCallback)
 class ImGuiDemoBrowser: public WindowWithEditor
 {
 public:
@@ -138,7 +81,6 @@ private:
         }
     }
 
-
     void guiDemoCodeTags()
     {
         bool showTooltip = false;
@@ -162,7 +104,6 @@ private:
             ImGui::EndTooltip();
         }
 
-
         static ImGuiTextFilter filter;
         filter.Draw();
         if (strlen(filter.InputBuf) >= 3)
@@ -184,19 +125,20 @@ private:
 };
 
 
-// Show ImGui Readme.md
+// This windows shows ImGui's Readme.md
 class ImGuiReadmeBrowser
 {
 public:
     ImGuiReadmeBrowser() : mSource(Sources::ReadSource("imgui/README.md")) {}
-    void gui() {
+    void gui()
+    {
         MarkdownHelper::Markdown(mSource.sourceCode);
     }
 private:
     Sources::Source mSource;
 };
 
-// Show doc in imgui.cpp
+// This windows shows the docs contained in imgui.cpp
 class ImGuiCppDocBrowser: public WindowWithEditor
 {
 public:
@@ -240,7 +182,7 @@ private:
     Sources::AnnotatedSource mAnnotatedSource;
 };
 
-
+// This window shows ImGui source files + Readme/License
 class ImGuiCodeBrowser: public WindowWithEditor
 {
 public:
@@ -248,7 +190,6 @@ public:
         : WindowWithEditor()
         , mLibrariesCodeBrowser(Sources::imguiLibrary(), "imgui/imgui.h")
     {
-
     }
     void gui()
     {
@@ -285,6 +226,7 @@ Backends for a variety of graphics api and rendering platforms are provided in t
 };
 
 
+// This window acknowledges the different libraries used by this manual
 class Acknowledgments: public WindowWithEditor
 {
 public:
@@ -320,6 +262,7 @@ This manual uses some great libraries, which are shown below.
     LibrariesCodeBrowser mLibrariesCodeBrowser;
 };
 
+// Theme menu
 void menuTheme()
 {
     if (ImGui::BeginMenu("Theme"))
@@ -340,9 +283,7 @@ void menuTheme()
             HyperlinkHelper::OpenUrl("https://github.com/ocornut/imgui/issues/707");
 
         ImGui::EndMenu();
-
     }
-
 }
 
 
@@ -351,7 +292,7 @@ int main(int, char **)
     ImGuiDemoBrowser imGuiDemoBrowser;
     ImGuiCppDocBrowser imGuiCppDocBrowser;
     ImGuiCodeBrowser imGuiCodeBrowser;
-    Acknowledgments otherLibraries;
+    Acknowledgments acknowledgments;
 
     gEditorImGuiDemo = imGuiDemoBrowser._GetTextEditorPtr();
 
@@ -372,7 +313,9 @@ int main(int, char **)
         { "MainDockSpace", "CodeSpace", ImGuiDir_Right, 0.65f },
     };
 
+    //
     // Dockable windows definitions
+    //
     HelloImGui::DockableWindow dock_imguiDemoWindow;
     {
         dock_imguiDemoWindow.label = "Dear ImGui Demo";
@@ -419,7 +362,7 @@ int main(int, char **)
     {
         dock_acknowledgments.label = "Acknowledgments";
         dock_acknowledgments.dockSpaceName = "CodeSpace";
-        dock_acknowledgments.GuiFonction = [&otherLibraries]{ otherLibraries.gui(); };
+        dock_acknowledgments.GuiFonction = [&acknowledgments]{ acknowledgments.gui(); };
     };
 
     HelloImGui::DockableWindow dock_about;
@@ -434,12 +377,6 @@ int main(int, char **)
         };
     };
 
-    // Menu
-    runnerParams.callbacks.ShowMenus = menuTheme;
-
-    // Fonts
-    runnerParams.callbacks.LoadAdditionalFonts = MarkdownHelper::LoadFonts;
-
     // Set app dockable windows
     runnerParams.dockingParams.dockableWindows = {
         dock_imguiDemoCode,
@@ -451,8 +388,16 @@ int main(int, char **)
         dock_about
     };
 
+    // Menu
+    runnerParams.callbacks.ShowMenus = menuTheme;
+
+    // Fonts
+    runnerParams.callbacks.LoadAdditionalFonts = MarkdownHelper::LoadFonts;
+
+    // Set global imgui_demo.cpp callback
     gImGuiDemoCallback = implImGuiDemoCallbackDemoCallback;
 
+    // Ready, set, go!
     HelloImGui::Run(runnerParams);
     return 0;
 }
