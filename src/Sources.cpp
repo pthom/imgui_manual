@@ -23,6 +23,7 @@ std::vector<Library> imguiLibrary()
     {
         {
             "imgui", "Dear ImGui", "https://github.com/ocornut/imgui",
+            "Dear ImGui: Bloat-free Immediate Mode Graphical User interface for C++ with minimal dependencies",
             make_string_vec(R"(
                 README.md
                 FAQ.md
@@ -48,6 +49,7 @@ std::vector<Library> otherLibraries()
     {
         {
             "ImGuiColorTextEdit", "ImGuiColorTextEdit", "https://github.com/BalazsJako/ImGuiColorTextEdit",
+            "Syntax highlighting text editor for ImGui. Demo project: [https://github.com/BalazsJako/ColorTextEditorDemo](https://github.com/BalazsJako/ColorTextEditorDemo)",
             make_string_vec(R"(
                 README.md
                 LICENSE
@@ -58,6 +60,7 @@ std::vector<Library> otherLibraries()
         },
         {
             "imgui_markdown", "imgui_markdown", "https://github.com/juliettef/imgui_markdown",
+            "Markdown for Dear ImGui. [Become a Patron](https://www.patreon.com/enkisoftware)",
             make_string_vec(R"(
                 README.md
                 License.txt
@@ -66,6 +69,7 @@ std::vector<Library> otherLibraries()
         },
         {
                 "fplus", "FunctionalPlus", "https://github.com/Dobiasd/FunctionalPlus",
+                "(Functional Programming Library for C++. Write concise and readable C++ code. [API Search](http://www.editgym.com/fplus-api-search/) (Awesome). [Browse the code](https://sourcegraph.com/github.com/Dobiasd/FunctionalPlus/-/tree/include/fplus)",
                 make_string_vec(R"(
                     README.md
                     LICENSE
@@ -76,6 +80,7 @@ std::vector<Library> otherLibraries()
         },
         {
             "hello_imgui", "Hello ImGui", "https://github.com/pthom/hello_imgui",
+            "Hello, Dear ImGui: cross-platform Gui apps for Windows / Mac / Linux / iOS / Android / Emscripten with the simplicity of a \"Hello World\" app",
             make_string_vec(R"(
                 README.md
                 LICENSE
@@ -85,6 +90,7 @@ std::vector<Library> otherLibraries()
         },
         {
             "imgui_hellodemo", "This Demo", "https://github.com/pthom/implot_demo",
+            "Dear ImGui Manual: an interactive manual for ImGui",
             make_string_vec(R"(
                 Readme.md
                 LICENSE

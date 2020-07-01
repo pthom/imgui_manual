@@ -29,6 +29,7 @@ namespace Sources
         std::string path;
         std::string name;
         std::string url;
+        std::string shortDoc; // markdown
         std::vector<std::string> sourcePaths;
     };
 

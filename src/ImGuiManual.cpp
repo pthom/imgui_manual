@@ -94,6 +94,7 @@ private:
             ImGui::Text("%s", librarySource.name.c_str());
             ImGui::SameLine(ImGui::GetWindowSize().x - 350.f );
             ImGuiExt::Hyperlink(librarySource.url);
+            MarkdownHelper::Markdown(librarySource.shortDoc);
             for (const auto & source: librarySource.sourcePaths)
             {
                 std::string currentSourcePath = librarySource.path + "/" + source;
@@ -158,10 +159,10 @@ private:
     }
     void guiSave()
     {
-#ifdef IMGUI_HELLODEMO_CAN_WRITE_IMGUI_DEMO_CPP
+#ifdef IMGUI_MANUAL_CAN_WRITE_IMGUI_DEMO_CPP
         if (ImGui::Button("Save"))
         {
-            std::string fileSrc = IMGUI_HELLODEMO_REPO_DIR "/external/imgui/imgui_demo.cpp";
+            std::string fileSrc = IMGUI_MANUAL_REPO_DIR "/external/imgui/imgui_demo.cpp";
             fplus::write_text_file(fileSrc, mEditor.GetText())();
         }
 #endif
@@ -334,17 +335,27 @@ public:
     }
     void gui()
     {
-        ImGui::TextWrapped(
-            "This demo was developed using Hello ImGui,"
-            "which provided the emscripten port "
-            "as well as the assets and source code embedding.");
-        ImGuiExt::Hyperlink("https://github.com/pthom/hello_imgui");
-        ImGui::Text("See also its sister demo, for Implot");
-        ImGuiExt::Hyperlink("https://traineq.org/implot_demo/src/implot_demo.html");
-        ImGui::NewLine();
+        guiHelp();
         mLibrariesCodeBrowser.gui();
     }
 private:
+    void guiHelp()
+    {
+        static bool showHelp = true;
+        if (showHelp)
+        {
+            std::string help = R"(
+This interactive manual was developed using [Hello ImGui](https://github.com/pthom/hello_imgui), which provided the emscripten port, as well as the assets and source code embedding.
+See also a [related demo for Implot](https://traineq.org/implot_demo/src/implot_demo.html), which also provides code navigation.
+
+This manual uses some great libraries, which are shown below.
+)";
+            MarkdownHelper::Markdown(help.c_str());
+            if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
+                showHelp = false;
+        }
+    }
+
     LibrariesCodeBrowser mLibrariesCodeBrowser;
 };
 
@@ -362,7 +373,7 @@ int main(int, char **)
     HelloImGui::RunnerParams runnerParams;
 
     // App window params
-    runnerParams.appWindowParams.windowTitle = "implot demo";
+    runnerParams.appWindowParams.windowTitle = "ImGui Manual";
     runnerParams.appWindowParams.windowSize = { 1200, 800};
 
     // ImGui window params
