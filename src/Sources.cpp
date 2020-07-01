@@ -69,7 +69,7 @@ std::vector<Library> otherLibraries()
         },
         {
                 "fplus", "FunctionalPlus", "https://github.com/Dobiasd/FunctionalPlus",
-                "(Functional Programming Library for C++. Write concise and readable C++ code. [API Search](http://www.editgym.com/fplus-api-search/) (Awesome). [Browse the code](https://sourcegraph.com/github.com/Dobiasd/FunctionalPlus/-/tree/include/fplus)",
+                "(Functional Programming Library for C++. Write concise and readable C++ code. [API Browser](http://www.editgym.com/fplus-api-search/) - [Udemy course](https://www.udemy.com/course/functional-programming-using-cpp/) - [Browse the code](https://sourcegraph.com/github.com/Dobiasd/FunctionalPlus/-/tree/include/fplus). ",
                 make_string_vec(R"(
                     README.md
                     LICENSE
@@ -78,6 +78,14 @@ std::vector<Library> otherLibraries()
                     fplus.hpp
             )")
         },
+    };
+}
+
+
+std::vector<Library> helloImGuiLibrary()
+{
+    return
+    {
         {
             "hello_imgui", "Hello ImGui", "https://github.com/pthom/hello_imgui",
             "Hello, Dear ImGui: cross-platform Gui apps for Windows / Mac / Linux / iOS / Android / Emscripten with the simplicity of a \"Hello World\" app",
@@ -88,18 +96,33 @@ std::vector<Library> otherLibraries()
                 hello_imgui_api.md
             )")
         },
+    };
+
+}
+
+
+std::vector<Library> imguiManualLibrary()
+{
+    return
+    {
         {
             "imgui_manual", "This manual", "https://github.com/pthom/imgui_manual",
-            "Dear ImGui Manual: an interactive manual for ImGui",
-            make_string_vec(R"(
+             "Dear ImGui Manual: an interactive manual for ImGui",
+             make_string_vec(R"(
                 Readme.md
                 LICENSE
                 ImGuiManual.cpp
                 Sources.h
                 Sources.cpp
-        )")
+            )")
         },
     };
+}
+
+std::vector<Library> acknowldegmentLibraries()
+{
+    auto r = fplus::append(otherLibraries(), helloImGuiLibrary());
+    return r;
 }
 
 

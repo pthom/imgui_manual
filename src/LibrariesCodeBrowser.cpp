@@ -7,7 +7,7 @@ LibrariesCodeBrowser::LibrariesCodeBrowser(
     const std::vector<Sources::Library> &librarySources,
     std::string currentSourcePath)
         : WindowWithEditor()
-        , mLibrarySources(librarySources)
+        , mLibraries(librarySources)
         , mCurrentSource(Sources::ReadSource(currentSourcePath))
 {
     mEditor.SetText(mCurrentSource.sourceCode);
@@ -27,7 +27,7 @@ void LibrariesCodeBrowser::gui()
 bool LibrariesCodeBrowser::guiSelectLibrarySource()
 {
     bool changed = false;
-    for (const auto & librarySource: mLibrarySources)
+    for (const auto & librarySource: mLibraries)
     {
         ImGui::Text("%s", librarySource.name.c_str());
         ImGui::SameLine(ImGui::GetWindowSize().x - 350.f );

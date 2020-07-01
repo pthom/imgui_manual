@@ -13,6 +13,6 @@ public:
 private:
     bool guiSelectLibrarySource();
 
-    std::vector<Sources::Library> mLibrarySources;
+    std::vector<Sources::Library> mLibraries;
     Sources::Source mCurrentSource;
 };

@@ -1,303 +1,26 @@
-#include "hello_imgui/hello_imgui.h"
-#include "imgui.h"
-#include "utilities/ImGuiExt.h"
-#include "TextEditor.h"
-#include "WindowWithEditor.h"
+#include "AboutWindow.h"
+#include "Acknowledgments.h"
+#include "ImGuiCodeBrowser.h"
+#include "ImGuiCppDocBrowser.h"
+#include "ImGuiDemoBrowser.h"
+#include "ImGuiReadmeBrowser.h"
+#include "ImGuiRepoUrl.h"
 #include "LibrariesCodeBrowser.h"
+#include "MenuTheme.h"
 #include "Sources.h"
-#include "utilities/MarkdownHelper.h"
-#include "utilities/HyperlinkHelper.h"
-#include <fplus/fplus.hpp>
-#include <functional>
+#include "WindowWithEditor.h"
 
-
-
-static std::string gImGuiRepoUrl = "https://github.com/pthom/imgui/blob/DemoCode/";
-
-TextEditor *gEditorImGuiDemo = nullptr;
-
-// This is a callback that will be called by imgui_demo.cpp
-void implImGuiDemoCallbackDemoCallback(int line_number)
-{
-    int cursorLineOnPage = 3;
-    gEditorImGuiDemo->SetCursorPosition({line_number, 0}, cursorLineOnPage);
-}
-
-// This is the window that shows imgui_demo.cpp code,
-// with a callback that will point to the correct line number
-// (see implImGuiDemoCallbackDemoCallback)
-class ImGuiDemoBrowser: public WindowWithEditor
-{
-public:
-    ImGuiDemoBrowser() :
-            WindowWithEditor()
-          , mAnnotatedSource(Sources::ReadImGuiDemoCode("imgui/imgui_demo.cpp"))
-    {
-        setEditorAnnotatedSource(mAnnotatedSource);
-    }
-
-    void gui()
-    {
-        guiHelp();
-        guiDemoCodeTags();
-        guiSave();
-        RenderEditor("imgui_demo.cpp", [this] { this->guiGithubButton(); });
-    }
-
-private:
-    void guiHelp()
-    {
-        static bool showHelp = true;
-        if (showHelp)
-        {
-            std::string help =
-                "This is the code of imgui_demo.cpp. It is the best way to learn about Dear ImGui! \n"
-                "On the left, you can see a demo that showcases all the widgets and features of ImGui: "
-                "Click on the \"Code\" buttons to see their code and learn about them. \n"
-                "Alternatively, you can also search for some features (try searching for \"widgets\", \"layout\", \"drag\", etc)";
-            ImGui::TextWrapped("%s", help.c_str());
-            //ImGui::SameLine();
-            if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
-                showHelp = false;
-        }
-    }
-    void guiSave()
-    {
-#ifdef IMGUI_MANUAL_CAN_WRITE_IMGUI_DEMO_CPP
-        if (ImGui::Button("Save"))
-        {
-            std::string fileSrc = IMGUI_MANUAL_REPO_DIR "/external/imgui/imgui_demo.cpp";
-            fplus::write_text_file(fileSrc, mEditor.GetText())();
-        }
-#endif
-    }
-    void guiGithubButton()
-    {
-        if (ImGui::SmallButton("View on github at this line"))
-        {
-            std::string url = gImGuiRepoUrl + "imgui_demo.cpp#L"
-                              + std::to_string(mEditor.GetCursorPosition().mLine);
-            HyperlinkHelper::OpenUrl(url);
-        }
-    }
-
-    void guiDemoCodeTags()
-    {
-        bool showTooltip = false;
-        ImGui::Text("Search demos"); ImGui::SameLine();
-        if (ImGui::IsItemHovered())
-            showTooltip = true;
-        ImGui::TextDisabled("?"); ImGui::SameLine();
-        if (ImGui::IsItemHovered())
-            showTooltip = true;
-        if (showTooltip)
-        {
-            ImGui::BeginTooltip();
-            ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-            ImGui::TextUnformatted(
-                "Filter usage:[-excl],incl\n"
-                "For example:\n"
-                "   \"button\" will search for \"button\"\n"
-                "   \"-widget,button\" will search for \"button\" without \"widget\""
-                );
-            ImGui::PopTextWrapPos();
-            ImGui::EndTooltip();
-        }
-
-        static ImGuiTextFilter filter;
-        filter.Draw();
-        if (strlen(filter.InputBuf) >= 3)
-        {
-            for (const auto & lineWithNote : mAnnotatedSource.linesWithTags)
-            {
-                if (filter.PassFilter(lineWithNote.tag.c_str()))
-                {
-                    if (ImGui::Button(lineWithNote.tag.c_str()))
-                        mEditor.SetCursorPosition({lineWithNote.lineNumber, 0}, 3);
-                    ImGuiExt::SameLine_IfPossible();
-                }
-            }
-            ImGui::NewLine();
-        }
-    }
-
-    Sources::AnnotatedSource mAnnotatedSource;
-};
-
-
-// This windows shows ImGui's Readme.md
-class ImGuiReadmeBrowser
-{
-public:
-    ImGuiReadmeBrowser() : mSource(Sources::ReadSource("imgui/README.md")) {}
-    void gui()
-    {
-        MarkdownHelper::Markdown(mSource.sourceCode);
-    }
-private:
-    Sources::Source mSource;
-};
-
-// This windows shows the docs contained in imgui.cpp
-class ImGuiCppDocBrowser: public WindowWithEditor
-{
-public:
-    ImGuiCppDocBrowser()
-        : WindowWithEditor()
-        , mAnnotatedSource(Sources::ReadImGuiCppDoc("imgui/imgui.cpp"))
-    {
-        setEditorAnnotatedSource(mAnnotatedSource);
-    }
-    void gui()
-    {
-        ImGui::Text("The doc for Dear ImGui is simply stored inside imgui.cpp");
-        guiTags();
-        RenderEditor("imgui.cpp", [this] { this->guiGithubButton(); });
-    }
-private:
-    void guiTags()
-    {
-        for (auto lineWithTag : mAnnotatedSource.linesWithTags)
-        {
-            // tags are of type H1 or H2, and begin with "H1 " or "H2 " (3 characters)
-            std::string title = fplus::drop(3, lineWithTag.tag);
-            bool isHeader1 = (fplus::take(3, lineWithTag.tag) == "H1 ");
-            if (isHeader1)
-            {
-                if (ImGuiExt::ClickableText(title.c_str()))
-                    mEditor.SetCursorPosition({lineWithTag.lineNumber, 0}, 3);
-            }
-        }
-    }
-    void guiGithubButton()
-    {
-        if (ImGui::SmallButton("View on github at this line"))
-        {
-            std::string url = gImGuiRepoUrl + "imgui.cpp#L"
-                              + std::to_string(mEditor.GetCursorPosition().mLine);
-            HyperlinkHelper::OpenUrl(url);
-        }
-    }
-
-    Sources::AnnotatedSource mAnnotatedSource;
-};
-
-// This window shows ImGui source files + Readme/License
-class ImGuiCodeBrowser: public WindowWithEditor
-{
-public:
-    ImGuiCodeBrowser()
-        : WindowWithEditor()
-        , mLibrariesCodeBrowser(Sources::imguiLibrary(), "imgui/imgui.h")
-    {
-    }
-    void gui()
-    {
-        guiHelp();
-        mLibrariesCodeBrowser.gui();
-    }
-private:
-    void guiHelp()
-    {
-        static bool showHelp = true;
-        if (showHelp)
-        {
-            // Readme
-            std::string help = R"(
-This is the core of ImGui code.
-
-Usage (extract from [ImGui Readme](https://github.com/ocornut/imgui#usage))
-
-The core of Dear ImGui is self-contained within a few platform-agnostic files which you can easily compile in your application/engine. They are all the files in the root folder of the repository (imgui.cpp, imgui.h, imgui_demo.cpp, imgui_draw.cpp etc.).
-
-No specific build process is required. You can add the .cpp files to your existing project.
-
-You will need a backend to integrate Dear ImGui in your app. The backend passes mouse/keyboard/gamepad inputs and variety of settings to Dear ImGui, and is in charge of rendering the resulting vertices.
-
-Backends for a variety of graphics api and rendering platforms are provided in the [examples/](https://github.com/ocornut/imgui/tree/master/examples) folder, along with example applications. See the [Integration](https://github.com/ocornut/imgui#integration) section of this document for details. You may also create your own backend. Anywhere where you can render textured triangles, you can render Dear ImGui.
-)";
-            MarkdownHelper::Markdown(help.c_str());
-            if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
-                showHelp = false;
-        }
-    }
-
-    LibrariesCodeBrowser mLibrariesCodeBrowser;
-};
-
-
-// This window acknowledges the different libraries used by this manual
-class Acknowledgments: public WindowWithEditor
-{
-public:
-    Acknowledgments()
-        : WindowWithEditor()
-        , mLibrariesCodeBrowser(Sources::otherLibraries(), "")
-    {
-
-    }
-    void gui()
-    {
-        guiHelp();
-        mLibrariesCodeBrowser.gui();
-    }
-private:
-    void guiHelp()
-    {
-        static bool showHelp = true;
-        if (showHelp)
-        {
-            std::string help = R"(
-This interactive manual was developed using [Hello ImGui](https://github.com/pthom/hello_imgui), which provided the emscripten port, as well as the assets and source code embedding.
-See also a [related demo for Implot](https://traineq.org/implot_demo/src/implot_demo.html), which also provides code navigation.
-
-This manual uses some great libraries, which are shown below.
-)";
-            MarkdownHelper::Markdown(help.c_str());
-            if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
-                showHelp = false;
-        }
-    }
-
-    LibrariesCodeBrowser mLibrariesCodeBrowser;
-};
-
-// Theme menu
-void menuTheme()
-{
-    if (ImGui::BeginMenu("Theme"))
-    {
-        ImGui::MenuItem("App", NULL, false, false);
-        if (ImGui::MenuItem("Dark"))
-            ImGui::StyleColorsDark();
-        if (ImGui::MenuItem("Classic"))
-            ImGui::StyleColorsClassic();
-        if (ImGui::MenuItem("Light"))
-            ImGui::StyleColorsLight();
-
-        ImGui::Separator();
-        menuEditorTheme();
-        ImGui::Separator();
-
-        if (ImGui::MenuItem("User contributed themes"))
-            HyperlinkHelper::OpenUrl("https://github.com/ocornut/imgui/issues/707");
-
-        ImGui::EndMenu();
-    }
-}
+#include "hello_imgui/hello_imgui.h"
 
 
 int main(int, char **)
 {
-    // Our gui provider for the different windows
+    // Our gui providers for the different windows
     ImGuiDemoBrowser imGuiDemoBrowser;
     ImGuiCppDocBrowser imGuiCppDocBrowser;
     ImGuiCodeBrowser imGuiCodeBrowser;
     Acknowledgments acknowledgments;
-
-    // Setup of imgui_demo.cpp's global callback
-    gEditorImGuiDemo = imGuiDemoBrowser._GetTextEditorPtr();
-    gImGuiDemoCallback = implImGuiDemoCallbackDemoCallback; // This variable belongs to imgui.cpp!
+    AboutWindow aboutWindow;
 
     //
     // Below, we will define all our application parameters and callbacks
@@ -379,16 +102,15 @@ int main(int, char **)
     HelloImGui::DockableWindow dock_about;
     {
         dock_about.label = "About this manual";
-        dock_about.isAboutWindow = true; // dock_about is an "About Window"
-        dock_about.dockSpaceName = "";   // and is not assigned to any Dock Space
-        dock_about.isVisible = false;
-        dock_about.imGuiWindowFlags = ImGuiWindowFlags_AlwaysAutoResize; // it will auto-resize
-        dock_about.GuiFonction = []{
-            ImGui::Text("About...");
-        };
+        dock_about.dockSpaceName = "CodeSpace";
+        // dock_about.isVisible = false;
+        // dock_about.imGuiWindowFlags = ImGuiWindowFlags_AlwaysAutoResize; // it will auto-resize
+        dock_about.GuiFonction = [&aboutWindow]{ aboutWindow.gui(); };
     };
 
+    //
     // Set our app dockable windows list
+    //
     runnerParams.dockingParams.dockableWindows = {
         dock_imguiDemoCode,
         dock_imguiDemoWindow,
@@ -403,7 +125,6 @@ int main(int, char **)
     runnerParams.callbacks.ShowMenus = menuTheme;
     // Set the custom fonts
     runnerParams.callbacks.LoadAdditionalFonts = MarkdownHelper::LoadFonts;
-
 
     // Ready, set, go!
     HelloImGui::Run(runnerParams);
