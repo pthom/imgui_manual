@@ -132,12 +132,7 @@ public:
 
     void gui()
     {
-        std::string help =
-"This is the code of imgui_demo.cpp. It is the best way to learn about Dear ImGui! \n"
-"On the left, you can see a demo that showcases all the widgets and features of ImGui: "
-"Click on the \"Code\" buttons to see their code and learn about them. \n"
-"Alternatively, you can also search for some features (try searching for \"widgets\", \"layout\", \"drag\", etc)";
-        ImGui::TextWrapped("%s", help.c_str());
+        guiHelp();
         guiDemoCodeTags();
         guiGithubButton();
         guiSave();
@@ -145,6 +140,22 @@ public:
     }
 
 private:
+    void guiHelp()
+    {
+        static bool showHelp = true;
+        if (showHelp)
+        {
+            std::string help =
+                "This is the code of imgui_demo.cpp. It is the best way to learn about Dear ImGui! \n"
+                "On the left, you can see a demo that showcases all the widgets and features of ImGui: "
+                "Click on the \"Code\" buttons to see their code and learn about them. \n"
+                "Alternatively, you can also search for some features (try searching for \"widgets\", \"layout\", \"drag\", etc)";
+            ImGui::TextWrapped("%s", help.c_str());
+            //ImGui::SameLine();
+            if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
+                showHelp = false;
+        }
+    }
     void guiSave()
     {
 #ifdef IMGUI_HELLODEMO_CAN_WRITE_IMGUI_DEMO_CPP
@@ -279,9 +290,35 @@ public:
     }
     void gui()
     {
+        guiHelp();
         mLibrariesCodeBrowser.gui();
     }
 private:
+    void guiHelp()
+    {
+        static bool showHelp = true;
+        if (showHelp)
+        {
+            // Readme
+            std::string help = R"(
+This is the core of ImGui code.
+
+Usage (extract from [ImGui Readme](https://github.com/ocornut/imgui#usage))
+
+The core of Dear ImGui is self-contained within a few platform-agnostic files which you can easily compile in your application/engine. They are all the files in the root folder of the repository (imgui.cpp, imgui.h, imgui_demo.cpp, imgui_draw.cpp etc.).
+
+No specific build process is required. You can add the .cpp files to your existing project.
+
+You will need a backend to integrate Dear ImGui in your app. The backend passes mouse/keyboard/gamepad inputs and variety of settings to Dear ImGui, and is in charge of rendering the resulting vertices.
+
+Backends for a variety of graphics api and rendering platforms are provided in the [examples/](https://github.com/ocornut/imgui/tree/master/examples) folder, along with example applications. See the [Integration](https://github.com/ocornut/imgui#integration) section of this document for details. You may also create your own backend. Anywhere where you can render textured triangles, you can render Dear ImGui.
+)";
+            MarkdownHelper::Markdown(help.c_str());
+            if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
+                showHelp = false;
+        }
+    }
+
     LibrariesCodeBrowser mLibrariesCodeBrowser;
 };
 
@@ -353,7 +390,7 @@ int main(int, char **)
 
     HelloImGui::DockableWindow dock_imguiDemoCode;
     {
-        dock_imguiDemoCode.label = "imgui_demo code";
+        dock_imguiDemoCode.label = "ImGui - Demo Code";
         dock_imguiDemoCode.dockSpaceName = "CodeSpace";
         dock_imguiDemoCode.GuiFonction = [&imGuiDemoBrowser]{ imGuiDemoBrowser.gui(); };
     };
@@ -377,7 +414,7 @@ int main(int, char **)
 
     HelloImGui::DockableWindow dock_imguiCodeBrowser;
     {
-        dock_imguiCodeBrowser.label = "ImGui Code";
+        dock_imguiCodeBrowser.label = "ImGui - Code";
         dock_imguiCodeBrowser.dockSpaceName = "CodeSpace";
         dock_imguiCodeBrowser.GuiFonction = [&imGuiCodeBrowser]{ imGuiCodeBrowser.gui(); };
     };
