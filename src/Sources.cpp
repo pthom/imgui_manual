@@ -112,8 +112,11 @@ std::vector<Library> imguiManualLibrary()
                 Readme.md
                 LICENSE
                 ImGuiManual.cpp
+                diagram.png
+                diagram.md
                 Sources.h
-                Sources.cpp
+                ImGuiDemoBrowser.h
+                ImGuiDemoBrowser.cpp
             )")
         },
     };

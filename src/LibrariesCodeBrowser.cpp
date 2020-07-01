@@ -45,7 +45,7 @@ bool LibrariesCodeBrowser::guiSelectLibrarySource()
                 mCurrentSource = Sources::ReadSource(currentSourcePath);
                 changed = true;
             }
-            ImGuiExt::SameLine_IfPossible(80.f);
+            ImGuiExt::SameLine_IfPossible(150.f);
         }
         ImGui::NewLine();
         ImGui::Separator();
