@@ -289,13 +289,20 @@ void menuTheme()
 
 int main(int, char **)
 {
+    // Our gui provider for the different windows
     ImGuiDemoBrowser imGuiDemoBrowser;
     ImGuiCppDocBrowser imGuiCppDocBrowser;
     ImGuiCodeBrowser imGuiCodeBrowser;
     Acknowledgments acknowledgments;
 
+    // Setup of imgui_demo.cpp's global callback
     gEditorImGuiDemo = imGuiDemoBrowser._GetTextEditorPtr();
+    gImGuiDemoCallback = implImGuiDemoCallbackDemoCallback; // This variable belongs to imgui.cpp!
 
+    //
+    // Below, we will define all our application parameters and callbacks
+    // before starting it.
+    //
     HelloImGui::RunnerParams runnerParams;
 
     // App window params
@@ -308,7 +315,11 @@ int main(int, char **)
     runnerParams.imGuiWindowParams.showMenuBar = true;
     runnerParams.imGuiWindowParams.showStatusBar = true;
 
-    // Split the screen in two parts
+    // Split the screen in two parts (two "DockSpaces")
+    // This will split the preexisting default dockspace "MainDockSpace"
+    // in two parts:
+    // "MainDockSpace" will be on the left, "CodeSpace" will be on the right
+    // and occupy 65% of the app width.
     runnerParams.dockingParams.dockingSplits = {
         { "MainDockSpace", "CodeSpace", ImGuiDir_Right, 0.65f },
     };
@@ -319,7 +330,7 @@ int main(int, char **)
     HelloImGui::DockableWindow dock_imguiDemoWindow;
     {
         dock_imguiDemoWindow.label = "Dear ImGui Demo";
-        dock_imguiDemoWindow.dockSpaceName = "MainDockSpace";
+        dock_imguiDemoWindow.dockSpaceName = "MainDockSpace"; // This window goes into "MainDockSpace"
         dock_imguiDemoWindow.GuiFonction = [&dock_imguiDemoWindow] {
             if (dock_imguiDemoWindow.isVisible)
                 ImGui::ShowDemoWindow(nullptr);
@@ -330,7 +341,7 @@ int main(int, char **)
     HelloImGui::DockableWindow dock_imguiDemoCode;
     {
         dock_imguiDemoCode.label = "ImGui - Demo Code";
-        dock_imguiDemoCode.dockSpaceName = "CodeSpace";
+        dock_imguiDemoCode.dockSpaceName = "CodeSpace"; // This window goes into "CodeSpace"
         dock_imguiDemoCode.GuiFonction = [&imGuiDemoBrowser]{ imGuiDemoBrowser.gui(); };
     };
 
@@ -368,16 +379,16 @@ int main(int, char **)
     HelloImGui::DockableWindow dock_about;
     {
         dock_about.label = "About this manual";
-        dock_about.dockSpaceName = "";
-        dock_about.isAboutWindow = true;
+        dock_about.isAboutWindow = true; // dock_about is an "About Window"
+        dock_about.dockSpaceName = "";   // and is not assigned to any Dock Space
         dock_about.isVisible = false;
-        dock_about.imGuiWindowFlags = ImGuiWindowFlags_AlwaysAutoResize;
+        dock_about.imGuiWindowFlags = ImGuiWindowFlags_AlwaysAutoResize; // it will auto-resize
         dock_about.GuiFonction = []{
             ImGui::Text("About...");
         };
     };
 
-    // Set app dockable windows
+    // Set our app dockable windows list
     runnerParams.dockingParams.dockableWindows = {
         dock_imguiDemoCode,
         dock_imguiDemoWindow,
@@ -388,15 +399,12 @@ int main(int, char **)
         dock_about
     };
 
-    // Menu
+    // Set the app menu
     runnerParams.callbacks.ShowMenus = menuTheme;
-
-    // Fonts
+    // Set the custom fonts
     runnerParams.callbacks.LoadAdditionalFonts = MarkdownHelper::LoadFonts;
 
-    // Set global imgui_demo.cpp callback
-    gImGuiDemoCallback = implImGuiDemoCallbackDemoCallback;
-
+    
     // Ready, set, go!
     HelloImGui::Run(runnerParams);
     return 0;
