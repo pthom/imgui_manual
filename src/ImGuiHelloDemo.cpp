@@ -151,11 +151,7 @@ private:
         if (ImGui::Button("Save"))
         {
             std::string fileSrc = IMGUI_HELLODEMO_REPO_DIR "/external/imgui/imgui_demo.cpp";
-            std::string fileAssets = IMGUI_HELLODEMO_BIN_DIR "/assets/code/imgui/imgui_demo.cpp";
-            fplus::write_text_file(fileSrc, mEditor.GetText());
-            fplus::write_text_file(fileAssets, mEditor.GetText());
-            mAnnotatedSource = Sources::ReadImGuiDemoCode("imgui/imgui_demo.cpp");
-            setEditorAnnotatedSource(mAnnotatedSource);
+            fplus::write_text_file(fileSrc, mEditor.GetText())();
         }
 #endif
     }
