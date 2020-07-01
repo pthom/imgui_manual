@@ -23,23 +23,6 @@ void implImGuiDemoCallbackDemoCallback(int line_number)
 
 std::vector<TextEditor *> gAllEditors;
 
-void menuEditorTheme()
-{
-    if (ImGui::BeginMenu("Editor"))
-    {
-        if (ImGui::MenuItem("Dark palette"))
-            for (auto editor: gAllEditors)
-                editor->SetPalette(TextEditor::GetDarkPalette());
-        if (ImGui::MenuItem("Light palette"))
-            for (auto editor: gAllEditors)
-                editor->SetPalette(TextEditor::GetLightPalette());
-        if (ImGui::MenuItem("Retro blue palette"))
-            for (auto editor: gAllEditors)
-                editor->SetPalette(TextEditor::GetRetroBluePalette());
-        ImGui::EndMenu();
-    }
-}
-
 
 class WindowWithEditor
 {
@@ -496,7 +479,41 @@ This manual uses some great libraries, which are shown below.
     LibrariesCodeBrowser mLibrariesCodeBrowser;
 };
 
+void menuTheme()
+{
+    if (ImGui::BeginMenu("Theme"))
+    {
+        ImGui::MenuItem("App", NULL, false, false);
+        if (ImGui::MenuItem("Dark"))
+            ImGui::StyleColorsDark();
+        if (ImGui::MenuItem("Classic"))
+            ImGui::StyleColorsClassic();
+        if (ImGui::MenuItem("Light"))
+            ImGui::StyleColorsLight();
 
+        ImGui::Separator();
+
+        ImGui::MenuItem("Editor", NULL, false, false);
+        if (ImGui::MenuItem("Dark palette"))
+            for (auto editor: gAllEditors)
+                editor->SetPalette(TextEditor::GetDarkPalette());
+        if (ImGui::MenuItem("Light palette"))
+            for (auto editor: gAllEditors)
+                editor->SetPalette(TextEditor::GetLightPalette());
+        if (ImGui::MenuItem("Retro blue palette"))
+            for (auto editor: gAllEditors)
+                editor->SetPalette(TextEditor::GetRetroBluePalette());
+
+        ImGui::Separator();
+
+        if (ImGui::MenuItem("User contributed themes"))
+            HyperlinkHelper::OpenUrl("https://github.com/ocornut/imgui/issues/707");
+
+        ImGui::EndMenu();
+
+    }
+
+}
 
 int main(int, char **)
 {
@@ -574,10 +591,20 @@ int main(int, char **)
         dock_acknowledgments.GuiFonction = [&otherLibraries]{ otherLibraries.gui(); };
     };
 
-    // Menu
-    runnerParams.callbacks.ShowMenus = []() {
-        menuEditorTheme();
+    HelloImGui::DockableWindow dock_about;
+    {
+        dock_about.label = "About this manual";
+        dock_about.dockSpaceName = "";
+        dock_about.isAboutWindow = true;
+        dock_about.isVisible = false;
+        dock_about.imGuiWindowFlags = ImGuiWindowFlags_AlwaysAutoResize;
+        dock_about.GuiFonction = []{
+            ImGui::Text("About...");
+        };
     };
+
+    // Menu
+    runnerParams.callbacks.ShowMenus = menuTheme;
 
     // Fonts
     runnerParams.callbacks.LoadAdditionalFonts = MarkdownHelper::LoadFonts;
@@ -590,6 +617,7 @@ int main(int, char **)
         dock_imGuiCppDocBrowser,
         dock_imguiCodeBrowser,
         dock_acknowledgments,
+        dock_about
     };
 
     gImGuiDemoCallback = implImGuiDemoCallbackDemoCallback;
