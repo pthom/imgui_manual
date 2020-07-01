@@ -1,7 +1,7 @@
 #include <fplus/fplus.hpp>
 #include "LibrariesCodeBrowser.h"
-#include "MarkdownHelper.h"
-#include "ImGuiExt.h"
+#include "utilities/MarkdownHelper.h"
+#include "utilities/ImGuiExt.h"
 
 LibrariesCodeBrowser::LibrariesCodeBrowser(
     const std::vector<Sources::Library> &librarySources,

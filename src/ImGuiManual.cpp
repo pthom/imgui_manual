@@ -1,12 +1,12 @@
 #include "hello_imgui/hello_imgui.h"
 #include "imgui.h"
-#include "ImGuiExt.h"
+#include "utilities/ImGuiExt.h"
 #include "TextEditor.h"
 #include "WindowWithEditor.h"
 #include "LibrariesCodeBrowser.h"
 #include "Sources.h"
-#include "MarkdownHelper.h"
-#include "HyperlinkHelper.h"
+#include "utilities/MarkdownHelper.h"
+#include "utilities/HyperlinkHelper.h"
 #include <fplus/fplus.hpp>
 #include <functional>
 
@@ -404,7 +404,7 @@ int main(int, char **)
     // Set the custom fonts
     runnerParams.callbacks.LoadAdditionalFonts = MarkdownHelper::LoadFonts;
 
-    
+
     // Ready, set, go!
     HelloImGui::Run(runnerParams);
     return 0;
