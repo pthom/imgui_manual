@@ -1,7 +1,15 @@
-#include <fplus/fplus.hpp>
 #include "LibrariesCodeBrowser.h"
 #include "utilities/MarkdownHelper.h"
 #include "utilities/ImGuiExt.h"
+#include "hello_imgui/hello_imgui.h"
+#include <fplus/fplus.hpp>
+
+void DrawImage_FixedWith(const HelloImGui::ImageGlPtr& image, float width)
+{
+    float ratio = width / image->imageSize.x;
+    ImVec2 size(image->imageSize.x * ratio, image->imageSize.y * ratio);
+    ImGui::Image(image->imTextureId, size);
+}
 
 LibrariesCodeBrowser::LibrariesCodeBrowser(
     const std::vector<Sources::Library> &librarySources,
@@ -18,8 +26,19 @@ void LibrariesCodeBrowser::gui()
     if (guiSelectLibrarySource())
         mEditor.SetText(mCurrentSource.sourceCode);
 
-    if (fplus::is_suffix_of(std::string(".md"), mCurrentSource.sourcePath))
+    std::string sourcePath = mCurrentSource.sourcePath;
+    if (fplus::is_suffix_of(std::string(".md"), sourcePath))
         MarkdownHelper::Markdown(mCurrentSource.sourceCode);
+    else if (fplus::is_suffix_of(std::string(".png"), sourcePath))
+    {
+        if (mTextureCache.find(sourcePath) == mTextureCache.end())
+        {
+            std::string assetPath = std::string("code/") + sourcePath.c_str();
+            mTextureCache[sourcePath] = HelloImGui::ImageGl::FactorImage(assetPath.c_str());
+        }
+
+        DrawImage_FixedWith(mTextureCache[sourcePath], ImGui::GetWindowSize().x - 30.f);
+    }
     else
         RenderEditor(mCurrentSource.sourcePath.c_str());
 }
