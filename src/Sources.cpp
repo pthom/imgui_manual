@@ -68,14 +68,14 @@ std::vector<Library> otherLibraries()
             )")
         },
         {
-                "fplus", "FunctionalPlus", "https://github.com/Dobiasd/FunctionalPlus",
-                "(Functional Programming Library for C++. Write concise and readable C++ code. [API Browser](http://www.editgym.com/fplus-api-search/) - [Udemy course](https://www.udemy.com/course/functional-programming-using-cpp/) - [Browse the code](https://sourcegraph.com/github.com/Dobiasd/FunctionalPlus/-/tree/include/fplus). ",
-                make_string_vec(R"(
-                    README.md
-                    LICENSE
-                    CONTRIBUTING.md
-                    INSTALL.md
-                    fplus.hpp
+            "fplus", "FunctionalPlus", "https://github.com/Dobiasd/FunctionalPlus",
+            "(Functional Programming Library for C++. Write concise and readable C++ code. [API Browser](http://www.editgym.com/fplus-api-search/) - [Udemy course](https://www.udemy.com/course/functional-programming-using-cpp/) - [Browse the code](https://sourcegraph.com/github.com/Dobiasd/FunctionalPlus/-/tree/include/fplus). ",
+            make_string_vec(R"(
+                README.md
+                LICENSE
+                CONTRIBUTING.md
+                INSTALL.md
+                fplus.hpp
             )")
         },
     };
@@ -106,7 +106,7 @@ std::vector<Library> imguiManualLibrary()
     return
     {
         {
-            "imgui_manual", "This manual", "https://github.com/pthom/imgui_manual",
+            "imgui_manual", "", "https://github.com/pthom/imgui_manual",
              "Dear ImGui Manual: an interactive manual for ImGui",
              make_string_vec(R"(
                 Readme.md
