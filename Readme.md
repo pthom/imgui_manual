@@ -1,8 +1,8 @@
-# implot demo
+# Dear ImGui: an interactive manual
 
-Source for an online emscripten demo of [implot](https://github.com/epezent/implot)
+Source for an online interactive manual for [Dear ImGui](https://github.com/ocornut/imgui).
 
-[Online demo here](https://traineq.org/implot_demo/src/implot_demo.html)
+[The manual is online here](https://traineq.org/imgui_manual/src/imgui_manual.html)
 
 ## Build instructions
 
