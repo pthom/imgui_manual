@@ -110,9 +110,9 @@ void ImGuiDemoBrowser::guiDemoCodeTags()
         {
             if (filter.PassFilter(lineWithNote.tag.c_str()))
             {
-                if (ImGui::Button(lineWithNote.tag.c_str()))
+                if (ImGui::SmallButton(lineWithNote.tag.c_str()))
                     mEditor.SetCursorPosition({lineWithNote.lineNumber, 0}, 3);
-                ImGuiExt::SameLine_IfPossible();
+                ImGuiExt::SameLine_IfPossible(150.f);
             }
         }
         ImGui::NewLine();

@@ -64,6 +64,7 @@ int main(int, char **)
             dock_imguiDemoCode.dockSpaceName = "CodeSpace";// This window goes into "CodeSpace"
             dock_imguiDemoCode.isVisible = true;
             dock_imguiDemoCode.GuiFonction = [&imGuiDemoBrowser] { imGuiDemoBrowser.gui(); };
+            dock_imguiDemoCode.imGuiWindowFlags = ImGuiWindowFlags_HorizontalScrollbar;
         };
 
         HelloImGui::DockableWindow dock_imGuiCppDocBrowser;
