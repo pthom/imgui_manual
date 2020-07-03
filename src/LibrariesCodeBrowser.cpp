@@ -16,8 +16,9 @@ LibrariesCodeBrowser::LibrariesCodeBrowser(
     std::string currentSourcePath)
         : WindowWithEditor()
         , mLibraries(librarySources)
-        , mCurrentSource(Sources::ReadSource(currentSourcePath))
 {
+    if (!currentSourcePath.empty())
+        mCurrentSource = Sources::ReadSource(currentSourcePath);
     mEditor.SetText(mCurrentSource.sourceCode);
 }
 
