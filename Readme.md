@@ -8,6 +8,8 @@ This interactive manual was developed using [Hello ImGui](https://github.com/pth
 
 See also a [related demo for Implot](https://traineq.org/implot_demo/src/implot_demo.html), which also provides code navigation.
 
+[I'd love to read your feedback!](https://github.com/pthom/imgui_manual/issues/1). 
+
 
 ## Build instructions
 
@@ -57,6 +59,6 @@ make -j 4
 ./src/implot_demo
 ````
 
+---
 
-### Note
-This demo is based on [Hello ImGui](https://github.com/pthom/hello_imgui).
+<font size=-1>_ETFM! (Enjoy The Fine Manual!)_</font>
