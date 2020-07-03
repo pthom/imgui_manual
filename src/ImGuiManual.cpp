@@ -146,7 +146,7 @@ int main(int, char **)
 
     // Add some widgets in the status bar
     runnerParams.callbacks.ShowStatus = [] {
-        ImGui::Text("   Dear ImGui Manual");
+        MarkdownHelper::Markdown("Dear ImGui Manual - [Repository](https://github.com/pthom/imgui_manual)");
     };
 
     // Set the custom fonts
