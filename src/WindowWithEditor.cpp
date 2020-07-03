@@ -130,20 +130,33 @@ void WindowWithEditor::guiIconBar(VoidFunction additionalGui)
     static bool canWrite = ! editor.IsReadOnly();
     if (ImGui::Checkbox(ICON_FA_EDIT, &canWrite))
         editor.SetReadOnly(!canWrite);
+    if (ImGui::IsItemHovered())
+        ImGui::SetTooltip("Enable editing this file");
     ImGui::SameLine();
-    if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_UNDO, editor.CanUndo() && canWrite, true))
+    if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_UNDO, editor.CanUndo() && canWrite, "Undo", true))
         editor.Undo();
-    if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_REDO, editor.CanRedo() && canWrite, true))
+    if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_REDO, editor.CanRedo() && canWrite, "Redo", true))
         editor.Redo();
-    if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_COPY, editor.HasSelection(), true))
+    if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_COPY, editor.HasSelection(), "Copy", true))
         editor.Copy();
-    if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_CUT, editor.HasSelection() && canWrite, true))
+    if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_CUT, editor.HasSelection() && canWrite, "Cut", true))
         editor.Cut();
-    if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_PASTE, (ImGui::GetClipboardText() != nullptr)  && canWrite, true))
+    if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_PASTE, (ImGui::GetClipboardText() != nullptr)  && canWrite, "Paste", true))
         editor.Paste();
+
     // missing icon from font awesome
     // if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_SELECT_ALL, ImGui::GetClipboardText() != nullptr, true))
     //      editor.PASTE();
+
+    #ifdef __EMSCRIPTEN__
+    ImGui::TextDisabled("?");
+    if (ImGui::IsItemHovered())
+        ImGui::SetTooltip("Due to browser security limitations, this app will not communicate \n"
+                          "with your computer's clipboard\n"
+                          "Use the \"view on github\" button if you want to copy-paste \n"
+                          "to an external IDE or application");
+    ImGui::SameLine();
+    #endif
 
     guiFind();
 

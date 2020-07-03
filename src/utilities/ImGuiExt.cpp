@@ -2,7 +2,7 @@
 #include "imgui.h"
 #include "hello_imgui.h"
 #include "utilities/HyperlinkHelper.h"
-
+#include <cstring>
 
 namespace ImGuiExt
 {
@@ -33,7 +33,7 @@ namespace ImGuiExt
             ImGui::SameLine();
     }
 
-    bool Button_WithEnabledFlag(const char *label, bool enabled, bool sameLineAfter)
+    bool Button_WithEnabledFlag(const char *label, bool enabled, const char *tooltip, bool sameLineAfter)
     {
         if (!enabled)
         {
@@ -42,6 +42,8 @@ namespace ImGuiExt
             ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
         }
         bool clicked = ImGui::Button(label);
+        if ((strlen(tooltip) > 0) && ImGui::IsItemHovered())
+            ImGui::SetTooltip("%s", tooltip);
         if (!enabled)
             ImGui::PopStyleColor(3);
         if (sameLineAfter)
@@ -49,7 +51,7 @@ namespace ImGuiExt
         return enabled ? clicked : false;
     }
 
-    bool SmallButton_WithEnabledFlag(const char *label, bool enabled, bool sameLineAfter)
+    bool SmallButton_WithEnabledFlag(const char *label, bool enabled, const char *tooltip, bool sameLineAfter)
     {
         if (!enabled)
         {
@@ -58,6 +60,8 @@ namespace ImGuiExt
             ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
         }
         bool clicked = ImGui::SmallButton(label);
+        if ((strlen(tooltip) > 0) && ImGui::IsItemHovered())
+            ImGui::SetTooltip("%s", tooltip);
         if (!enabled)
             ImGui::PopStyleColor(3);
         if (sameLineAfter)
