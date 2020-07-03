@@ -19,6 +19,7 @@ int main(int, char **)
     ImGuiDemoBrowser imGuiDemoBrowser;
     ImGuiCppDocBrowser imGuiCppDocBrowser;
     ImGuiCodeBrowser imGuiCodeBrowser;
+    ImGuiReadmeBrowser imGuiReadmeBrowser;
     Acknowledgments acknowledgments;
     AboutWindow aboutWindow;
 
@@ -66,30 +67,31 @@ int main(int, char **)
         {
             dock_imguiDemoCode.label = "ImGui - Demo Code";
             dock_imguiDemoCode.dockSpaceName = "CodeSpace";// This window goes into "CodeSpace"
+            dock_imguiDemoCode.isVisible = true;
             dock_imguiDemoCode.GuiFonction = [&imGuiDemoBrowser] { imGuiDemoBrowser.gui(); };
-        };
-
-        HelloImGui::DockableWindow dock_imguiReadme;
-        {
-            dock_imguiReadme.label = "ImGui - Readme";
-            dock_imguiReadme.dockSpaceName = "CodeSpace";
-            dock_imguiReadme.GuiFonction = [] {
-                static ImGuiReadmeBrowser w;
-                w.gui();
-            };
         };
 
         HelloImGui::DockableWindow dock_imGuiCppDocBrowser;
         {
             dock_imGuiCppDocBrowser.label = "ImGui - Doc";
             dock_imGuiCppDocBrowser.dockSpaceName = "CodeSpace";
+            dock_imGuiCppDocBrowser.isVisible = true;
             dock_imGuiCppDocBrowser.GuiFonction = [&imGuiCppDocBrowser] { imGuiCppDocBrowser.gui(); };
+        };
+
+        HelloImGui::DockableWindow dock_imguiReadme;
+        {
+            dock_imguiReadme.label = "ImGui - Readme";
+            dock_imguiReadme.dockSpaceName = "CodeSpace";
+            dock_imguiReadme.isVisible = false;
+            dock_imguiReadme.GuiFonction = [&imGuiReadmeBrowser] { imGuiReadmeBrowser.gui(); };
         };
 
         HelloImGui::DockableWindow dock_imguiCodeBrowser;
         {
             dock_imguiCodeBrowser.label = "ImGui - Code";
             dock_imguiCodeBrowser.dockSpaceName = "CodeSpace";
+            dock_imguiCodeBrowser.isVisible = false;
             dock_imguiCodeBrowser.GuiFonction = [&imGuiCodeBrowser] { imGuiCodeBrowser.gui(); };
         };
 
@@ -97,6 +99,8 @@ int main(int, char **)
         {
             dock_acknowledgments.label = "Acknowledgments";
             dock_acknowledgments.dockSpaceName = "CodeSpace";
+            dock_acknowledgments.isVisible = false;
+            dock_acknowledgments.includeInViewMenu = false;
             dock_acknowledgments.GuiFonction = [&acknowledgments] { acknowledgments.gui(); };
         };
 
@@ -105,6 +109,7 @@ int main(int, char **)
             dock_about.label = "About this manual";
             dock_about.dockSpaceName = "CodeSpace";
             dock_about.isVisible = false;
+            dock_about.includeInViewMenu = false;
             dock_about.GuiFonction = [&aboutWindow] { aboutWindow.gui(); };
         };
 
@@ -114,8 +119,8 @@ int main(int, char **)
         runnerParams.dockingParams.dockableWindows = {
             dock_imguiDemoCode,
             dock_imguiDemoWindow,
-            dock_imguiReadme,
             dock_imGuiCppDocBrowser,
+            dock_imguiReadme,
             dock_imguiCodeBrowser,
             dock_acknowledgments,
             dock_about};
@@ -127,13 +132,23 @@ int main(int, char **)
 
         HelloImGui::DockableWindow *aboutWindow =
             runnerParams.dockingParams.dockableWindowOfName("About this manual");
+          HelloImGui::DockableWindow *acknowledgmentWindow =
+              runnerParams.dockingParams.dockableWindowOfName("Acknowledgments");
         if (aboutWindow && ImGui::BeginMenu("About"))
         {
             if (ImGui::MenuItem("About this manual"))
                 aboutWindow->isVisible = true;
+            if (ImGui::MenuItem("Acknowledgments"))
+                acknowledgmentWindow->isVisible = true;
             ImGui::EndMenu();
         }
     };
+
+    // Add some widgets in the status bar
+    runnerParams.callbacks.ShowStatus = [] {
+        ImGui::Text("   Dear ImGui Manual");
+    };
+
     // Set the custom fonts
     runnerParams.callbacks.LoadAdditionalFonts = MarkdownHelper::LoadFonts;
 
