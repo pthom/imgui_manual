@@ -4,14 +4,9 @@
 #include "ImGuiCppDocBrowser.h"
 #include "ImGuiDemoBrowser.h"
 #include "ImGuiReadmeBrowser.h"
-#include "ImGuiRepoUrl.h"
-#include "LibrariesCodeBrowser.h"
 #include "MenuTheme.h"
-#include "Sources.h"
-#include "WindowWithEditor.h"
 
 #include "hello_imgui/hello_imgui.h"
-#include <fplus/fplus.hpp>
 
 int main(int, char **)
 {
