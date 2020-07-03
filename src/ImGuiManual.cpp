@@ -120,7 +120,7 @@ int main(int, char **)
             dock_imguiDemoCode,
             dock_imguiDemoWindow,
             dock_imGuiCppDocBrowser,
-            dock_imguiReadme,
+            // dock_imguiReadme,
             dock_imguiCodeBrowser,
             dock_acknowledgments,
             dock_about};

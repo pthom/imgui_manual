@@ -61,4 +61,4 @@ make -j 4
 
 ---
 
-<font size=-1>_ETFM! (Enjoy The Fine Manual!)_</font>
+_ETFM! (Enjoy The Fine Manual!)_
