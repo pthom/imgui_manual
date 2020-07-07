@@ -19,6 +19,13 @@ See also a [related demo for Implot](https://traineq.org/implot_demo/src/implot_
 [I'd love to read your feedback!](https://github.com/pthom/imgui_manual/issues/1). 
 
 
+# Instant develop
+
+A related project enables you to develop small ImGui applications in 3 minutes, *without even installing anything*! No IDE, no text editor, no library, no compiler is required.
+
+[Test ImGui application instant develop](https://github.com/pthom/hello_imgui_my_app/tree/gitpod#instant-develop)
+
+
 ## Build instructions
 
 First, init the submodules:
