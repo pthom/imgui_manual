@@ -169,25 +169,23 @@ LinesWithTags findImGuiCppDoc(const std::string &sourceCode)
     // Given two lines, we can check whether they are a header
     // and return 0 (not header) , 1 ("H1") or 2 ("H2")
     auto isHeaderLine = [](const std::pair<std::string, std::string> &linePair) {
-        int r = 0;
+        int headerLevel = 0;
         if (fplus::is_prefix_of("===="s, fplus::trim_whitespace(linePair.second)))
-            r = 1;
+            headerLevel = 1;
         if (fplus::is_prefix_of("----"s, fplus::trim_whitespace(linePair.second)))
-            r = 2;
-        return r;
+            headerLevel = 2;
+        return headerLevel;
     };
 
     for (auto idx_lines : fplus::enumerate(fplus::overlapping_pairs(lines)))
     {
         int lineNumber = (int)idx_lines.first + 1;
         auto line_pair = idx_lines.second;
-        int headerWeight = isHeaderLine(line_pair);
+        int headerLevel = isHeaderLine(line_pair);
         std::string tag = fplus::trim_whitespace(line_pair.first);
         tag = lowerCaseTitle(tag);
-        if (headerWeight == 1)
-            r.push_back({lineNumber, "H1 "s + tag});
-        if (headerWeight == 2)
-            r.push_back({lineNumber, "H2 "s + tag});
+        if (headerLevel > 0)
+            r.push_back({lineNumber, tag, headerLevel});
     }
     return r;
 }
@@ -234,8 +232,9 @@ Source ReadSource(const std::string sourcePath)
 }
 
 
-AnnotatedSource ReadImGuiDemoCode(const std::string& sourcePath)
+AnnotatedSource ReadImGuiDemoCode()
 {
+    std::string sourcePath = "imgui/imgui_demo.cpp";
     AnnotatedSource r;
     r.source = ReadSource(sourcePath);
     r.linesWithTags = findImGuiDemoCodeLines(r.source.sourceCode);

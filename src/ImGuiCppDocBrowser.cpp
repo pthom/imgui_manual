@@ -25,12 +25,9 @@ void ImGuiCppDocBrowser::guiTags()
 {
     for (auto lineWithTag : mAnnotatedSource.linesWithTags)
     {
-        // tags are of type H1 or H2, and begin with "H1 " or "H2 " (3 characters)
-        std::string title = fplus::drop(3, lineWithTag.tag);
-        bool isHeader1 = (fplus::take(3, lineWithTag.tag) == "H1 ");
-        if (isHeader1)
+        if (lineWithTag.level == 1)
         {
-            if (ImGuiExt::ClickableText(title.c_str()))
+            if (ImGuiExt::ClickableText(lineWithTag.tag.c_str()))
                 mEditor.SetCursorPosition({lineWithTag.lineNumber, 0}, 3);
         }
     }

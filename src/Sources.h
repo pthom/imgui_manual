@@ -15,6 +15,7 @@ struct LineWithTag
 {
     int lineNumber;
     std::string tag;
+    int level = 0; // optional header level
 };
 using LinesWithTags = std::vector<LineWithTag>;
 
@@ -41,7 +42,7 @@ std::vector<Library> acknowldegmentLibraries();
 
 
 Source ReadSource(const std::string sourcePath);
-AnnotatedSource ReadImGuiDemoCode(const std::string& sourcePath);
-AnnotatedSource ReadImGuiCppDoc(const std::string& sourcePath);
+AnnotatedSource ReadImGuiDemoCode();
+AnnotatedSource ReadImGuiCppDoc();
 
 } // namespace Sources
