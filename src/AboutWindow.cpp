@@ -1,10 +1,10 @@
 #include "hello_imgui/hello_imgui.h"
 #include "utilities/MarkdownHelper.h"
-#include "sources/Sources.h"
+#include "source_parse/Sources.h"
 #include "AboutWindow.h"
 
 AboutWindow::AboutWindow()
-    : mLibrariesCodeBrowser(Sources::imguiManualLibrary(), "imgui_manual/ImGuiManual.cpp")
+    : mLibrariesCodeBrowser(SourceParse::imguiManualLibrary(), "imgui_manual/ImGuiManual.cpp")
 {
 }
 

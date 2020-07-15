@@ -23,7 +23,7 @@ cd imgui_manual
 cp -f $SRC_DIR/*.* .
 cp -f $SRC_DIR/../Readme.md .
 cp -f $SRC_DIR/../LICENSE .
-cp -r $SRC_DIR/sources .
+cp -r $SRC_DIR/source_parse .
 cd ..
 
 if [ ! -d ImGuiColorTextEdit ]; then

@@ -1,15 +1,13 @@
-#include "sources/ImGuiRepoUrl.h"
+#include "source_parse/ImGuiRepoUrl.h"
 
 #include "utilities/ImGuiExt.h"
 #include "utilities/HyperlinkHelper.h"
-
-#include <fplus/fplus.hpp>
 
 #include "ImGuiCppDocBrowser.h"
 
 ImGuiCppDocBrowser::ImGuiCppDocBrowser()
     : WindowWithEditor()
-    , mAnnotatedSource(Sources::ReadImGuiCppDoc())
+    , mAnnotatedSource(SourceParse::ReadImGuiCppDoc())
 {
     setEditorAnnotatedSource(mAnnotatedSource);
 }

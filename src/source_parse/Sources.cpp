@@ -14,7 +14,7 @@ namespace {
     };
 }
 
-namespace Sources
+namespace SourceParse
 {
 
 
@@ -115,7 +115,7 @@ std::vector<Library> imguiManualLibrary()
                 ImGuiManual.cpp
                 diagram.png
                 diagram.md
-                sources/Sources.h
+                source_parse/Sources.h
                 ImGuiDemoBrowser.h
                 ImGuiDemoBrowser.cpp
             )")
@@ -292,4 +292,4 @@ int guiLinesWithTags(const LinesWithTags & linesWithTags, int currentEditorLineN
     return clickedLineNumber;
 }
 
-} // namespace Sources
+} // namespace SourceParse

@@ -1,4 +1,3 @@
-
 #include "utilities/MarkdownHelper.h"
 #include "hello_imgui/hello_imgui.h"
 
@@ -6,7 +5,7 @@
 
 
 ImGuiCodeBrowser::ImGuiCodeBrowser()
-    : mLibrariesCodeBrowser(Sources::imguiLibrary(), "imgui/imgui.h")
+    : mLibrariesCodeBrowser(SourceParse::imguiLibrary(), "imgui/imgui.h")
 {
 }
 

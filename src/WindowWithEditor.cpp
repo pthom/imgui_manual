@@ -13,7 +13,7 @@ WindowWithEditor::WindowWithEditor()
     gAllEditors.push_back(&mEditor);
 }
 
-void WindowWithEditor::setEditorAnnotatedSource(const Sources::AnnotatedSource &annotatedSource)
+void WindowWithEditor::setEditorAnnotatedSource(const SourceParse::AnnotatedSource &annotatedSource)
 {
     mEditor.SetText(annotatedSource.source.sourceCode);
     std::unordered_set<int> lineNumbers;

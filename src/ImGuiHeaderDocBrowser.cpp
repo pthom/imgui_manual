@@ -1,16 +1,15 @@
-#include "sources/ImGuiRepoUrl.h"
+#include "source_parse/ImGuiRepoUrl.h"
 
 #include "utilities/ImGuiExt.h"
 #include "utilities/HyperlinkHelper.h"
-#include "sources/ImGuiHeaderDocParser.h"
-#include "sources/Sources.h"
-#include <fplus/fplus.hpp>
+#include "source_parse/ImGuiHeaderDocParser.h"
+#include "source_parse/Sources.h"
 
 #include "ImGuiHeaderDocBrowser.h"
 
 ImGuiHeaderDocBrowser::ImGuiHeaderDocBrowser()
     : WindowWithEditor()
-    , mAnnotatedSource(Sources::ReadImGuiHeaderDoc())
+    , mAnnotatedSource(SourceParse::ReadImGuiHeaderDoc())
 {
     setEditorAnnotatedSource(mAnnotatedSource);
 }
@@ -33,7 +32,7 @@ void ImGuiHeaderDocBrowser::guiTags()
 //        }
 //    }
     int currentEditorLineNumber = mEditor.GetCursorPosition().mLine;
-    int selectedLine = Sources::guiLinesWithTags(mAnnotatedSource.linesWithTags, currentEditorLineNumber);
+    int selectedLine = SourceParse::guiLinesWithTags(mAnnotatedSource.linesWithTags, currentEditorLineNumber);
     if (selectedLine >= 0)
         mEditor.SetCursorPosition({selectedLine, 0}, 3);
 }

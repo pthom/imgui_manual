@@ -1,5 +1,5 @@
 #pragma once
-#include "sources/Sources.h"
+#include "source_parse/Sources.h"
 #include "WindowWithEditor.h"
 
 // This windows shows the docs contained in imgui.cpp
@@ -13,5 +13,5 @@ private:
     void guiTags();
     void guiGithubButton();
 
-    Sources::AnnotatedSource mAnnotatedSource;
+    SourceParse::AnnotatedSource mAnnotatedSource;
 };

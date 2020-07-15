@@ -1,5 +1,5 @@
 #pragma once
-#include "sources/Sources.h"
+#include "source_parse/Sources.h"
 #include "TextEditor.h"
 #include "imgui.h"
 
@@ -11,7 +11,7 @@ class WindowWithEditor
 public:
     WindowWithEditor();
 
-    void setEditorAnnotatedSource(const Sources::AnnotatedSource &annotatedSource);
+    void setEditorAnnotatedSource(const SourceParse::AnnotatedSource &annotatedSource);
     void RenderEditor(const std::string& filename, VoidFunction additionalGui = {});
 
     TextEditor * _GetTextEditorPtr() { return &mEditor; }

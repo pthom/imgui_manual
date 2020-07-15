@@ -1,5 +1,5 @@
 #pragma once
-#include "sources/Sources.h"
+#include "source_parse/Sources.h"
 #include "WindowWithEditor.h"
 #include "hello_imgui/hello_imgui.h"
 #include <unordered_map>
@@ -9,14 +9,14 @@ class LibrariesCodeBrowser: public WindowWithEditor
 {
 public:
     LibrariesCodeBrowser(
-        const std::vector<Sources::Library>& librarySources,
+        const std::vector<SourceParse::Library>& librarySources,
         std::string currentSourcePath
     );
     void gui();
 private:
     bool guiSelectLibrarySource();
 
-    std::vector<Sources::Library> mLibraries;
+    std::vector<SourceParse::Library> mLibraries;
     std::unordered_map<std::string, HelloImGui::ImageGlPtr> mTextureCache;
-    Sources::Source mCurrentSource;
+    SourceParse::Source mCurrentSource;
 };

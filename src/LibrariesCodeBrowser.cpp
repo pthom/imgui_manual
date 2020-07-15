@@ -12,13 +12,13 @@ void DrawImage_FixedWith(const HelloImGui::ImageGlPtr& image, float width)
 }
 
 LibrariesCodeBrowser::LibrariesCodeBrowser(
-    const std::vector<Sources::Library> &librarySources,
+    const std::vector<SourceParse::Library> &librarySources,
     std::string currentSourcePath)
         : WindowWithEditor()
         , mLibraries(librarySources)
 {
     if (!currentSourcePath.empty())
-        mCurrentSource = Sources::ReadSource(currentSourcePath);
+        mCurrentSource = SourceParse::ReadSource(currentSourcePath);
     mEditor.SetText(mCurrentSource.sourceCode);
 }
 
@@ -62,7 +62,7 @@ bool LibrariesCodeBrowser::guiSelectLibrarySource()
                 ImGui::TextDisabled("%s", source.c_str());
             else if (ImGui::Button(buttonLabel.c_str()))
             {
-                mCurrentSource = Sources::ReadSource(currentSourcePath);
+                mCurrentSource = SourceParse::ReadSource(currentSourcePath);
                 changed = true;
             }
             ImGuiExt::SameLine_IfPossible(150.f);

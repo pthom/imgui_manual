@@ -3,7 +3,7 @@
 #include <string>
 #include <map>
 
-namespace Sources
+namespace SourceParse
 {
 struct Source
 {
@@ -49,4 +49,4 @@ Source ReadSource(const std::string sourcePath);
 AnnotatedSource ReadImGuiDemoCode();
 AnnotatedSource ReadImGuiCppDoc();
 
-} // namespace Sources
+} // namespace SourceParse

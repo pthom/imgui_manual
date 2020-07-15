@@ -1,4 +1,4 @@
-#include "sources/ImGuiRepoUrl.h"
+#include "source_parse/ImGuiRepoUrl.h"
 
 #include "utilities/HyperlinkHelper.h"
 #include "utilities/ImGuiExt.h"
@@ -23,7 +23,7 @@ void implImGuiDemoCallbackDemoCallback(int line_number)
 
 ImGuiDemoBrowser::ImGuiDemoBrowser()
     : WindowWithEditor()
-    , mAnnotatedSource(Sources::ReadImGuiDemoCode())
+    , mAnnotatedSource(SourceParse::ReadImGuiDemoCode())
 {
     setEditorAnnotatedSource(mAnnotatedSource);
 

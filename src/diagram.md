@@ -27,8 +27,8 @@ class LibrariesCodeBrowser {
 }
 
 LibrariesCodeBrowser --|> WindowWithEditor
-LibrariesCodeBrowser *-- Sources.Library: vector
-LibrariesCodeBrowser *-- Sources.Source
+LibrariesCodeBrowser *-- SourceParse.Library: vector
+LibrariesCodeBrowser *-- SourceParse.Source
 
 class ImGuiCodeBrowser {
     + ImGuiCodeBrowser()
@@ -43,7 +43,7 @@ class ImGuiCppDocBrowser {
     - mAnnotatedSource
 }
 ImGuiCppDocBrowser --|> WindowWithEditor
-ImGuiCppDocBrowser *-- Sources.AnnotatedSource
+ImGuiCppDocBrowser *-- SourceParse.AnnotatedSource
 
 
 class ImGuiDemoBrowser {
@@ -53,7 +53,7 @@ class ImGuiDemoBrowser {
 }
 
 ImGuiDemoBrowser --|> WindowWithEditor
-ImGuiDemoBrowser *-- Sources.AnnotatedSource
+ImGuiDemoBrowser *-- SourceParse.AnnotatedSource
 
 class Acknowledgments {
     + gui()
@@ -73,7 +73,7 @@ AboutWindow *-- LibrariesCodeBrowser
 
 
 
-namespace Sources {
+namespace SourceParse {
     class Source<struct> {
         sourcePath
         sourceCode

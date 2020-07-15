@@ -1,6 +1,6 @@
 #pragma once
 #include "WindowWithEditor.h"
-#include "sources/Sources.h"
+#include "source_parse/Sources.h"
 
 // This is the window that shows imgui_demo.cpp code,
 // with a callback that will point to the correct line number
@@ -17,5 +17,5 @@ private:
     void guiGithubButton();
     void guiDemoCodeTags();
 
-    Sources::AnnotatedSource mAnnotatedSource;
+    SourceParse::AnnotatedSource mAnnotatedSource;
 };

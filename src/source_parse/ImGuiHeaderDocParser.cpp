@@ -2,8 +2,7 @@
 #include <string>
 #include "ImGuiHeaderDocParser.h"
 
-namespace Sources
-{
+namespace SourceParse {
 
 using NumberedLine = std::pair<size_t, std::string>;
 using NumberedLines = std::vector<NumberedLine>;

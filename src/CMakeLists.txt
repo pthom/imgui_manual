@@ -9,8 +9,8 @@ set(imgui_markdown_dir ${CMAKE_CURRENT_LIST_DIR}/../external/imgui_markdown)
 FILE(GLOB sources
     ${CMAKE_CURRENT_LIST_DIR}/*.h
     ${CMAKE_CURRENT_LIST_DIR}/*.cpp
-    ${CMAKE_CURRENT_LIST_DIR}/sources/*.h
-    ${CMAKE_CURRENT_LIST_DIR}/sources/*.cpp
+    ${CMAKE_CURRENT_LIST_DIR}/source_parse/*.h
+    ${CMAKE_CURRENT_LIST_DIR}/source_parse/*.cpp
     ${CMAKE_CURRENT_LIST_DIR}/utilities/*.h
     ${CMAKE_CURRENT_LIST_DIR}/utilities/*.cpp
     )
