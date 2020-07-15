@@ -23,7 +23,7 @@ void implImGuiDemoCallbackDemoCallback(int line_number)
 
 ImGuiDemoBrowser::ImGuiDemoBrowser()
     : WindowWithEditor()
-    , mAnnotatedSource(Sources::ReadImGuiDemoCode("imgui/imgui_demo.cpp"))
+    , mAnnotatedSource(Sources::ReadImGuiDemoCode())
 {
     setEditorAnnotatedSource(mAnnotatedSource);
 

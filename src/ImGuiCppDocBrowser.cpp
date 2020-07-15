@@ -9,7 +9,7 @@
 
 ImGuiCppDocBrowser::ImGuiCppDocBrowser()
     : WindowWithEditor()
-    , mAnnotatedSource(Sources::ReadImGuiCppDoc("imgui/imgui.cpp"))
+    , mAnnotatedSource(Sources::ReadImGuiCppDoc())
 {
     setEditorAnnotatedSource(mAnnotatedSource);
 }

@@ -152,6 +152,7 @@ std::string lowerCaseTitle(const std::string& s)
     return title;
 }
 
+
 LinesWithTags findImGuiCppDoc(const std::string &sourceCode)
 {
     LinesWithTags r;
@@ -241,7 +242,9 @@ AnnotatedSource ReadImGuiDemoCode(const std::string& sourcePath)
     return r;
 }
 
-AnnotatedSource ReadImGuiCppDoc(const std::string& sourcePath) {
+AnnotatedSource ReadImGuiCppDoc()
+{
+    std::string sourcePath = "imgui/imgui.cpp";
     AnnotatedSource r;
     r.source = ReadSource(sourcePath);
     r.linesWithTags = findImGuiCppDoc(r.source.sourceCode);
