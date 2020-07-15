@@ -1,5 +1,5 @@
 #pragma once
-#include "utilities/HyperlinkHelper.h"
+#include "imgui_utilities/HyperlinkHelper.h"
 #include "imgui.h"
 
 // Theme menu

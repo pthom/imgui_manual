@@ -1,6 +1,6 @@
 #include "LibrariesCodeBrowser.h"
-#include "utilities/MarkdownHelper.h"
-#include "utilities/ImGuiExt.h"
+#include "imgui_utilities/MarkdownHelper.h"
+#include "imgui_utilities/ImGuiExt.h"
 #include "hello_imgui/hello_imgui.h"
 #include <fplus/fplus.hpp>
 

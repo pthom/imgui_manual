@@ -1,10 +1,12 @@
 #include "source_parse/ImGuiRepoUrl.h"
 
-#include "utilities/HyperlinkHelper.h"
-#include "utilities/ImGuiExt.h"
-#include "utilities/MarkdownHelper.h"
+#include "imgui_utilities/HyperlinkHelper.h"
+#include "imgui_utilities/ImGuiExt.h"
+#include "imgui_utilities/MarkdownHelper.h"
 
 #include "hello_imgui/hello_imgui.h"
+
+#include <fplus/fplus.hpp>
 
 #include "ImGuiDemoBrowser.h"
 

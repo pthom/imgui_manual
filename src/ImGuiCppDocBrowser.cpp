@@ -1,7 +1,7 @@
 #include "source_parse/ImGuiRepoUrl.h"
 
-#include "utilities/ImGuiExt.h"
-#include "utilities/HyperlinkHelper.h"
+#include "imgui_utilities/ImGuiExt.h"
+#include "imgui_utilities/HyperlinkHelper.h"
 
 #include "ImGuiCppDocBrowser.h"
 

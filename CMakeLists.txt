@@ -2,6 +2,9 @@ cmake_minimum_required(VERSION 3.10)
 project(my_app LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 14)
 
+option(IMGUI_MANUAL_BUILD_TESTS "Build tests" OFF)
+option(IMGUI_MANUAL_CAN_WRITE_IMGUI_DEMO_CPP "Allow writing to imgui_demo.cpp" OFF)
+
 # Provide our own fork of imgui, disable the one provided by hello_imgui
 set (HELLOIMGUI_BUILD_IMGUI OFF CACHE BOOL "" FORCE)
 set(imgui_dir ${CMAKE_CURRENT_LIST_DIR}/external/imgui)
@@ -15,7 +18,7 @@ add_library(imgui
     )
 target_include_directories(imgui PUBLIC ${imgui_dir})
 
-option(IMGUI_HELLODEMO_CAN_WRITE_IMGUI_DEMO_CPP OFF)
+option(IMGUI_MANUAL_CAN_WRITE_IMGUI_DEMO_CPP "Allow writing to imgui_demo.cpp" OFF)
 
 set(HELLOIMGUI_USE_SDL_OPENGL3 ON CACHE STRING "" FORCE)
 add_subdirectory(external/hello_imgui)

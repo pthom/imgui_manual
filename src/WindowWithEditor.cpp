@@ -1,6 +1,6 @@
 #include "hello_imgui.h"
 #include <fplus/fplus.hpp>
-#include "utilities/ImGuiExt.h"
+#include "imgui_utilities/ImGuiExt.h"
 #include "WindowWithEditor.h"
 
 std::vector<TextEditor *> gAllEditors;
