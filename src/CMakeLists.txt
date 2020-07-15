@@ -25,11 +25,11 @@ target_include_directories(imgui_manual PRIVATE
     ${CMAKE_CURRENT_LIST_DIR}
 )
 
-if (IMGUI_HELLODEMO_CAN_WRITE_IMGUI_DEMO_CPP)
+option(IMGUI_MANUAL_CAN_WRITE_IMGUI_DEMO_CPP "Allow writing to imgui_demo.cpp" OFF)
+if (IMGUI_MANUAL_CAN_WRITE_IMGUI_DEMO_CPP)
     target_compile_definitions(imgui_manual
         PRIVATE
-        IMGUI_HELLODEMO_CAN_WRITE_IMGUI_DEMO_CPP
-        -DIMGUI_HELLODEMO_REPO_DIR="${CMAKE_SOURCE_DIR}"
-        -DIMGUI_HELLODEMO_BIN_DIR="${CMAKE_CURRENT_BINARY_DIR}"
+        IMGUI_MANUAL_CAN_WRITE_IMGUI_DEMO_CPP
+        -DIMGUI_MANUAL_REPO_DIR="${CMAKE_SOURCE_DIR}"
         )
 endif()
