@@ -5,6 +5,7 @@ execute_process(COMMAND bash -c ${CMAKE_CURRENT_LIST_DIR}/populate_assets.sh)
 set(textedit_dir ${CMAKE_CURRENT_LIST_DIR}/../external/ImGuiColorTextEdit)
 set(fplus_dir ${CMAKE_CURRENT_LIST_DIR}/../external/FunctionalPlus/include)
 set(imgui_markdown_dir ${CMAKE_CURRENT_LIST_DIR}/../external/imgui_markdown)
+set(doctest_dir ${CMAKE_CURRENT_LIST_DIR}/../external/doctest/include)
 
 add_subdirectory(imgui_utilities)
 add_subdirectory(source_parse)

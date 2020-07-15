@@ -8,3 +8,7 @@ target_include_directories(source_parse PUBLIC
     ${CMAKE_CURRENT_LIST_DIR}/..
     )
 target_link_libraries(source_parse PRIVATE hello_imgui)
+
+if (IMGUI_MANUAL_BUILD_TESTS)
+    add_subdirectory(tests)
+endif()

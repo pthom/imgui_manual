@@ -18,7 +18,9 @@ add_library(imgui
     )
 target_include_directories(imgui PUBLIC ${imgui_dir})
 
-option(IMGUI_MANUAL_CAN_WRITE_IMGUI_DEMO_CPP "Allow writing to imgui_demo.cpp" OFF)
+if (IMGUI_MANUAL_BUILD_TESTS)
+    enable_testing()
+endif()
 
 set(HELLOIMGUI_USE_SDL_OPENGL3 ON CACHE STRING "" FORCE)
 add_subdirectory(external/hello_imgui)
