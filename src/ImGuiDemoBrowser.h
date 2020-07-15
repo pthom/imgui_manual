@@ -1,6 +1,6 @@
 #pragma once
 #include "WindowWithEditor.h"
-#include "Sources.h"
+#include "sources/Sources.h"
 
 // This is the window that shows imgui_demo.cpp code,
 // with a callback that will point to the correct line number

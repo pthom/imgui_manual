@@ -14,10 +14,14 @@ struct Source
 struct LineWithTag
 {
     int lineNumber;
-    std::string tag;
-    int level = 0; // optional header level
+    std::string tag; // tag can be an Id or a title
+    int level = 0; // optional title level
 };
 using LinesWithTags = std::vector<LineWithTag>;
+
+// Show a tree gui with all the tags
+// return a line number if the user selected a tag, returns -1 otherwise
+int guiLinesWithTags(const LinesWithTags & linesWithTags, int currentEditorLineNumber);
 
 struct AnnotatedSource
 {

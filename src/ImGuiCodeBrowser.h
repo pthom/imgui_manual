@@ -1,6 +1,6 @@
 #pragma once
 #include "LibrariesCodeBrowser.h"
-#include "Sources.h"
+#include "sources/Sources.h"
 #include "WindowWithEditor.h"
 
 // This window shows ImGui source files + Readme/License

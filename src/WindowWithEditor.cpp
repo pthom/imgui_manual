@@ -18,7 +18,7 @@ void WindowWithEditor::setEditorAnnotatedSource(const Sources::AnnotatedSource &
     mEditor.SetText(annotatedSource.source.sourceCode);
     std::unordered_set<int> lineNumbers;
     for (auto line : annotatedSource.linesWithTags)
-        lineNumbers.insert(line.lineNumber);
+        lineNumbers.insert(line.lineNumber + 1);
     mEditor.SetBreakpoints(lineNumbers);
 }
 void WindowWithEditor::RenderEditor(const std::string &filename, VoidFunction additionalGui)

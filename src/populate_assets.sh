@@ -20,9 +20,10 @@ if [ ! -d imgui_manual ]; then
   mkdir imgui_manual
 fi
 cd imgui_manual
-cp -f $SRC_DIR/* .
+cp -f $SRC_DIR/*.* .
 cp -f $SRC_DIR/../Readme.md .
 cp -f $SRC_DIR/../LICENSE .
+cp -r $SRC_DIR/sources .
 cd ..
 
 if [ ! -d ImGuiColorTextEdit ]; then

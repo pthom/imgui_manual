@@ -4,7 +4,7 @@
 #include <emscripten.h>
 #elif defined(_WIN32)
 #include <windows.h>
-    #include <Shellapi.h>
+#include <Shellapi.h>
 #elif defined(__APPLE__)
 #include <TargetConditionals.h>
 #include <cstdlib>
