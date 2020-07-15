@@ -1,5 +1,6 @@
 #include "hello_imgui/hello_imgui_assets.h"
 #include <fplus/fplus.hpp>
+#include <imgui.h>
 #include "Sources.h"
 
 using namespace std::literals;
@@ -114,7 +115,7 @@ std::vector<Library> imguiManualLibrary()
                 ImGuiManual.cpp
                 diagram.png
                 diagram.md
-                Sources.h
+                sources/Sources.h
                 ImGuiDemoBrowser.h
                 ImGuiDemoBrowser.cpp
             )")
@@ -213,7 +214,7 @@ LinesWithTags findImGuiDemoCodeLines(const std::string &sourceCode)
     {
         const std::string& line = lines[line_number];
         if (line.find(regionToken) != std::string::npos)
-            r.push_back({(int)line_number + 1, extractDemoCodeName(line)});
+            r.push_back({(int)line_number, extractDemoCodeName(line)});
     }
     return r;
 }
@@ -249,4 +250,46 @@ AnnotatedSource ReadImGuiCppDoc()
     r.linesWithTags = findImGuiCppDoc(r.source.sourceCode);
     return r;
 }
+
+
+// Show a tree gui with all the tags
+// return a line number if the user selected a tag, returns -1 otherwise
+int guiLinesWithTags(const LinesWithTags & linesWithTags, int currentEditorLineNumber)
+{
+    int clickedLineNumber = -1;
+    int currentHeaderLevel = 0;
+    int nbTreeOpen = 0;
+
+    static ImGuiTreeNodeFlags baseTreeFlags =
+          ImGuiTreeNodeFlags_OpenOnArrow
+        | ImGuiTreeNodeFlags_OpenOnDoubleClick
+        | ImGuiTreeNodeFlags_SpanAvailWidth;
+
+    static ImGuiTreeNodeFlags leafFlags = baseTreeFlags | ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen;
+
+    for (const auto & lineWithTag: linesWithTags)
+    {
+
+        if (lineWithTag.level != 1)
+            continue;
+
+        bool isLeafNode = true;
+
+        ImGuiTreeNodeFlags treeNodeFlags = isLeafNode ? leafFlags : baseTreeFlags;
+
+        const bool is_selected = (currentEditorLineNumber == lineWithTag.lineNumber);
+        if (is_selected)
+            treeNodeFlags |= ImGuiTreeNodeFlags_Selected;
+
+        const void* ptr_id = (const void*)(&lineWithTag.lineNumber);
+        std::string title = std::to_string(lineWithTag.level) + "-"s + lineWithTag.tag;
+        bool node_open = ImGui::TreeNodeEx(ptr_id, treeNodeFlags, "%s", title.c_str());
+        if (ImGui::IsItemClicked())
+            clickedLineNumber = lineWithTag.lineNumber;
+
+    }
+
+    return clickedLineNumber;
+}
+
 } // namespace Sources

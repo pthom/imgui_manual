@@ -2,6 +2,7 @@
 #include "Acknowledgments.h"
 #include "ImGuiCodeBrowser.h"
 #include "ImGuiCppDocBrowser.h"
+#include "ImGuiHeaderDocBrowser.h"
 #include "ImGuiDemoBrowser.h"
 #include "ImGuiReadmeBrowser.h"
 #include "MenuTheme.h"
@@ -13,6 +14,7 @@ int main(int, char **)
     // Our gui providers for the different windows
     ImGuiDemoBrowser imGuiDemoBrowser;
     ImGuiCppDocBrowser imGuiCppDocBrowser;
+    ImGuiHeaderDocBrowser imGuiHeaderDocBrowser;
     ImGuiCodeBrowser imGuiCodeBrowser;
     ImGuiReadmeBrowser imGuiReadmeBrowser;
     Acknowledgments acknowledgments;
@@ -69,10 +71,18 @@ int main(int, char **)
 
         HelloImGui::DockableWindow dock_imGuiCppDocBrowser;
         {
-            dock_imGuiCppDocBrowser.label = "ImGui - Doc";
+            dock_imGuiCppDocBrowser.label = "imgui.cpp - Doc";
             dock_imGuiCppDocBrowser.dockSpaceName = "CodeSpace";
             dock_imGuiCppDocBrowser.isVisible = true;
             dock_imGuiCppDocBrowser.GuiFonction = [&imGuiCppDocBrowser] { imGuiCppDocBrowser.gui(); };
+        };
+
+        HelloImGui::DockableWindow dock_imGuiHeaderDocBrowser;
+        {
+            dock_imGuiHeaderDocBrowser.label = "imgui.h - Doc";
+            dock_imGuiHeaderDocBrowser.dockSpaceName = "CodeSpace";
+            dock_imGuiHeaderDocBrowser.isVisible = true;
+            dock_imGuiHeaderDocBrowser.GuiFonction = [&imGuiHeaderDocBrowser] { imGuiHeaderDocBrowser.gui(); };
         };
 
         HelloImGui::DockableWindow dock_imguiReadme;
@@ -116,6 +126,7 @@ int main(int, char **)
             dock_imguiDemoCode,
             dock_imguiDemoWindow,
             dock_imGuiCppDocBrowser,
+            dock_imGuiHeaderDocBrowser,
             // dock_imguiReadme,
             dock_imguiCodeBrowser,
             dock_acknowledgments,

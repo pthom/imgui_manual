@@ -1,16 +1,17 @@
-//
-// Created by Pascal Thomet on 15/07/2020.
-//
+#pragma once
+#include "sources/Sources.h"
+#include "WindowWithEditor.h"
 
-#ifndef MY_APP_IMGUIHEADERDOCBROWSER_H
-#define MY_APP_IMGUIHEADERDOCBROWSER_H
+// This windows shows the docs contained in imgui.cpp
+class ImGuiHeaderDocBrowser: public WindowWithEditor
+{
+public:
+    ImGuiHeaderDocBrowser();
+    void gui();
 
+private:
+    void guiTags();
+    void guiGithubButton();
 
-
-class ImGuiHeaderDocBrowser {
-
+    Sources::AnnotatedSource mAnnotatedSource;
 };
-
-
-
-#endif //MY_APP_IMGUIHEADERDOCBROWSER_H
