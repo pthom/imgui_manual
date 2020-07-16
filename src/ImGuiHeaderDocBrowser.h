@@ -1,4 +1,5 @@
 #pragma once
+#include "source_parse/GuiHeaderTree.h"
 #include "source_parse/Sources.h"
 #include "WindowWithEditor.h"
 
@@ -14,4 +15,5 @@ private:
     void guiGithubButton();
 
     SourceParse::AnnotatedSource mAnnotatedSource;
+    SourceParse::GuiHeaderTree mGuiHeaderTree;
 };

@@ -20,9 +20,6 @@ struct LineWithTag
 };
 using LinesWithTags = std::vector<LineWithTag>;
 
-// Show a tree gui with all the tags
-// return a line number if the user selected a tag, returns -1 otherwise
-int guiLinesWithTags(const LinesWithTags & linesWithTags, int currentEditorLineNumber);
 
 struct AnnotatedSource
 {

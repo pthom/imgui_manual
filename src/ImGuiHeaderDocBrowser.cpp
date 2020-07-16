@@ -10,6 +10,7 @@
 ImGuiHeaderDocBrowser::ImGuiHeaderDocBrowser()
     : WindowWithEditor()
     , mAnnotatedSource(SourceParse::ReadImGuiHeaderDoc())
+    , mGuiHeaderTree(mAnnotatedSource.linesWithTags)
 {
     setEditorAnnotatedSource(mAnnotatedSource);
 }
@@ -32,7 +33,7 @@ void ImGuiHeaderDocBrowser::guiTags()
 //        }
 //    }
     int currentEditorLineNumber = mEditor.GetCursorPosition().mLine;
-    int selectedLine = SourceParse::guiLinesWithTags(mAnnotatedSource.linesWithTags, currentEditorLineNumber);
+    int selectedLine = mGuiHeaderTree.gui(currentEditorLineNumber);
     if (selectedLine >= 0)
         mEditor.SetCursorPosition({selectedLine, 0}, 3);
 }
