@@ -2,6 +2,7 @@
 #include <vector>
 #include <string>
 #include <map>
+#include <ostream>
 
 namespace SourceParse
 {
@@ -48,5 +49,11 @@ std::vector<Library> acknowldegmentLibraries();
 Source ReadSource(const std::string sourcePath);
 AnnotatedSource ReadImGuiDemoCode();
 AnnotatedSource ReadImGuiCppDoc();
+
+inline std::ostream& operator<<(std::ostream& os, const SourceParse::LineWithTag& t)
+{
+    os << "{line:" << t.lineNumber << ", " << t.tag << ", level:" << t.level << "}";
+    return os;
+}
 
 } // namespace SourceParse
