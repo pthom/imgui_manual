@@ -13,36 +13,6 @@ TEST_CASE("Test ReadImGuiHeaderDoc")
 }
 
 
-template<typename T>
-std::string show_tree(const fplus::tree<T>& xs)
-{
-    std::string siblingSeparator = "\n";
-    std::string childStart = "\n<\n";
-    std::string childEnd = "\n>";
-
-    auto indentLines = [](const std::string& s, int nbSpaces) -> std::string {
-        auto lines = fplus::split_lines(true, s);
-        auto indentation = fplus::repeat(nbSpaces, std::string(" "));
-        auto indentedLines = fplus::transform([indentation](const auto &ss) { return indentation + ss; }, lines);
-        return fplus::join(std::string("\n"), indentedLines);
-    };
-
-    std::string r = fplus::show(xs.value_);
-    if (!xs.children_.empty())
-    {
-        auto strings = fplus::transform(show_tree<T>, xs.children_);
-        r = r + childStart +  indentLines(fplus::join(siblingSeparator, strings), 2) + childEnd;
-    }
-    return r;n r2;
-    //return r;
-}
-
-template<typename T>
-std::string show_trees(const std::vector<fplus::tree<T>>& xs)
-{
-    auto tree_strings = fplus::transform(show_tree<T>, xs);
-    return fplus::join(std::string("\n"), tree_strings);
-}
 
 template<typename T, typename FunctionComparator>
 fplus::tree<T> sort_tree(
@@ -83,52 +53,117 @@ std::vector<fplus::tree<T>> sort_trees(
 }
 
 
-std::vector<fplus::tree<SourceParse::LineWithTag>> SourceHeadersTree(
-    const SourceParse::LinesWithTags linesWithTags
-    )
+namespace SourceParse
 {
-    auto isTagChildOf =
-        [&linesWithTags](const SourceParse::LineWithTag& testedChild,
-                         const SourceParse::LineWithTag& testedParent)
-        {
-          if (testedChild.level <= testedParent.level)
-              return false;
-          // The possible parent should appear before this tag
-          // and have a higher level
-          std::vector<SourceParse::LineWithTag> allPossibleParents =
-              fplus::keep_if(
-                  [&testedChild](const SourceParse::LineWithTag & possibleParent ) {
-                    return (
-                        possibleParent.level < testedChild.level
-                        && possibleParent.lineNumber < testedChild.lineNumber);
-                  },
-                  linesWithTags);
-          if (allPossibleParents.empty())
-              return false;
+    template <typename T>
+    struct tree
+    {
+        T value_;
+        std::vector<tree<T>> children_;
+        tree<T> *parent_ = nullptr;
+    };
+    using HeaderTree = tree<LineWithTag>;
+    using HeaderTrees = std::vector<HeaderTree>;
 
-          // The best parent is the parent with the highest line number
-          // amongst the parents
-          SourceParse::LineWithTag bestParent = fplus::partial_sort_by(
-              [](const auto& t1, const auto& t2) {
-                return t1.lineNumber > t2.lineNumber;
-              },
-              1,
-              allPossibleParents
-          ).front();
+    template<typename T>
+    std::string show_tree2(const tree<T>& xs)
+    {
+        std::string siblingSeparator = "\n";
+        std::string childStart = "\n<\n";
+        std::string childEnd = "\n>";
 
-          return testedParent.lineNumber == bestParent.lineNumber;
+        auto indentLines = [](const std::string& s, int nbSpaces) -> std::string {
+          auto lines = fplus::split_lines(true, s);
+          auto indentation = fplus::repeat(nbSpaces, std::string(" "));
+          auto indentedLines = fplus::transform([indentation](const auto &ss) { return indentation + ss; }, lines);
+          return fplus::join(std::string("\n"), indentedLines);
         };
 
-    std::vector<fplus::tree<SourceParse::LineWithTag>> trees =
-                                                           fplus::trees_from_sequence(isTagChildOf, linesWithTags);
+        std::string r = fplus::show(xs.value_);
+        if (!xs.children_.empty())
+        {
+            auto strings = fplus::transform(show_tree2<T>, xs.children_);
+            r = r + childStart +  indentLines(fplus::join(siblingSeparator, strings), 2) + childEnd;
+        }
+        return r;
+    }
 
-    auto cmpTags = [](const SourceParse::LineWithTag& t1, const SourceParse::LineWithTag& t2) {
-      return t1.lineNumber < t2.lineNumber;
-    };
-    auto trees_sorted = sort_trees(cmpTags, trees);
+    template<typename T>
+    std::string show_trees2(const std::vector<tree<T>>& xs)
+    {
+        auto tree_strings = fplus::transform(show_tree2<T>, xs);
+        return fplus::join(std::string("\n"), tree_strings);
+    }
 
-    return trees_sorted;
-}
+
+    HeaderTree * searchSiblingInParents(HeaderTree* headerTree, int siblingHeaderLevel)
+    {
+        HeaderTree *possibleSibling = headerTree;
+        while (possibleSibling->value_.level > siblingHeaderLevel)
+        {
+            if (possibleSibling->parent_ != nullptr)
+                possibleSibling = possibleSibling->parent_;
+            else
+                break;
+        }
+        assert(possibleSibling != nullptr);
+        return possibleSibling;
+    }
+
+    void makeHeaderTrees_Impl(
+        std::deque<LineWithTag>& headerLinesStream,
+        HeaderTree& outHeaderTreeParent
+        )
+    {
+        if (headerLinesStream.empty())
+            return;
+
+        LineWithTag nextHeader = headerLinesStream.front();
+        headerLinesStream.pop_front();
+
+        HeaderTree *parent = nullptr;
+        // Search for correct parent
+        {
+            if (nextHeader.level > outHeaderTreeParent.value_.level)
+            {
+                // Append child
+                parent = &outHeaderTreeParent;
+            }
+            else if (nextHeader.level == outHeaderTreeParent.value_.level)
+            {
+                // Create a new sibling tree
+                parent = outHeaderTreeParent.parent_;
+            }
+            else // if (nextHeader.level < outHeaderTreeParent.value_.level)
+            {
+                // Search for sibling with same level by going up in the parents
+                HeaderTree *correctSibling = searchSiblingInParents(&outHeaderTreeParent, nextHeader.level);
+                parent = correctSibling->parent_;
+            }
+        }
+
+        assert(parent != nullptr);
+        HeaderTree newTree({nextHeader, {}, parent});
+        parent->children_.push_back(newTree);
+        HeaderTree& newTreeRef = parent->children_.back();
+        makeHeaderTrees_Impl(headerLinesStream, newTreeRef);
+    }
+
+    HeaderTrees makeHeaderTrees(const LinesWithTags& linesWithTags)
+    {
+        std::deque<LineWithTag> headerLinesStream;
+        for (const auto& v: linesWithTags)
+            headerLinesStream.push_back(v);
+
+        LineWithTag topTag { -1, "", -1};
+        HeaderTree  treeTop { topTag, {}, nullptr};
+        makeHeaderTrees_Impl(headerLinesStream, treeTop);
+
+        return  treeTop.children_;
+    }
+
+} // namespace SourceParse
+
 
 TEST_CASE("Tree")
 {
@@ -179,10 +214,11 @@ TEST_CASE("Tree")
 {line:120, D, level:1}
 )";
 
-
-    auto sourceHeadersTree = SourceHeadersTree(linesWithTags);
-    std::cout << show_trees(sourceHeadersTree) << "\n";
-    auto computed = std::string("\n") + show_trees(sourceHeadersTree) + std::string("\n");
-    CHECK(computed == expected);
+    {
+        auto sourceHeadersTree = SourceParse::makeHeaderTrees(linesWithTags);
+        std::cout << SourceParse::show_trees2(sourceHeadersTree) << "\n";
+        auto computed = std::string("\n") + show_trees2(sourceHeadersTree) + std::string("\n");
+        CHECK(computed == expected);
+    }
 }
 
