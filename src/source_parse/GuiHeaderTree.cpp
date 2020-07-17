@@ -103,7 +103,7 @@ int GuiHeaderTree::gui(int currentEditorLineNumber)
     if (ImGui::Button(ICON_FA_MINUS_SQUARE "Collapse all"))
         mExpandCollapseAction = ExpandCollapseAction::CollapseAll;
 
-    int r = guiImpl(currentEditorLineNumber, mHeaderTree);
+    int r = guiImpl(currentEditorLineNumber, mFilteredHeaderTree);
     mExpandCollapseAction = ExpandCollapseAction::NoAction;
 
     ImGui::EndChild();

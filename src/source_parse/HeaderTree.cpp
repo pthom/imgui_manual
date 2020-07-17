@@ -11,7 +11,7 @@ HeaderTree * searchParent(
     HeaderTree *possibleSibling = currentNode;
     while (possibleSibling->value_.level > siblingHeaderLevel)
     {
-        auto parent = tree_find_parent(*treeRoot, *currentNode);
+        auto parent = tree_find_parent(*treeRoot, *possibleSibling);
         if (parent != nullptr)
             possibleSibling = parent;
         else
@@ -73,18 +73,6 @@ HeaderTree makeHeaderTree(const LinesWithTags& linesWithTags, const LineWithTag&
 
     HeaderTree  treeTop {treeTopLeaf, {}};
     makeHeaderTrees_Impl(headerLinesStream, &treeTop, &treeTop);
-
-    auto visitNode = [](const Tree<LineWithTag> &xs) {
-        using namespace std::literals;
-        std::string msg = "line: "s + std::to_string(xs.value_.lineNumber);
-//        if (xs.parent_ == nullptr)
-//            msg += "\tparent: nul";
-//        else
-//            msg += "\tparent: " + std::to_string(xs.parent_->value_.lineNumber);
-        msg = msg + "\ttag: "s + xs.value_.tag;
-        std::cout << msg << "\n";
-    };
-    tree_visit_breadth_first(visitNode, treeTop);
 
     return treeTop;
 }
