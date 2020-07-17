@@ -89,20 +89,20 @@ inline std::string showTree(const Tree<T>& xs)
     return r;
 }
 
-template <typename T, typename Transformer_T>
-inline void tree_transform_leafs_depth_first_inplace(Transformer_T transformer, Tree<T> & xs_io)
+template <typename T, typename Visitor_T>
+inline void tree_visit_depth_first(Visitor_T visitor, Tree<T> & xs_io)
 {
     for (auto & child : xs_io.children_)
-        tree_transform_leafs_depth_first_inplace(transformer, child);
-    transformer(xs_io);
+        tree_visit_depth_first(visitor, child);
+    visitor(xs_io);
 }
 
-template <typename T, typename Transformer_T>
-inline void tree_transform_leafs_breadth_first_inplace(Transformer_T transformer, Tree<T> & xs_io)
+template <typename T, typename Visitor_T>
+inline void tree_visit_breadth_first(Visitor_T visitor, Tree<T> & xs_io)
 {
-    transformer(xs_io);
+    visitor(xs_io);
     for (auto & child : xs_io.children_)
-        tree_transform_leafs_breadth_first_inplace(transformer, child);
+        tree_visit_breadth_first(visitor, child);
 }
 
 
@@ -174,7 +174,7 @@ inline Tree<T> treeKeepIfAnyAncesterMatches(UnaryPredicate f, const Tree<T> & xs
         }
     };
 
-    tree_transform_leafs_breadth_first_inplace(
+    tree_visit_breadth_first(
         flagIfNodeOrAnyAncesterMatchPredicate, flaggedTree);
 
     auto filteredFlaggedTree = treeKeepIf([](auto v) { return v.flag; }, flaggedTree);
