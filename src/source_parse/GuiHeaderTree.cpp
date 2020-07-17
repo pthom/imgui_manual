@@ -1,4 +1,4 @@
-#include "imgui.h"
+#include "hello_imgui/hello_imgui.h"
 #include "GuiHeaderTree.h"
 
 namespace SourceParse
@@ -7,6 +7,7 @@ namespace SourceParse
 GuiHeaderTree::GuiHeaderTree(const LinesWithTags & linesWithTags)
 {
     mHeaderTree = makeHeaderTree(linesWithTags);
+    mFilteredHeaderTree = mHeaderTree;
 }
 
 ImGuiTreeNodeFlags makeTreeNodeFlags(bool isLeafNode, bool isSelected)
@@ -46,6 +47,11 @@ int GuiHeaderTree::guiImpl(int currentEditorLineNumber, const HeaderTree& header
 
     std::string title = lineWithTag.tag
                         + "##" + std::to_string(lineWithTag.lineNumber);
+
+    if (mExpandCollapseAction == ExpandCollapseAction::CollapseAll)
+        ImGui::SetNextItemOpen(false, ImGuiCond_Always);
+    if (mExpandCollapseAction == ExpandCollapseAction::ExpandAll)
+        ImGui::SetNextItemOpen(true, ImGuiCond_Always);
     bool node_open = ImGui::TreeNodeEx(title.c_str(), treeNodeFlags);
     if (ImGui::IsItemClicked())
         clickedLineNumber = lineWithTag.lineNumber;
@@ -77,7 +83,34 @@ int GuiHeaderTree::guiImpl(int currentEditorLineNumber, const HeaderTree& header
 // return a line number if the user selected a tag, returns -1 otherwise
 int GuiHeaderTree::gui(int currentEditorLineNumber)
 {
-    return guiImpl(currentEditorLineNumber, mHeaderTree);
+    ImGuiWindowFlags window_flags = 0;//ImGuiWindowFlags_None;
+//    window_flags |= ImGuiWindowFlags_MenuBar;
+//    window_flags |= ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar;
+    bool border = true;
+    ImVec2 guiSize(0, ImGui::GetWindowHeight() / 3.f);
+    ImGui::BeginChild("ChildR", guiSize, border, window_flags);
+
+    bool filterChanged = mFilter.Draw();
+    if (filterChanged)
+    {
+        auto lambdaPassFilter = [this](const LineWithTag& t) {
+            return mFilter.PassFilter(t.tag.c_str());
+        };
+        mFilteredHeaderTree = SourceParse::treeKeepIfAnyAncesterMatches(
+            lambdaPassFilter, mHeaderTree);
+    }
+    if (ImGui::Button(ICON_FA_PLUS_SQUARE "Expand all"))
+        mExpandCollapseAction = ExpandCollapseAction::ExpandAll;
+    ImGui::SameLine();
+    if (ImGui::Button(ICON_FA_MINUS_SQUARE "Collapse all"))
+        mExpandCollapseAction = ExpandCollapseAction::CollapseAll;
+
+    int r = guiImpl(currentEditorLineNumber, mFilteredHeaderTree);
+    mExpandCollapseAction = ExpandCollapseAction::NoAction;
+
+    ImGui::EndChild();
+
+    return r;
 }
 
 

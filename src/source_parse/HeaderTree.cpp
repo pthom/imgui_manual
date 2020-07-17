@@ -24,7 +24,7 @@ HeaderTree * searchParent(HeaderTree* headerTree, int siblingHeaderLevel)
 
 void makeHeaderTrees_Impl(
     std::deque<LineWithTag>& headerLinesStream,
-    HeaderTree& outHeaderTreeParent
+    HeaderTree* outHeaderTreeParent
 )
 {
     if (headerLinesStream.empty())
@@ -36,27 +36,27 @@ void makeHeaderTrees_Impl(
     HeaderTree *parent = nullptr;
     // Search for correct parent
     {
-        if (nextHeader.level > outHeaderTreeParent.value_.level)
+        if (nextHeader.level > outHeaderTreeParent->value_.level)
         {
             // Append child
-            parent = &outHeaderTreeParent;
+            parent = outHeaderTreeParent;
         }
-        else if (nextHeader.level == outHeaderTreeParent.value_.level)
+        else if (nextHeader.level == outHeaderTreeParent->value_.level)
         {
             // Create a new sibling tree
-            parent = outHeaderTreeParent.parent_;
+            parent = outHeaderTreeParent->parent_;
         }
         else // if (nextHeader.level < outHeaderTreeParent.value_.level)
         {
             // Search for parent by going up in the parents
-            parent = searchParent(&outHeaderTreeParent, nextHeader.level);
+            parent = searchParent(outHeaderTreeParent, nextHeader.level);
         }
     }
 
     assert(parent != nullptr);
     HeaderTree newTree({nextHeader, {}, parent});
     parent->children_.push_back(newTree);
-    HeaderTree& newTreeRef = parent->children_.back();
+    HeaderTree* newTreeRef = &(parent->children_.back());
     makeHeaderTrees_Impl(headerLinesStream, newTreeRef);
 }
 
@@ -67,9 +67,8 @@ HeaderTree makeHeaderTree(const LinesWithTags& linesWithTags, const LineWithTag&
         headerLinesStream.push_back(v);
 
     HeaderTree  treeTop { treeTopLeaf, {}, nullptr};
-    makeHeaderTrees_Impl(headerLinesStream, treeTop);
-
-    return  treeTop;
+    makeHeaderTrees_Impl(headerLinesStream, &treeTop); // argh treeTop is destroyed at exit!
+    return treeTop;
 }
 
 } // namespace SourceParse

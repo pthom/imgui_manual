@@ -1,5 +1,6 @@
 #pragma once
 #include "source_parse/HeaderTree.h"
+#include "imgui.h"
 
 namespace SourceParse
 {
@@ -16,6 +17,16 @@ namespace SourceParse
         int guiImpl(int currentEditorLineNumber, const HeaderTree& headerTree);
 
         HeaderTree mHeaderTree;
+        HeaderTree mFilteredHeaderTree;
+        ImGuiTextFilter mFilter;
+
+        enum class ExpandCollapseAction
+        {
+            ExpandAll,
+            CollapseAll,
+            NoAction
+        };
+        ExpandCollapseAction mExpandCollapseAction = ExpandCollapseAction::NoAction;
     };
 
 
