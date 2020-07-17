@@ -58,7 +58,7 @@ int GuiHeaderTree::guiImpl(int currentEditorLineNumber, const HeaderTree& header
 
     if (node_open && !isLeafNode)
     {
-        auto showChildrenNodes = [this, headerTree, currentEditorLineNumber]()
+        auto showChildrenNodes = [this, &headerTree, currentEditorLineNumber]()
         {
           int clickedLineNumber_Child = -1;
           for(const auto& headerTreeChild: headerTree.children_)
@@ -84,8 +84,6 @@ int GuiHeaderTree::guiImpl(int currentEditorLineNumber, const HeaderTree& header
 int GuiHeaderTree::gui(int currentEditorLineNumber)
 {
     ImGuiWindowFlags window_flags = 0;//ImGuiWindowFlags_None;
-//    window_flags |= ImGuiWindowFlags_MenuBar;
-//    window_flags |= ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_AlwaysHorizontalScrollbar;
     bool border = true;
     ImVec2 guiSize(0, ImGui::GetWindowHeight() / 3.f);
     ImGui::BeginChild("ChildR", guiSize, border, window_flags);
@@ -96,7 +94,7 @@ int GuiHeaderTree::gui(int currentEditorLineNumber)
         auto lambdaPassFilter = [this](const LineWithTag& t) {
             return mFilter.PassFilter(t.tag.c_str());
         };
-        mFilteredHeaderTree = SourceParse::treeKeepIfAnyAncesterMatches(
+        mFilteredHeaderTree = SourceParse::tree_keep_wholebranch_if(
             lambdaPassFilter, mHeaderTree);
     }
     if (ImGui::Button(ICON_FA_PLUS_SQUARE "Expand all"))
@@ -105,7 +103,7 @@ int GuiHeaderTree::gui(int currentEditorLineNumber)
     if (ImGui::Button(ICON_FA_MINUS_SQUARE "Collapse all"))
         mExpandCollapseAction = ExpandCollapseAction::CollapseAll;
 
-    int r = guiImpl(currentEditorLineNumber, mFilteredHeaderTree);
+    int r = guiImpl(currentEditorLineNumber, mHeaderTree);
     mExpandCollapseAction = ExpandCollapseAction::NoAction;
 
     ImGui::EndChild();

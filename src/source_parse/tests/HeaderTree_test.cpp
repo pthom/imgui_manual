@@ -43,7 +43,7 @@ TEST_CASE("makeHeaderTrees")
 )";
 
     auto sourceHeadersTree = SourceParse::makeHeaderTree(linesWithTags);
-    auto computed = std::string("\n") + showTree(sourceHeadersTree) + std::string("\n");
+    auto computed = std::string("\n") + tree_show(sourceHeadersTree) + std::string("\n");
     //std::cout << computed;
     CHECK(computed == expected);
 }
@@ -81,8 +81,8 @@ TEST_CASE("sortHeaderTrees")
     {
       return t2.lineNumber < t1.lineNumber;
     };
-    auto sourceHeadersTreesReversed = SourceParse::sortTree(fnComparator, sourceHeadersTrees);
-    auto computed = std::string("\n") + SourceParse::showTree(sourceHeadersTreesReversed) + std::string("\n");
+    auto sourceHeadersTreesReversed = SourceParse::tree_sort(fnComparator, sourceHeadersTrees);
+    auto computed = std::string("\n") + SourceParse::tree_show(sourceHeadersTreesReversed) + std::string("\n");
     //std::cout << computed;
     CHECK(computed == expected);
 }
@@ -108,7 +108,7 @@ TEST_CASE("badHierarchyTree")
 )";
 
     auto sourceHeadersTree = SourceParse::makeHeaderTree(linesWithTags);
-    auto computed = std::string("\n") + showTree(sourceHeadersTree) + std::string("\n");
+    auto computed = std::string("\n") + tree_show(sourceHeadersTree) + std::string("\n");
     //std::cout << computed;
     CHECK(computed == expected);
 }
