@@ -44,21 +44,26 @@ int GuiHeaderTree::guiImpl(int currentEditorLineNumber, const HeaderTree& header
     }
 
     ImGuiTreeNodeFlags treeNodeFlags = makeTreeNodeFlags(isLeafNode, isSelected);
-    if (isRootNode)
-        treeNodeFlags = ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Framed;
 
     std::string title = lineWithTag.tag
                         + "##" + std::to_string(lineWithTag.lineNumber);
 
     if (mExpandCollapseAction == ExpandCollapseAction::CollapseAll)
         ImGui::SetNextItemOpen(false, ImGuiCond_Always);
-    if (isRootNode || mExpandCollapseAction == ExpandCollapseAction::ExpandAll)
+    if (mExpandCollapseAction == ExpandCollapseAction::ExpandAll)
         ImGui::SetNextItemOpen(true, ImGuiCond_Always);
-    bool node_open = ImGui::TreeNodeEx(title.c_str(), treeNodeFlags);
-    if (ImGui::IsItemClicked())
-        clickedLineNumber = lineWithTag.lineNumber;
 
-    if (node_open && !isLeafNode)
+    bool isNodeOpen;
+    if (isRootNode)
+        isNodeOpen = true;
+    else
+    {
+        isNodeOpen = ImGui::TreeNodeEx(title.c_str(), treeNodeFlags);
+        if (ImGui::IsItemClicked())
+            clickedLineNumber = lineWithTag.lineNumber;
+    }
+
+    if (isNodeOpen && !isLeafNode)
     {
         auto showChildrenNodes = [this, &headerTree, currentEditorLineNumber]()
         {
@@ -75,7 +80,9 @@ int GuiHeaderTree::guiImpl(int currentEditorLineNumber, const HeaderTree& header
         int selectedChildLine = showChildrenNodes();
         if (selectedChildLine > 0)
             clickedLineNumber = selectedChildLine;
-        ImGui::TreePop();
+
+        if (!isRootNode)
+            ImGui::TreePop();
     }
     return clickedLineNumber;
 }
@@ -85,18 +92,48 @@ int GuiHeaderTree::guiImpl(int currentEditorLineNumber, const HeaderTree& header
 // return a line number if the user selected a tag, returns -1 otherwise
 int GuiHeaderTree::gui(int currentEditorLineNumber)
 {
-    ImGuiWindowFlags window_flags = 0;//ImGuiWindowFlags_None;
+    auto showExpandCollapseButtons = [this]() {
+        ImGui::SameLine();
+        if (ImGui::Button(ICON_FA_PLUS_SQUARE " Expand all"))
+            mExpandCollapseAction = ExpandCollapseAction::ExpandAll;
+        ImGui::SameLine();
+        if (ImGui::Button(ICON_FA_MINUS_SQUARE " Collapse all"))
+            mExpandCollapseAction = ExpandCollapseAction::CollapseAll;
+    };
+
+    ImGui::Checkbox("Show Table Of Content", &mShowToc);
+
+    if (!mShowToc)
+        return -1;
+
+    ImGuiWindowFlags window_flags = 0;
     bool border = true;
     ImVec2 guiSize(0, ImGui::GetWindowHeight() / 4.f);
     ImGui::BeginChild("ChildR", guiSize, border, window_flags);
 
-    if (ImGui::Button(ICON_FA_PLUS_SQUARE " Expand all"))
-        mExpandCollapseAction = ExpandCollapseAction::ExpandAll;
-    ImGui::SameLine();
-    if (ImGui::Button(ICON_FA_MINUS_SQUARE " Collapse all"))
-        mExpandCollapseAction = ExpandCollapseAction::CollapseAll;
+    bool showTooltip = false;
+    ImGui::TextDisabled("?"); ImGui::SameLine();
+    if (ImGui::IsItemHovered())
+        showTooltip = true;
+    if (showTooltip)
+    {
+        ImGui::BeginTooltip();
+        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
+        ImGui::TextUnformatted(
+            "Filter usage:[-excl],incl\n"
+            "For example:\n"
+            "   \"button\" will search for \"button\"\n"
+            "   \"-widget,button\" will search for \"button\" without \"widget\""
+        );
+        ImGui::PopTextWrapPos();
+        ImGui::EndTooltip();
+    }
+    ImGui::SetNextItemWidth(200.f);
+    bool filterChanged = mFilter.Draw("Filter usage:[-excl],incl");
 
-    bool filterChanged = mFilter.Draw("Filter Table of Content (inc,-exc)");
+    ImGui::SameLine();
+    showExpandCollapseButtons();
+
     if (filterChanged)
     {
         auto lambdaPassFilter = [this](const LineWithTag& t) {
@@ -105,6 +142,7 @@ int GuiHeaderTree::gui(int currentEditorLineNumber)
         mFilteredHeaderTree = SourceParse::tree_keep_wholebranch_if(
             lambdaPassFilter, mHeaderTree);
     }
+
 
     int r = guiImpl(currentEditorLineNumber, mFilteredHeaderTree, true);
     mExpandCollapseAction = ExpandCollapseAction::NoAction;

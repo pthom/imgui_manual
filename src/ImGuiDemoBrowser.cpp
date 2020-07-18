@@ -26,6 +26,7 @@ void implImGuiDemoCallbackDemoCallback(int line_number)
 ImGuiDemoBrowser::ImGuiDemoBrowser()
     : WindowWithEditor()
     , mAnnotatedSource(SourceParse::ReadImGuiDemoCode())
+    , mGuiHeaderTree(mAnnotatedSource.linesWithTags)
 {
     setEditorAnnotatedSource(mAnnotatedSource);
 
@@ -56,7 +57,7 @@ void ImGuiDemoBrowser::guiHelp()
         ImGui::TextWrapped("%s", help.c_str());
         //ImGui::SameLine();
         if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
-        showHelp = false;
+            showHelp = false;
     }
 }
 
@@ -83,6 +84,14 @@ void ImGuiDemoBrowser::guiGithubButton()
 
 void ImGuiDemoBrowser::guiDemoCodeTags()
 {
+    {
+        int currentEditorLineNumber = mEditor.GetCursorPosition().mLine;
+        int selectedLine = mGuiHeaderTree.gui(currentEditorLineNumber);
+        if (selectedLine >= 0)
+            mEditor.SetCursorPosition({selectedLine, 0}, 3);
+    }
+
+
     bool showTooltip = false;
     ImGui::Text("Search demos"); ImGui::SameLine();
     if (ImGui::IsItemHovered())

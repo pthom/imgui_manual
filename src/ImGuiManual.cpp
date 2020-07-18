@@ -126,8 +126,8 @@ int main(int, char **)
         runnerParams.dockingParams.dockableWindows = {
             dock_imguiDemoCode,
             dock_imguiDemoWindow,
-            dock_imGuiCppDocBrowser,
             dock_imGuiHeaderDocBrowser,
+            dock_imGuiCppDocBrowser,
             // dock_imguiReadme,
             dock_imguiCodeBrowser,
             dock_acknowledgments,

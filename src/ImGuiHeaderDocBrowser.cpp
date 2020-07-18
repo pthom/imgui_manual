@@ -4,6 +4,7 @@
 #include "imgui_utilities/HyperlinkHelper.h"
 #include "source_parse/ImGuiHeaderDocParser.h"
 #include "source_parse/Sources.h"
+#include "hello_imgui/hello_imgui.h"
 
 #include "ImGuiHeaderDocBrowser.h"
 
@@ -17,21 +18,22 @@ ImGuiHeaderDocBrowser::ImGuiHeaderDocBrowser()
 
 void ImGuiHeaderDocBrowser::gui()
 {
-    ImGui::Text("The doc for Dear ImGui is simply stored inside imgui.cpp");
+    static bool showHelp = true;
+    if (showHelp)
+    {
+        std::string help =
+            "imgui.h contains many useful advices. See the searchable table of content below (and for example, "
+            "search for \"docking\")";
+        ImGui::TextWrapped("%s", help.c_str());
+        if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
+            showHelp = false;
+    }
     guiTags();
-    RenderEditor("imgui.cpp", [this] { this->guiGithubButton(); });
+    RenderEditor("imgui.h", [this] { this->guiGithubButton(); });
 }
 
 void ImGuiHeaderDocBrowser::guiTags()
 {
-//    for (auto lineWithTag : mAnnotatedSource.linesWithTags)
-//    {
-//        if (lineWithTag.level == 1)
-//        {
-//            if (ImGuiExt::ClickableText(lineWithTag.tag.c_str()))
-//                mEditor.SetCursorPosition({lineWithTag.lineNumber, 0}, 3);
-//        }
-//    }
     int currentEditorLineNumber = mEditor.GetCursorPosition().mLine;
     int selectedLine = mGuiHeaderTree.gui(currentEditorLineNumber);
     if (selectedLine >= 0)

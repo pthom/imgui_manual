@@ -19,6 +19,7 @@ namespace SourceParse
         HeaderTree mHeaderTree;
         HeaderTree mFilteredHeaderTree;
         ImGuiTextFilter mFilter;
+        bool mShowToc = true;
 
         enum class ExpandCollapseAction
         {

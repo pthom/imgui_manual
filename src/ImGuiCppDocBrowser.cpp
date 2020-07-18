@@ -2,33 +2,38 @@
 
 #include "imgui_utilities/ImGuiExt.h"
 #include "imgui_utilities/HyperlinkHelper.h"
-
+#include "hello_imgui/hello_imgui.h"
 #include "ImGuiCppDocBrowser.h"
 
 ImGuiCppDocBrowser::ImGuiCppDocBrowser()
     : WindowWithEditor()
     , mAnnotatedSource(SourceParse::ReadImGuiCppDoc())
+    , mGuiHeaderTree(mAnnotatedSource.linesWithTags)
 {
     setEditorAnnotatedSource(mAnnotatedSource);
 }
 
 void ImGuiCppDocBrowser::gui()
 {
-    ImGui::Text("The doc for Dear ImGui is simply stored inside imgui.cpp");
+    static bool showHelp = true;
+    if (showHelp)
+    {
+        std::string help =
+            "imgui.cpp contains some useful Docs\n";
+        ImGui::TextWrapped("%s", help.c_str());
+        if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
+        showHelp = false;
+    }
     guiTags();
     RenderEditor("imgui.cpp", [this] { this->guiGithubButton(); });
 }
 
 void ImGuiCppDocBrowser::guiTags()
 {
-    for (auto lineWithTag : mAnnotatedSource.linesWithTags)
-    {
-        if (lineWithTag.level == 1)
-        {
-            if (ImGuiExt::ClickableText(lineWithTag.tag.c_str()))
-                mEditor.SetCursorPosition({lineWithTag.lineNumber, 0}, 3);
-        }
-    }
+    int currentEditorLineNumber = mEditor.GetCursorPosition().mLine;
+    int selectedLine = mGuiHeaderTree.gui(currentEditorLineNumber);
+    if (selectedLine >= 0)
+        mEditor.SetCursorPosition({selectedLine, 0}, 3);
 }
 
 void ImGuiCppDocBrowser::guiGithubButton()
