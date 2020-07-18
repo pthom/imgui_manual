@@ -14,19 +14,48 @@ struct HeaderLineInfo
 };
 HeaderLineInfo NotAHeader() { return {0, ""};}
 
-bool isLeftAlignedSingleLineComment(const NumberedLine & line)
+bool isEmptyLine(const NumberedLine & line)
 {
-    using namespace std::literals;
-    return fplus::is_prefix_of("//"s, line.second);
+    return fplus::trim_whitespace(line.second).empty();
 }
 
-bool isRightAlignedSingleLineComment(const NumberedLine & line)
+bool isTopCommentLine(const NumberedLine & line)
+{
+    using namespace std::literals;
+    return fplus::is_prefix_of("// "s, line.second);
+}
+
+bool isInnerCommentLine(const NumberedLine & line)
 {
   using namespace std::literals;
   const std::string& lineCode = line.second;
   if (! fplus::is_prefix_of("  "s, lineCode))
       return false;
   return fplus::is_prefix_of(std::string("//"), fplus::trim_whitespace_left(lineCode));
+}
+
+bool isTopHeaderDashes(const NumberedLine & line)
+{
+    std::string headerMark = "//------";
+    return fplus::is_prefix_of(headerMark, line.second);
+}
+
+bool isInnerHeaderDashes(const NumberedLine & line)
+{
+    using namespace std::literals;
+    std::string headerMark = "//------";
+    if (! fplus::is_prefix_of("  "s, line.second))
+        return false;
+    return fplus::is_prefix_of(headerMark, fplus::trim_whitespace_left(line.second));
+}
+
+bool isTopCommentOrHeaderDashes(const NumberedLine & line)
+{
+    return isTopCommentLine(line) || (isTopHeaderDashes(line));
+}
+bool isInnerCommentOrHeaderDashes(const NumberedLine & line)
+{
+    return isInnerCommentLine(line) || (isInnerHeaderDashes(line));
 }
 
 std::string cutStringBeforeParenthesis(const std::string& s)
@@ -45,7 +74,6 @@ std::string extractTitleFromCommentLine(const std::string& line)
 }
 
 
-std::string headerMark = "//------";
 
 
 // in imgui.h, H1 titles look like this:
@@ -61,19 +89,18 @@ HeaderLineInfo isH1Header(const NumberedLines& numberedLines, size_t idxLine)
   using namespace std::literals;
   std::string line = numberedLines[idxLine].second;
 
-  if (! isLeftAlignedSingleLineComment(numberedLines[idxLine]))
+  if (!isTopCommentLine(numberedLines[idxLine]))
       return NotAHeader();
   if (idxLine < 1)
       return NotAHeader();
-  if (! fplus::is_prefix_of(headerMark, numberedLines[idxLine - 1].second))
+  if (! isTopHeaderDashes(numberedLines[idxLine - 1]))
       return NotAHeader();
-  if ((idxLine > 2) && (isLeftAlignedSingleLineComment(numberedLines[idxLine - 2])))
+  if ((idxLine > 2) && (isTopCommentLine(numberedLines[idxLine - 2])))
       return NotAHeader();
   auto remainingLines = fplus::drop(idxLine, numberedLines);
-  auto followingCommentLines = fplus::take_while(isLeftAlignedSingleLineComment, remainingLines);
+  auto followingCommentLines = fplus::take_while(isTopCommentOrHeaderDashes, remainingLines);
   auto lastCommentLine = followingCommentLines.back();
-
-  bool isHeader = fplus::is_prefix_of(headerMark, lastCommentLine.second);
+  bool isHeader = isTopHeaderDashes(lastCommentLine);
   if (!isHeader)
       return NotAHeader();
 
@@ -83,19 +110,22 @@ HeaderLineInfo isH1Header(const NumberedLines& numberedLines, size_t idxLine)
 
 
 // H2 titles have 2 types:
-// Case 1: Several left aligned single line comments followed by a struct or enum
+// Case 1: Several left aligned single line comments (with an empty line before)
+// followed by a struct or enum
 //    -> title = struct or enum name
 //    See example below
 /*
+
 // Shared state of InputText(), passed as an argument to your callback when a ImGuiInputTextFlags_Callback* flag is used.
 // The callback function should return 0 by default.
 struct ImGuiInputTextCallbackData
 {
 */
-    // Case 2: Several left aligned single line comments
+    // Case 2: Several left aligned single line comments (with an empty line before)
     // -> title = first line, without parenthesis content
     //    See example below
 /*
+
 // Enums/Flags (declared as int for compatibility with old C++, to allow using as flags and to not pollute the top of this file)
 // - Tip: Use your programming IDE navigation facilities on the names in the _central column_ below to find the actual flags/enum lists!
 //   In Visual Studio IDE: CTRL+comma ("Edit.NavigateTo") can follow symbols in comments, whereas CTRL+F12 ("Edit.GoToImplementation") cannot.
@@ -107,31 +137,30 @@ HeaderLineInfo isH2Header(const NumberedLines& numberedLines, size_t idxLine)
     using namespace std::literals;
     std::string line = numberedLines[idxLine].second;
 
-    if (! isLeftAlignedSingleLineComment(numberedLines[idxLine]))
+    if (!isTopCommentLine(numberedLines[idxLine]))
         return NotAHeader();
-    if (fplus::is_prefix_of(headerMark, line))
+    if (isTopHeaderDashes(numberedLines[idxLine]))
         return NotAHeader();
     if (idxLine >= 1 )
     {
         auto previousLine = numberedLines[idxLine - 1];
-        if (isLeftAlignedSingleLineComment(previousLine))
-            return NotAHeader();
-        if (isRightAlignedSingleLineComment(previousLine))
+        if (!isEmptyLine(previousLine))
             return NotAHeader();
     }
 
     auto remainingLines = fplus::drop(idxLine, numberedLines);
-    auto followingCommentLines = fplus::take_while(isLeftAlignedSingleLineComment, remainingLines);
+    auto followingCommentLines = fplus::take_while(isTopCommentLine, remainingLines);
 
     std::string title = "";
     size_t nextSourceLineIdx = idxLine + followingCommentLines.size();
     // See if a struct or enum is defined after the comment lines
-    if (nextSourceLineIdx < numberedLines.size())
+    if (nextSourceLineIdx < numberedLines.size() - 1)
     {
       std::string nextSourceLine = numberedLines[nextSourceLineIdx].second;
-      if (fplus::is_prefix_of("struct "s, nextSourceLine))
+      std::string nextSourceLine2 = numberedLines[nextSourceLineIdx + 1].second;
+      if (fplus::is_prefix_of("struct "s, nextSourceLine) && fplus::is_prefix_of("{"s, nextSourceLine2))
           title = nextSourceLine;
-      if (fplus::is_prefix_of("enum "s, nextSourceLine))
+      if (fplus::is_prefix_of("enum "s, nextSourceLine) && fplus::is_prefix_of("{"s, nextSourceLine2))
           title = nextSourceLine;
     }
     if (title.empty())
@@ -144,28 +173,26 @@ HeaderLineInfo isH2Header(const NumberedLines& numberedLines, size_t idxLine)
 // H3 headers look like this (note the spacing at the beginning of lines; since we
 // are in a namespace or in a struct.
 /*
-//------------------------------------------------------------------
-// Configuration (fill once)                // Default value
-// Other lines...
-//------------------------------------------------------------------
+    //------------------------------------------------------------------
+    // Configuration (fill once)                // Default value
+    //------------------------------------------------------------------
 */
 HeaderLineInfo isH3Header(const NumberedLines& numberedLines, size_t idxLine)
 {
       std::string line = numberedLines[idxLine].second;
 
-      if (! isRightAlignedSingleLineComment(numberedLines[idxLine]))
+      if (!isInnerCommentLine(numberedLines[idxLine]))
           return NotAHeader();
-      std::string headerMarker = "//-----";
 
       if (idxLine < 1)
           return NotAHeader();
-      if (! fplus::is_prefix_of(headerMarker, fplus::trim_whitespace_left(numberedLines[idxLine - 1].second)))
+      if (! isInnerHeaderDashes(numberedLines[idxLine - 1]))
           return NotAHeader();
       auto remainingLines = fplus::drop(idxLine, numberedLines);
-      auto followingCommentLines = fplus::take_while(isRightAlignedSingleLineComment, remainingLines);
+      auto followingCommentLines = fplus::take_while(isInnerCommentLine, remainingLines);
       auto lastCommentLine = followingCommentLines.back();
 
-      bool isHeader = fplus::is_prefix_of(headerMarker, fplus::trim_whitespace_left(lastCommentLine.second));
+      bool isHeader = isInnerHeaderDashes(lastCommentLine);
       if (!isHeader)
           return NotAHeader();
 
@@ -174,22 +201,30 @@ HeaderLineInfo isH3Header(const NumberedLines& numberedLines, size_t idxLine)
 };
 
 
-// H4 headers look like this
+// H4 headers look like this (note the empty line before)
 /*
-// Arguments for the different callback events
-// - To modify the text buffer in a callback, prefer using the InsertChars() / DeleteChars() function. InsertChars() will take care of calling the resize callback if necessary.
-// - If you know your edits are not going to resize the underlying buffer allocation, you may modify the contents of 'Buf[]' directly. You need to update 'BufTextLen' accordingly (0 <= BufTextLen < BufSize) and set 'BufDirty'' to true so InputText can update its internal state.
+
+    // Arguments for the different callback events
+    // - To modify the text buffer in a callback, prefer using the InsertChars() / DeleteChars() function. InsertChars() will take care of calling the resize callback if necessary.
+    // - If you know your edits are not going to resize the underlying buffer allocation, you may modify the contents of 'Buf[]' directly. You need to update 'BufTextLen' accordingly (0 <= BufTextLen < BufSize) and set 'BufDirty'' to true so InputText can update its internal state.
 */
 HeaderLineInfo isH4Header(const NumberedLines& numberedLines, size_t idxLine)
 {
-    std::string line = numberedLines[idxLine].second;
+    const std::string& line = numberedLines[idxLine].second;
 
-    if (!isRightAlignedSingleLineComment(numberedLines[idxLine]))
+    if (!isInnerCommentLine(numberedLines[idxLine]))
       return NotAHeader();
     if (idxLine < 1)
       return NotAHeader();
-    if (isRightAlignedSingleLineComment(numberedLines[idxLine - 1]))
-      return NotAHeader();
+    //if (isInnerCommentLine(numberedLines[idxLine - 1]))
+      //return NotAHeader();
+    std::string trimmedPreviousLine = fplus::trim_whitespace(numberedLines[idxLine - 1].second);
+    if (!trimmedPreviousLine.empty())
+        return NotAHeader();
+
+    bool hasHeaderMark = isInnerHeaderDashes(numberedLines[idxLine]);
+    if (hasHeaderMark)
+        return NotAHeader();
 
     std::string title = fplus::drop(3, fplus::trim_whitespace_left(line));
     return {4, title};
@@ -225,27 +260,45 @@ LinesWithTags findImGuiHeaderDoc(const std::string &sourceCode)
     auto lines = fplus::split('\n', true, sourceCode);
     NumberedLines numberedLines = fplus::enumerate(lines);
 
-    // imgui.h file content becomes indexable after the first H1 titled "Header mess",
-    // which looks like this:
-/*
-//-----------------------------------------------------------------------------
-// Header mess
-//-----------------------------------------------------------------------------
-*/
+    // imgui.h file content becomes indexable after the first H1 title ("Header mess")
     NumberedLines indexableLines = fplus::drop_while(
-        [](const auto & line) { return  ! fplus::is_prefix_of("//----"s, line.second); },
+        [](const auto & line) { return  ! isTopHeaderDashes(line); },
         numberedLines
         );
+
+    auto cleanTitle = [](const HeaderLineInfo &headerLineInfo) {
+        // cut title after first sentence ends (i.e after '.', '?', '!')
+        std::string title = fplus::take_while(
+            [](auto c) {
+                return c != '.' && c != '!' && c != '?';
+            },
+            headerLineInfo.title);
+        title = fplus::trim_whitespace(title);
+        // remove after '(' except if the title is all in ()
+        if (!title.empty() && title[0] != '(')
+            title = fplus::take_while([](auto c) { return c != '('; }, title);
+
+        size_t maxTitleLength = 60;
+        if (title.size() > maxTitleLength)
+            title = fplus::take(maxTitleLength, title) + "...";
+
+        title = std::to_string(headerLineInfo.headerLevel) + "-"s + title;
+        return title;
+    };
 
     LinesWithTags linesWithTags;
     for (size_t i = 0; i < indexableLines.size(); ++i)
     {
         const auto & lineWithNumber = indexableLines[i];
+
         auto headerLineInfo = isHeader(indexableLines, i);
         if (headerLineInfo.headerLevel > 0)
         {
             int lineNumber = (int)lineWithNumber.first;
-            linesWithTags.push_back({ lineNumber, headerLineInfo.title, headerLineInfo.headerLevel});
+            linesWithTags.push_back({
+                lineNumber,
+                cleanTitle(headerLineInfo),
+                headerLineInfo.headerLevel});
         }
     }
     return linesWithTags;
