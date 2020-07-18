@@ -82,6 +82,8 @@ void RenderLongLinesOverlay(const std::string& currentCodeLine)
     }
 }
 
+void searchForTermInImGuiHeader(const std::string& search); // defined in ImGuiHeaderDocBrowser.cpp
+
 void WindowWithEditor::RenderEditor(const std::string &filename, VoidFunction additionalGui)
 {
     guiIconBar(additionalGui);
@@ -92,7 +94,25 @@ void WindowWithEditor::RenderEditor(const std::string &filename, VoidFunction ad
     ImGui::PushFont(gMonospaceFont);
     mEditor.Render(filename.c_str());
     ImGui::PopFont();
-}
+
+    if (ImGui::BeginPopupContextItem("item context menu"))
+    {
+        if (mEditor.GetSelectedText().empty())
+            ImGui::TextWrapped("Select some text in order to search for its documentation in imgui.h\n"
+                               "For example, if you select \"Button(\", you will be taken to its declaration\n"
+                               "and its documentation."
+                               );
+        else
+        {
+            std::string selectionShort = mEditor.GetSelectedText().size() < 30
+                  ? mEditor.GetSelectedText()
+                  : fplus::take(30, mEditor.GetSelectedText()) + "...";
+            std::string label = "Search for \"" + selectionShort + "\" in imgui.h";
+            if (ImGui::Button(label.c_str()))
+                searchForTermInImGuiHeader(mEditor.GetSelectedText());
+        }
+        ImGui::EndPopup();
+    }}
 
 void WindowWithEditor::guiStatusLine(const std::string &filename)
 {
@@ -171,7 +191,7 @@ void WindowWithEditor::guiFind()
                 },
                 linesToSearch);
             if (line_idx.is_just())
-                mEditor.SetCursorPosition({(int)line_idx.unsafe_get_just(), 0});
+                mEditor.SetCursorPosition({(int)line_idx.unsafe_get_just(), 0}, 3);
         }
         if (searchDown)
         {
@@ -183,7 +203,7 @@ void WindowWithEditor::guiFind()
                 },
                 linesToSearch);
             if (line_idx.is_just())
-                mEditor.SetCursorPosition({(int)line_idx.unsafe_get_just() + currentLine + 1, 0});
+                mEditor.SetCursorPosition({(int)line_idx.unsafe_get_just() + currentLine + 1, 0}, 3);
         }
     }
 
@@ -238,6 +258,24 @@ void WindowWithEditor::guiIconBar(VoidFunction additionalGui)
 
     ImGui::NewLine();
 }
+
+void WindowWithEditor::searchForFirstOccurence(const std::string& search)
+{
+    snprintf(mFilter.InputBuf, 256, "%s", search.c_str());
+    mFilter.Build();
+    const auto & lines = mEditor.GetTextLines();
+    mNbFindMatches = (int)fplus::count_if([this](auto s){ return mFilter.PassFilter(s.c_str());}, lines);
+
+    const auto &linesToSearch = mEditor.GetTextLines();
+    auto line_idx = fplus::find_first_idx_by(
+        [this](const std::string &line) {
+          return mFilter.PassFilter(line.c_str());
+        },
+        linesToSearch);
+    if (line_idx.is_just())
+        mEditor.SetCursorPosition({(int)line_idx.unsafe_get_just(), 0}, 3);
+}
+
 
 void menuEditorTheme()
 {

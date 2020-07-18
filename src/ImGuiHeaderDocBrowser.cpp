@@ -8,12 +8,15 @@
 
 #include "ImGuiHeaderDocBrowser.h"
 
+ImGuiHeaderDocBrowser * gInstance;
+
 ImGuiHeaderDocBrowser::ImGuiHeaderDocBrowser()
     : WindowWithEditor()
     , mAnnotatedSource(SourceParse::ReadImGuiHeaderDoc())
     , mGuiHeaderTree(mAnnotatedSource.linesWithTags)
 {
     setEditorAnnotatedSource(mAnnotatedSource);
+    gInstance = this;
 }
 
 void ImGuiHeaderDocBrowser::gui()
@@ -48,4 +51,15 @@ void ImGuiHeaderDocBrowser::guiGithubButton()
                           + std::to_string(mEditor.GetCursorPosition().mLine + 1);
         HyperlinkHelper::OpenUrl(url);
     }
+}
+
+void ImGuiHeaderDocBrowser::searchForTermInImGuiHeader(const std::string& search)
+{
+    searchForFirstOccurence(search);
+}
+
+
+void searchForTermInImGuiHeader(const std::string& search)
+{
+    gInstance->searchForTermInImGuiHeader(search);
 }

@@ -14,6 +14,8 @@ public:
     void setEditorAnnotatedSource(const SourceParse::AnnotatedSource &annotatedSource);
     void RenderEditor(const std::string& filename, VoidFunction additionalGui = {});
 
+    void searchForFirstOccurence(const std::string& search);
+
     TextEditor * _GetTextEditorPtr() { return &mEditor; }
 
 private:
