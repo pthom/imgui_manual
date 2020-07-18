@@ -9,6 +9,7 @@
 
 #include "hello_imgui/hello_imgui.h"
 
+
 int main(int, char **)
 {
     // Our gui providers for the different windows
@@ -157,7 +158,11 @@ int main(int, char **)
     };
 
     // Set the custom fonts
-    runnerParams.callbacks.LoadAdditionalFonts = MarkdownHelper::LoadFonts;
+    runnerParams.callbacks.LoadAdditionalFonts = []() {
+      HelloImGui::ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons();
+      LoadMonospaceFont();
+      MarkdownHelper::LoadFonts();
+    };
 
     // Ready, set, go!
     HelloImGui::Run(runnerParams);

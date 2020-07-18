@@ -5,6 +5,16 @@
 
 std::vector<TextEditor *> gAllEditors;
 
+ImFont * gMonospaceFont = nullptr;
+
+void LoadMonospaceFont()
+{
+    float fontSize = 14.f;
+    std::string fontFilename = "fonts/Inconsolata-Regular.ttf";
+    gMonospaceFont = HelloImGui::LoadFontTTF(fontFilename, fontSize);
+    // MergeFontAwesomeToLastFont(fontSize);
+}
+
 WindowWithEditor::WindowWithEditor()
 {
     mEditor.SetPalette(TextEditor::GetLightPalette());
@@ -21,11 +31,67 @@ void WindowWithEditor::setEditorAnnotatedSource(const SourceParse::AnnotatedSour
         lineNumbers.insert(line.lineNumber + 1);
     mEditor.SetBreakpoints(lineNumbers);
 }
+
+void RenderLongLinesOverlay(const std::string& currentCodeLine)
+{
+    using namespace std::literals;
+
+    std::string code, comment;
+    {
+        auto commentPosition = fplus::find_first_instance_of_token("//"s, currentCodeLine);
+        if (commentPosition.is_nothing())
+            code = currentCodeLine;
+        else
+        {
+            code = fplus::trim_whitespace(fplus::take(commentPosition.unsafe_get_just(), currentCodeLine));
+            comment = fplus::drop(commentPosition.unsafe_get_just() + 2, currentCodeLine);
+        }
+    }
+
+    ImGui::SetNextWindowBgAlpha(0.75f); // Transparent background
+    ImGuiWindowFlags window_flags =
+          ImGuiWindowFlags_NoDecoration
+        | ImGuiWindowFlags_NoDocking
+        | ImGuiWindowFlags_NoSavedSettings
+        | ImGuiWindowFlags_NoFocusOnAppearing
+        | ImGuiWindowFlags_NoNav;
+
+    ImVec2 commentOverlaySize(ImVec2(ImGui::GetWindowWidth(), 60.f));
+    ImGui::SetNextWindowSize( commentOverlaySize, ImGuiCond_Appearing );
+    ImGui::SetNextWindowPos(
+        ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x - commentOverlaySize.x,
+               ImGui::GetWindowPos().y + ImGui::GetWindowSize().y - commentOverlaySize.y),
+        ImGuiCond_Appearing
+        );
+
+    if (ImGui::Begin("Comment Overlay", nullptr, window_flags))
+    {
+        if (!code.empty())
+        {
+            ImGui::PushFont(gMonospaceFont);
+            ImGui::TextWrapped("%s", code.c_str());
+            ImGui::PopFont();
+        }
+        if (!comment.empty())
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6, 1., 0.6, 1.));
+            ImGui::TextWrapped("%s", comment.c_str());
+            ImGui::PopStyleColor();
+        }
+        ImGui::End();
+    }
+}
+
 void WindowWithEditor::RenderEditor(const std::string &filename, VoidFunction additionalGui)
 {
     guiIconBar(additionalGui);
     guiStatusLine(filename);
+    if (mShowLongLinesOverlay)
+        RenderLongLinesOverlay(mEditor.GetCurrentLineText());
+
+    ImGui::PushFont(gMonospaceFont);
     mEditor.Render(filename.c_str());
+    ImGui::PopFont();
 }
 
 void WindowWithEditor::guiStatusLine(const std::string &filename)
@@ -133,6 +199,13 @@ void WindowWithEditor::guiIconBar(VoidFunction additionalGui)
     if (ImGui::IsItemHovered())
         ImGui::SetTooltip("Enable editing this file");
     ImGui::SameLine();
+
+    if (ImGui::Checkbox(ICON_FA_BOOK, &mShowLongLinesOverlay))
+        editor.SetReadOnly(!canWrite);
+    if (ImGui::IsItemHovered())
+        ImGui::SetTooltip("Display wrapped line below the editor");
+    ImGui::SameLine();
+
     if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_UNDO, editor.CanUndo() && canWrite, "Undo", true))
         editor.Undo();
     if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_REDO, editor.CanRedo() && canWrite, "Redo", true))
