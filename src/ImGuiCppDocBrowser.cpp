@@ -1,9 +1,10 @@
 #include "source_parse/ImGuiRepoUrl.h"
 
-#include "imgui_utilities/ImGuiExt.h"
-#include "imgui_utilities/HyperlinkHelper.h"
-#include "hello_imgui/hello_imgui.h"
 #include "ImGuiCppDocBrowser.h"
+#include "hello_imgui/hello_imgui.h"
+#include "imgui_utilities/HyperlinkHelper.h"
+#include "imgui_utilities/ImGuiExt.h"
+#include "source_parse/ImGuiCodeParser.h"
 
 ImGuiCppDocBrowser::ImGuiCppDocBrowser()
     : WindowWithEditor()

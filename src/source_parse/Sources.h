@@ -44,8 +44,6 @@ std::vector<Library> acknowldegmentLibraries();
 
 
 Source ReadSource(const std::string sourcePath);
-AnnotatedSource ReadImGuiDemoCode();
-AnnotatedSource ReadImGuiCppDoc();
 
 inline std::ostream& operator<<(std::ostream& os, const SourceParse::LineWithTag& t)
 {

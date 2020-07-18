@@ -2,6 +2,8 @@
 
 #include "Sources.h"
 
-namespace SourceParse {
+namespace SourceParse
+{
     AnnotatedSource ReadImGuiHeaderDoc();
+    AnnotatedSource ReadImGuiCppDoc();
 }
