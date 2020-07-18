@@ -25,8 +25,8 @@ void ImGuiHeaderDocBrowser::gui()
     if (showHelp)
     {
         std::string help =
-            "imgui.h contains many useful advices. See the searchable table of content below (and for example, "
-            "search for \"docking\")";
+            "imgui.h contains the detailed doc for the different widgets and features.\n"
+            "See the searchable table of content below (and for example, search for \"docking\")";
         ImGui::TextWrapped("%s", help.c_str());
         if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
             showHelp = false;

@@ -20,7 +20,7 @@ void ImGuiCppDocBrowser::gui()
     if (showHelp)
     {
         std::string help =
-            "imgui.cpp contains some useful Docs\n";
+            "The high level doc for Dear ImGui is simply stored inside imgui.cpp\n";
         ImGui::TextWrapped("%s", help.c_str());
         if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
         showHelp = false;
