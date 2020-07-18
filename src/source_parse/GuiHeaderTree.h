@@ -13,6 +13,9 @@ namespace SourceParse
         // Show a tree gui with all the tags
         // return a line number if the user selected a tag, returns -1 otherwise
         int gui(int currentEditorLineNumber);
+
+        void setShowToc(bool v) { mShowToc = v; }
+
     private:
         int guiImpl(int currentEditorLineNumber, const HeaderTree& headerTree, bool isRootNode = false);
         void applyTocFilter();

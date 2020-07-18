@@ -29,6 +29,7 @@ ImGuiDemoBrowser::ImGuiDemoBrowser()
     , mAnnotatedSource(SourceParse::ReadImGuiDemoCode())
     , mGuiHeaderTree(mAnnotatedSource.linesWithTags)
 {
+    mGuiHeaderTree.setShowToc(false);
     setEditorAnnotatedSource(mAnnotatedSource);
 
     // Setup of imgui_demo.cpp's global callback
