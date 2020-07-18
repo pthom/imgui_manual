@@ -20,6 +20,8 @@ struct LineWithTag
 };
 using LinesWithTags = std::vector<LineWithTag>;
 
+using NumberedLine = std::pair<size_t, std::string>;
+using NumberedLines = std::vector<NumberedLine>;
 
 struct AnnotatedSource
 {

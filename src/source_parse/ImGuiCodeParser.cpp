@@ -10,8 +10,6 @@ namespace SourceParse {
 //    imgui.h parsing below
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
-using NumberedLine = std::pair<size_t, std::string>;
-using NumberedLines = std::vector<NumberedLine>;
 
 struct HeaderLineInfo
 {

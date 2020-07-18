@@ -56,7 +56,6 @@ void ImGuiDemoBrowser::guiHelp()
             "Click on the \"Code\" buttons to see their code and learn about them. \n"
             "Alternatively, you can also search for some features (try searching for \"widgets\", \"layout\", \"drag\", etc)";
         ImGui::TextWrapped("%s", help.c_str());
-        //ImGui::SameLine();
         if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
             showHelp = false;
     }
@@ -85,48 +84,8 @@ void ImGuiDemoBrowser::guiGithubButton()
 
 void ImGuiDemoBrowser::guiDemoCodeTags()
 {
-    {
-        int currentEditorLineNumber = mEditor.GetCursorPosition().mLine;
-        int selectedLine = mGuiHeaderTree.gui(currentEditorLineNumber);
-        if (selectedLine >= 0)
-            mEditor.SetCursorPosition({selectedLine, 0}, 3);
-    }
-
-
-    bool showTooltip = false;
-    ImGui::Text("Search demos"); ImGui::SameLine();
-    if (ImGui::IsItemHovered())
-        showTooltip = true;
-    ImGui::TextDisabled("?"); ImGui::SameLine();
-    if (ImGui::IsItemHovered())
-        showTooltip = true;
-    if (showTooltip)
-    {
-        ImGui::BeginTooltip();
-        ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-        ImGui::TextUnformatted(
-            "Filter usage:[-excl],incl\n"
-            "For example:\n"
-            "   \"button\" will search for \"button\"\n"
-            "   \"-widget,button\" will search for \"button\" without \"widget\""
-        );
-        ImGui::PopTextWrapPos();
-        ImGui::EndTooltip();
-    }
-
-    static ImGuiTextFilter filter;
-    filter.Draw();
-    if (strlen(filter.InputBuf) >= 3)
-    {
-        for (const auto & lineWithNote : mAnnotatedSource.linesWithTags)
-        {
-            if (filter.PassFilter(lineWithNote.tag.c_str()))
-            {
-                if (ImGui::SmallButton(lineWithNote.tag.c_str()))
-                    mEditor.SetCursorPosition({lineWithNote.lineNumber, 0}, 3);
-                ImGuiExt::SameLine_IfPossible(150.f);
-            }
-        }
-        ImGui::NewLine();
-    }
+    int currentEditorLineNumber = mEditor.GetCursorPosition().mLine;
+    int selectedLine = mGuiHeaderTree.gui(currentEditorLineNumber);
+    if (selectedLine >= 0)
+        mEditor.SetCursorPosition({selectedLine, 0}, 3);
 }
