@@ -28,7 +28,7 @@ ImGuiTreeNodeFlags makeTreeNodeFlags(bool isLeafNode, bool isSelected)
     return treeNodeFlags;
 }
 
-int GuiHeaderTree::guiImpl(int currentEditorLineNumber, const HeaderTree& headerTree)
+int GuiHeaderTree::guiImpl(int currentEditorLineNumber, const HeaderTree& headerTree, bool isRootNode)
 {
     using namespace std::literals;
 
@@ -44,13 +44,15 @@ int GuiHeaderTree::guiImpl(int currentEditorLineNumber, const HeaderTree& header
     }
 
     ImGuiTreeNodeFlags treeNodeFlags = makeTreeNodeFlags(isLeafNode, isSelected);
+    if (isRootNode)
+        treeNodeFlags = ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_SpanAvailWidth | ImGuiTreeNodeFlags_Framed;
 
     std::string title = lineWithTag.tag
                         + "##" + std::to_string(lineWithTag.lineNumber);
 
     if (mExpandCollapseAction == ExpandCollapseAction::CollapseAll)
         ImGui::SetNextItemOpen(false, ImGuiCond_Always);
-    if (mExpandCollapseAction == ExpandCollapseAction::ExpandAll)
+    if (isRootNode || mExpandCollapseAction == ExpandCollapseAction::ExpandAll)
         ImGui::SetNextItemOpen(true, ImGuiCond_Always);
     bool node_open = ImGui::TreeNodeEx(title.c_str(), treeNodeFlags);
     if (ImGui::IsItemClicked())
@@ -85,25 +87,26 @@ int GuiHeaderTree::gui(int currentEditorLineNumber)
 {
     ImGuiWindowFlags window_flags = 0;//ImGuiWindowFlags_None;
     bool border = true;
-    ImVec2 guiSize(0, ImGui::GetWindowHeight() / 3.f);
+    ImVec2 guiSize(0, ImGui::GetWindowHeight() / 4.f);
     ImGui::BeginChild("ChildR", guiSize, border, window_flags);
 
-    bool filterChanged = mFilter.Draw();
+    if (ImGui::Button(ICON_FA_PLUS_SQUARE " Expand all"))
+        mExpandCollapseAction = ExpandCollapseAction::ExpandAll;
+    ImGui::SameLine();
+    if (ImGui::Button(ICON_FA_MINUS_SQUARE " Collapse all"))
+        mExpandCollapseAction = ExpandCollapseAction::CollapseAll;
+
+    bool filterChanged = mFilter.Draw("Filter Table of Content (inc,-exc)");
     if (filterChanged)
     {
         auto lambdaPassFilter = [this](const LineWithTag& t) {
-            return mFilter.PassFilter(t.tag.c_str());
+          return mFilter.PassFilter(t.tag.c_str());
         };
         mFilteredHeaderTree = SourceParse::tree_keep_wholebranch_if(
             lambdaPassFilter, mHeaderTree);
     }
-    if (ImGui::Button(ICON_FA_PLUS_SQUARE "Expand all"))
-        mExpandCollapseAction = ExpandCollapseAction::ExpandAll;
-    ImGui::SameLine();
-    if (ImGui::Button(ICON_FA_MINUS_SQUARE "Collapse all"))
-        mExpandCollapseAction = ExpandCollapseAction::CollapseAll;
 
-    int r = guiImpl(currentEditorLineNumber, mFilteredHeaderTree);
+    int r = guiImpl(currentEditorLineNumber, mFilteredHeaderTree, true);
     mExpandCollapseAction = ExpandCollapseAction::NoAction;
 
     ImGui::EndChild();

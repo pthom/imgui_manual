@@ -282,7 +282,7 @@ LinesWithTags findImGuiHeaderDoc(const std::string &sourceCode)
         if (title.size() > maxTitleLength)
             title = fplus::take(maxTitleLength, title) + "...";
 
-        title = std::to_string(headerLineInfo.headerLevel) + "-"s + title;
+        // title = std::to_string(headerLineInfo.headerLevel) + "-"s + title;
         return title;
     };
 

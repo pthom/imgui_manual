@@ -9,7 +9,7 @@ namespace SourceParse
 
     HeaderTree makeHeaderTree(
         const LinesWithTags& linesWithTags,
-        const LineWithTag& treeTopLeaf = { -1, "TOC", -1} );
+        const LineWithTag& treeTopLeaf = { -1, "Table Of Content", -1} );
 
 } // namespace SourceParse
 

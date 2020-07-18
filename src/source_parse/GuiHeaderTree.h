@@ -14,7 +14,7 @@ namespace SourceParse
         // return a line number if the user selected a tag, returns -1 otherwise
         int gui(int currentEditorLineNumber);
     private:
-        int guiImpl(int currentEditorLineNumber, const HeaderTree& headerTree);
+        int guiImpl(int currentEditorLineNumber, const HeaderTree& headerTree, bool isRootNode = false);
 
         HeaderTree mHeaderTree;
         HeaderTree mFilteredHeaderTree;
