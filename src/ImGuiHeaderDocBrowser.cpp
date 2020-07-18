@@ -45,7 +45,7 @@ void ImGuiHeaderDocBrowser::guiGithubButton()
     if (ImGui::SmallButton("View on github at this line"))
     {
         std::string url = ImGuiRepoUrl() + "imgui.h#L"
-                          + std::to_string(mEditor.GetCursorPosition().mLine);
+                          + std::to_string(mEditor.GetCursorPosition().mLine + 1);
         HyperlinkHelper::OpenUrl(url);
     }
 }
