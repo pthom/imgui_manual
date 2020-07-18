@@ -15,6 +15,9 @@ namespace SourceParse
         int gui(int currentEditorLineNumber);
     private:
         int guiImpl(int currentEditorLineNumber, const HeaderTree& headerTree, bool isRootNode = false);
+        void applyTocFilter();
+        void showExpandCollapseButtons();
+        void showCommandLine();
 
         HeaderTree mHeaderTree;
         HeaderTree mFilteredHeaderTree;

@@ -87,30 +87,17 @@ int GuiHeaderTree::guiImpl(int currentEditorLineNumber, const HeaderTree& header
     return clickedLineNumber;
 }
 
-
-// Show a tree gui with all the tags
-// return a line number if the user selected a tag, returns -1 otherwise
-int GuiHeaderTree::gui(int currentEditorLineNumber)
+bool DrawImGuiTextFilterWithTooltip(
+    ImGuiTextFilter &imGuiTextFilter,
+    const std::string &tooltipText =
+        "Filter usage:[-excl],incl\n"
+        "For example:\n"
+        "   \"button\" will search for \"button\"\n"
+        "   \"-widget,button\" will search for \"button\" without \"widget\"",
+    const std::string& filterLabel =
+        "Filter usage:[-excl],incl"
+    )
 {
-    auto showExpandCollapseButtons = [this]() {
-        ImGui::SameLine();
-        if (ImGui::Button(ICON_FA_PLUS_SQUARE " Expand all"))
-            mExpandCollapseAction = ExpandCollapseAction::ExpandAll;
-        ImGui::SameLine();
-        if (ImGui::Button(ICON_FA_MINUS_SQUARE " Collapse all"))
-            mExpandCollapseAction = ExpandCollapseAction::CollapseAll;
-    };
-
-    ImGui::Checkbox("Show Table Of Content", &mShowToc);
-
-    if (!mShowToc)
-        return -1;
-
-    ImGuiWindowFlags window_flags = 0;
-    bool border = true;
-    ImVec2 guiSize(0, ImGui::GetWindowHeight() / 4.f);
-    ImGui::BeginChild("ChildR", guiSize, border, window_flags);
-
     bool showTooltip = false;
     ImGui::TextDisabled("?"); ImGui::SameLine();
     if (ImGui::IsItemHovered())
@@ -119,39 +106,66 @@ int GuiHeaderTree::gui(int currentEditorLineNumber)
     {
         ImGui::BeginTooltip();
         ImGui::PushTextWrapPos(ImGui::GetFontSize() * 35.0f);
-        ImGui::TextUnformatted(
-            "Filter usage:[-excl],incl\n"
-            "For example:\n"
-            "   \"button\" will search for \"button\"\n"
-            "   \"-widget,button\" will search for \"button\" without \"widget\""
-        );
+        ImGui::TextUnformatted(tooltipText.c_str());
         ImGui::PopTextWrapPos();
         ImGui::EndTooltip();
     }
     ImGui::SetNextItemWidth(200.f);
-    bool filterChanged = mFilter.Draw("Filter usage:[-excl],incl");
-
-    ImGui::SameLine();
-    showExpandCollapseButtons();
-
-    if (filterChanged)
-    {
-        auto lambdaPassFilter = [this](const LineWithTag& t) {
-          return mFilter.PassFilter(t.tag.c_str());
-        };
-        mFilteredHeaderTree = SourceParse::tree_keep_wholebranch_if(
-            lambdaPassFilter, mHeaderTree);
-    }
-
-
-    int r = guiImpl(currentEditorLineNumber, mFilteredHeaderTree, true);
-    mExpandCollapseAction = ExpandCollapseAction::NoAction;
-
-    ImGui::EndChild();
-
-    return r;
+    return imGuiTextFilter.Draw(filterLabel.c_str());
 }
 
+
+// Show a tree gui with all the tags
+// return a line number if the user selected a tag, returns -1 otherwise
+int GuiHeaderTree::gui(int currentEditorLineNumber)
+{
+    ImGui::Checkbox("Show Table Of Content", &mShowToc);
+    if (!mShowToc)
+        return -1;
+
+    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
+    bool border = true;
+    ImVec2 guiSize(0, ImGui::GetWindowHeight() / 4.f);
+    ImGui::BeginChild("ChildR", guiSize, border, window_flags);
+        ImGui::BeginMenuBar();
+            showCommandLine();
+        ImGui::EndMenuBar();
+
+        int lineNumber = guiImpl(currentEditorLineNumber, mFilteredHeaderTree, true);
+    ImGui::EndChild();
+
+    mExpandCollapseAction = ExpandCollapseAction::NoAction;
+
+    return lineNumber;
+}
+
+void GuiHeaderTree::showCommandLine()
+{
+    ImGui::Text("Table Of Contents");
+    ImGui::SameLine();
+    if (DrawImGuiTextFilterWithTooltip(mFilter))
+        applyTocFilter();
+    ImGui::SameLine();
+    showExpandCollapseButtons();
+}
+
+void GuiHeaderTree::showExpandCollapseButtons()
+{
+    if (ImGui::Button(ICON_FA_PLUS_SQUARE " Expand all"))
+        mExpandCollapseAction = ExpandCollapseAction::ExpandAll;
+    ImGui::SameLine();
+    if (ImGui::Button(ICON_FA_MINUS_SQUARE " Collapse all"))
+        mExpandCollapseAction = ExpandCollapseAction::CollapseAll;
+}
+
+void GuiHeaderTree::applyTocFilter()
+{
+    auto lambdaPassFilter = [this](const LineWithTag& t) {
+      return mFilter.PassFilter(t.tag.c_str());
+    };
+    mFilteredHeaderTree = tree_keep_wholebranch_if(
+        lambdaPassFilter, mHeaderTree);
+}
 
 
 } // namespace SourceParse
