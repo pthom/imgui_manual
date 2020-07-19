@@ -15,6 +15,7 @@ tasks:
             source ./tools/gitpod/gitpod_emsdk_set_env.sh
             mkdir build_emscripten
             cd build_emscripten
+            cp ../tools/gitpod/index.build_emscripten.html index.html
             emcmake cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
             make -j 4
             /workspace/imgui_manual/tools/gitpod/gitpod_help.sh
@@ -22,4 +23,4 @@ tasks:
 
 ports:
   - port: 8000
-    # onOpen: open-browser
+    onOpen: open-preview

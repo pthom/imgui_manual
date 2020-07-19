@@ -1,0 +1,42 @@
+
+<h4>Welcome to the interactive playground.</h4>
+<br/>
+This interactive playground uses emscripten: all the C++ code is compiled into javascript, so that you
+can test everything from the browser.
+<br/><br/>
+At the bottom, of the window, you will see 3 terminals
+
+<ul>
+    <li/> A terminal named "http.server": it runs a web server on the port 8000.
+    The text you are reading (i.e this text) is located on a page of this web server.
+    <li/> A terminal named "main": use it to run any command
+    <li/> A terminal name "build": the code should have already started to build automatically in this terminal.
+</ul>
+
+Wait until the build is finished (the first build takes about 1 minute) and you will then be able to run:
+
+<ul>
+    <li/> The imgui manual at <a href="src/imgui_manual.html" target="_blank">src/imgui_manual.html</a>
+    <li/> All the examples in the <a href="playground/" target="_blank">playground folder</a>
+</ul>
+
+<h4>How to use the playground</h4>
+
+You can quickly add a new program by adding a new cpp file in the playground/ folder.
+For example:
+<pre>
+    cp playground/button.cpp playground/my_test.cpp
+</pre>
+
+Then edit this file and add any code you wish.
+After adding a new cpp file, just run cmake, so that your new file gets discovered:
+<pre>
+    cmake .
+</pre>
+
+And then compile it:
+<pre>
+    make
+</pre>
+
+After the build, your program should be visible in the <a href="playground/" target="_blank"> build playground folder</a>
