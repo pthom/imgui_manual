@@ -1,0 +1,8 @@
+{
+   "cpp.buildConfigurations": [
+      {
+         "name": "Debug",
+         "directory": "/workspace/imgui_manual/build_emscripten"
+      }
+   ],
+}
