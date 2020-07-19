@@ -17,10 +17,12 @@
 // And  gEditorImGuiDemo is a global reference to the text editor
 // used by this callback
 TextEditor *gEditorImGuiDemo = nullptr;
+extern HelloImGui::RunnerParams runnerParams; // defined in ImGuiManual.cpp
 void implImGuiDemoCallbackDemoCallback(int line_number)
 {
     int cursorLineOnPage = 3;
     gEditorImGuiDemo->SetCursorPosition({line_number, 0}, cursorLineOnPage);
+    runnerParams.dockingParams.focusDockableWindow("ImGui - Demo Code");
 }
 
 
