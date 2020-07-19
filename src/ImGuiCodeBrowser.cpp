@@ -5,7 +5,7 @@
 
 
 ImGuiCodeBrowser::ImGuiCodeBrowser()
-    : mLibrariesCodeBrowser(SourceParse::imguiLibrary(), "imgui/imgui.h")
+    : mLibrariesCodeBrowser("ImGuiCodeBrowser", SourceParse::imguiLibrary(), "imgui/imgui.h")
 {
 }
 

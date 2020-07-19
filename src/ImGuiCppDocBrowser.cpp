@@ -7,7 +7,7 @@
 #include "source_parse/ImGuiCodeParser.h"
 
 ImGuiCppDocBrowser::ImGuiCppDocBrowser()
-    : WindowWithEditor()
+    : WindowWithEditor("imgui.cpp - Doc")
     , mAnnotatedSource(SourceParse::ReadImGuiCppDoc())
     , mGuiHeaderTree(mAnnotatedSource.linesWithTags)
 {

@@ -5,7 +5,7 @@
 #include "Acknowledgments.h"
 
 Acknowledgments::Acknowledgments()
-    : mLibrariesCodeBrowser(SourceParse::acknowldegmentLibraries(), "")
+    : mLibrariesCodeBrowser("Acknowledgments", SourceParse::acknowldegmentLibraries(), "")
 {
 }
 

@@ -9,7 +9,6 @@ class ImGuiHeaderDocBrowser: public WindowWithEditor
 public:
     ImGuiHeaderDocBrowser();
     void gui();
-    void searchForTermInImGuiHeader(const std::string& search);
 private:
     void guiTags();
     void guiGithubButton();
@@ -17,5 +16,3 @@ private:
     SourceParse::AnnotatedSource mAnnotatedSource;
     SourceParse::GuiHeaderTree mGuiHeaderTree;
 };
-
-void searchForTermInImGuiHeader(const std::string& search);

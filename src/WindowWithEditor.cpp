@@ -1,9 +1,11 @@
+#include "imgui_utilities/ImGuiExt.h"
 #include "hello_imgui.h"
 #include <fplus/fplus.hpp>
-#include "imgui_utilities/ImGuiExt.h"
+#include <map>
 #include "WindowWithEditor.h"
 
 std::vector<TextEditor *> gAllEditors;
+std::vector<WindowWithEditor *> gAllWindowWithEditors;
 
 ImFont * gMonospaceFont = nullptr;
 
@@ -15,12 +17,14 @@ void LoadMonospaceFont()
     // MergeFontAwesomeToLastFont(fontSize);
 }
 
-WindowWithEditor::WindowWithEditor()
+WindowWithEditor::WindowWithEditor(const std::string& windowLabel)
+    : mWindowLabel(windowLabel)
 {
     mEditor.SetPalette(TextEditor::GetLightPalette());
     mEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
     mEditor.SetReadOnly(true);
     gAllEditors.push_back(&mEditor);
+    gAllWindowWithEditors.push_back(this);
 }
 
 void WindowWithEditor::setEditorAnnotatedSource(const SourceParse::AnnotatedSource &annotatedSource)
@@ -82,8 +86,6 @@ void RenderLongLinesOverlay(const std::string& currentCodeLine)
     }
 }
 
-void searchForTermInImGuiHeader(const std::string& search); // defined in ImGuiHeaderDocBrowser.cpp
-
 void WindowWithEditor::RenderEditor(const std::string &filename, VoidFunction additionalGui)
 {
     guiIconBar(additionalGui);
@@ -94,25 +96,36 @@ void WindowWithEditor::RenderEditor(const std::string &filename, VoidFunction ad
     ImGui::PushFont(gMonospaceFont);
     mEditor.Render(filename.c_str());
     ImGui::PopFont();
+    editorContextMenu();
+}
 
+void WindowWithEditor::editorContextMenu()
+{
+    if (mEditor.GetSelectedText().empty())
+        return;
     if (ImGui::BeginPopupContextItem("item context menu"))
     {
-        if (mEditor.GetSelectedText().empty())
-            ImGui::TextWrapped("Select some text in order to search for its documentation in imgui.h\n"
-                               "For example, if you select \"Button(\", you will be taken to its declaration\n"
-                               "and its documentation."
-                               );
-        else
+        std::map<std::string, std::string> fileAndEditorWindowName
+            {
+                {"imgui.h", "imgui.h - Doc"},
+                // {"imgui.cpp", "imgui.cpp - Doc"},
+                {"imgui_demo.cpp", "ImGui - Demo Code"}
+            };
+
+        std::string selectionShort = mEditor.GetSelectedText();
+        if (selectionShort.size() > 30)
+            selectionShort = fplus::take(30, selectionShort) + "...";
+
+        for (const auto& kv: fileAndEditorWindowName)
         {
-            std::string selectionShort = mEditor.GetSelectedText().size() < 30
-                  ? mEditor.GetSelectedText()
-                  : fplus::take(30, mEditor.GetSelectedText()) + "...";
-            std::string label = "Search for \"" + selectionShort + "\" in imgui.h";
-            if (ImGui::Button(label.c_str()))
-                searchForTermInImGuiHeader(mEditor.GetSelectedText());
+            std::string label = "Search for \"" + selectionShort + "\" in " + kv.first;
+            if (ImGui::Selectable(label.c_str()))
+                WindowWithEditor::searchForFirstOccurenceAndFocusWindow(
+                    mEditor.GetSelectedText(), kv.second);
         }
         ImGui::EndPopup();
-    }}
+    }
+}
 
 void WindowWithEditor::guiStatusLine(const std::string &filename)
 {
@@ -274,6 +287,24 @@ void WindowWithEditor::searchForFirstOccurence(const std::string& search)
         linesToSearch);
     if (line_idx.is_just())
         mEditor.SetCursorPosition({(int)line_idx.unsafe_get_just(), 0}, 3);
+}
+
+extern HelloImGui::RunnerParams runnerParams; // defined in ImGuiManual.cpp
+
+void WindowWithEditor::searchForFirstOccurenceAndFocusWindow(
+    const std::string& search,
+    const std::string& windowName
+)
+{
+    for (auto windowWithEditor: gAllWindowWithEditors)
+    {
+        if (windowWithEditor->windowLabel() == windowName)
+        {
+            windowWithEditor->searchForFirstOccurence(search);
+            runnerParams.dockingParams.focusDockableWindow(windowName);
+        }
+    }
+
 }
 
 

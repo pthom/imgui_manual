@@ -11,7 +11,7 @@
 ImGuiHeaderDocBrowser * gInstance;
 
 ImGuiHeaderDocBrowser::ImGuiHeaderDocBrowser()
-    : WindowWithEditor()
+    : WindowWithEditor("imgui.h - Doc")
     , mAnnotatedSource(SourceParse::ReadImGuiHeaderDoc())
     , mGuiHeaderTree(mAnnotatedSource.linesWithTags)
 {
@@ -51,15 +51,4 @@ void ImGuiHeaderDocBrowser::guiGithubButton()
                           + std::to_string(mEditor.GetCursorPosition().mLine + 1);
         HyperlinkHelper::OpenUrl(url);
     }
-}
-
-void ImGuiHeaderDocBrowser::searchForTermInImGuiHeader(const std::string& search)
-{
-    searchForFirstOccurence(search);
-}
-
-
-void searchForTermInImGuiHeader(const std::string& search)
-{
-    gInstance->searchForTermInImGuiHeader(search);
 }

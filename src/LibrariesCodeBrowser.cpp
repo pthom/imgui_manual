@@ -12,9 +12,10 @@ void DrawImage_FixedWith(const HelloImGui::ImageGlPtr& image, float width)
 }
 
 LibrariesCodeBrowser::LibrariesCodeBrowser(
+    const std::string & windowName,
     const std::vector<SourceParse::Library> &librarySources,
     std::string currentSourcePath)
-        : WindowWithEditor()
+        : WindowWithEditor(windowName)
         , mLibraries(librarySources)
 {
     if (!currentSourcePath.empty())

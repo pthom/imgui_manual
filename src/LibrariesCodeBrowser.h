@@ -9,6 +9,7 @@ class LibrariesCodeBrowser: public WindowWithEditor
 {
 public:
     LibrariesCodeBrowser(
+        const std::string & windowName,
         const std::vector<SourceParse::Library>& librarySources,
         std::string currentSourcePath
     );

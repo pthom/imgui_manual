@@ -4,7 +4,7 @@
 #include "AboutWindow.h"
 
 AboutWindow::AboutWindow()
-    : mLibrariesCodeBrowser(SourceParse::imguiManualLibrary(), "imgui_manual/ImGuiManual.cpp")
+    : mLibrariesCodeBrowser("AboutWindow", SourceParse::imguiManualLibrary(), "imgui_manual/ImGuiManual.cpp")
 {
 }
 

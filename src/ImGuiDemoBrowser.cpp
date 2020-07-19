@@ -25,7 +25,7 @@ void implImGuiDemoCallbackDemoCallback(int line_number)
 
 
 ImGuiDemoBrowser::ImGuiDemoBrowser()
-    : WindowWithEditor()
+    : WindowWithEditor("ImGui - Demo Code")
     , mAnnotatedSource(SourceParse::ReadImGuiDemoCode())
     , mGuiHeaderTree(mAnnotatedSource.linesWithTags)
 {

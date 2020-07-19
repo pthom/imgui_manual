@@ -9,6 +9,7 @@
 
 #include "hello_imgui/hello_imgui.h"
 
+HelloImGui::RunnerParams runnerParams;
 
 int main(int, char **)
 {
@@ -25,7 +26,6 @@ int main(int, char **)
     // Below, we will define all our application parameters and callbacks
     // before starting it.
     //
-    HelloImGui::RunnerParams runnerParams;
 
     // App window params
     runnerParams.appWindowParams.windowTitle = "ImGui Manual";
@@ -63,7 +63,7 @@ int main(int, char **)
 
         HelloImGui::DockableWindow dock_imguiDemoCode;
         {
-            dock_imguiDemoCode.label = "ImGui - Demo Code";
+            dock_imguiDemoCode.label = imGuiDemoBrowser.windowLabel();
             dock_imguiDemoCode.dockSpaceName = "CodeSpace";// This window goes into "CodeSpace"
             dock_imguiDemoCode.isVisible = true;
             dock_imguiDemoCode.GuiFonction = [&imGuiDemoBrowser] { imGuiDemoBrowser.gui(); };
@@ -72,15 +72,15 @@ int main(int, char **)
 
         HelloImGui::DockableWindow dock_imGuiCppDocBrowser;
         {
-            dock_imGuiCppDocBrowser.label = "imgui.cpp - Doc";
+            dock_imGuiCppDocBrowser.label = imGuiCppDocBrowser.windowLabel();
             dock_imGuiCppDocBrowser.dockSpaceName = "CodeSpace";
-            dock_imGuiCppDocBrowser.isVisible = true;
+            dock_imGuiCppDocBrowser.isVisible = false;
             dock_imGuiCppDocBrowser.GuiFonction = [&imGuiCppDocBrowser] { imGuiCppDocBrowser.gui(); };
         };
 
         HelloImGui::DockableWindow dock_imGuiHeaderDocBrowser;
         {
-            dock_imGuiHeaderDocBrowser.label = "imgui.h - Doc";
+            dock_imGuiHeaderDocBrowser.label = imGuiHeaderDocBrowser.windowLabel();
             dock_imGuiHeaderDocBrowser.dockSpaceName = "CodeSpace";
             dock_imGuiHeaderDocBrowser.isVisible = true;
             dock_imGuiHeaderDocBrowser.GuiFonction = [&imGuiHeaderDocBrowser] { imGuiHeaderDocBrowser.gui(); };
@@ -135,7 +135,7 @@ int main(int, char **)
     }
 
     // Set the app menu
-    runnerParams.callbacks.ShowMenus = [&runnerParams]{
+    runnerParams.callbacks.ShowMenus = []{
         menuTheme();
 
         HelloImGui::DockableWindow *aboutWindow =
