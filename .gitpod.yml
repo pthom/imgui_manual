@@ -1,0 +1,25 @@
+image:
+  file: tools/gitpod/gitpod.Dockerfile
+
+tasks:
+  - command: |
+            echo "Server Terminal"
+            sleep 5
+            cd build_emscripten
+            python -m http.server
+    name: http server
+  - command: echo "Main Terminal - You are in the top folder of the repository"
+    name: main
+  - command: |
+            echo "Build Terminal"
+            source ./tools/gitpod/gitpod_emsdk_set_env.sh
+            mkdir build_emscripten
+            cd build_emscripten
+            emcmake cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+            make -j 4
+            /workspace/imgui_manual/tools/gitpod/gitpod_help.sh
+    name: build
+
+ports:
+  - port: 8000
+    # onOpen: open-browser
