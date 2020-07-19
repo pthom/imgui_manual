@@ -2,3 +2,4 @@ build/
 build_*/
 cmake-build*/
 .idea/
+imgui_manual_online/

@@ -2,16 +2,9 @@
 
 Source for an online interactive manual for [Dear ImGui](https://github.com/ocornut/imgui).
 
-The manual is online: just click on the image below to open it!
+The manual is available online at https://pthom.github.io/imgui_manual_online.
 
-[![ImGui Manual](doc/images/link_manual.png)](https://traineq.org/imgui_manual/src/imgui_manual.html)
-
-The videos below gives a quick (2 minutes) introduction:
-
-| Introduction Video | Code navigation |
-|--------------------|-----------------|
-|[![Introduction Video](doc/images/link_youtube_demo.png)](https://www.youtube.com/watch?v=MJ5jgoPPjH4)| [![Navigation Video](doc/images/link_youtube_demo_nav.png)](https://www.youtube.com/watch?v=5jHilwGNSmA&feature=youtu.be)|
-
+[![ImGui Manual](doc/images/link_manual.png)](https://pthom.github.io/imgui_manual_online)
 
 ---
 This interactive manual was developed using [Hello ImGui](https://github.com/pthom/hello_imgui), which provided the emscripten port, as well as the assets embedding and image loading. [ImGuiManual.cpp](src/ImGuiManual.cpp) gives a good overview of [Hello Imgui API](https://github.com/pthom/hello_imgui/blob/master/src/hello_imgui/hello_imgui_api.md).
