@@ -6,7 +6,7 @@ The manual is online: just click on the image below to open it!
 
 [![ImGui Manual](doc/images/link_manual.png)](https://traineq.org/imgui_manual/src/imgui_manual.html)
 
-__The videos below gives a quick (2 minutes) introduction:__
+The videos below gives a quick (2 minutes) introduction:
 
 | Introduction Video | Code navigation |
 |--------------------|-----------------|
