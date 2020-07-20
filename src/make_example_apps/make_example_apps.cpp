@@ -4,7 +4,7 @@
 
 // make_example_apps is an exe called by cmake that  will populate
 // the folder playground/ExampleApps with the example apps from imgui_demo.cpp
-// it will thus create 13 cpp files there (which are git ignored)
+// it will thus create 13 cpp files there
 using namespace SourceParse;
 using namespace std::literals;
 
