@@ -11,7 +11,6 @@
 
 #include "ImGuiDemoBrowser.h"
 
-
 // implImGuiDemoCallbackDemoCallback is the implementation
 // of imgui_demo.cpp's global callback (gImGuiDemoCallback)
 // And  gEditorImGuiDemo is a global reference to the text editor
@@ -57,8 +56,8 @@ void ImGuiDemoBrowser::guiHelp()
             "This is the code of imgui_demo.cpp. It is the best way to learn about Dear ImGui! \n"
             "On the left, you can see a demo that showcases all the widgets and features of ImGui: "
             "Click on the \"Code\" buttons to see their code and learn about them. \n"
-            "Alternatively, you can also search for some features (try searching for \"widgets\", \"layout\", \"drag\", etc)";
-        ImGui::TextWrapped("%s", help.c_str());
+            "Alternatively, you can also search for some features (try searching for \"widgets\", \"layout\", \"drag\", etc)\n";
+        MarkdownHelper::Markdown(help);
         if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
             showHelp = false;
     }
