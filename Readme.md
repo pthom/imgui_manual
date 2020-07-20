@@ -49,9 +49,14 @@ Launch a web server
 python3 -m http.server
 ````
 
-Then, browse to http://localhost:8000/src/implot_demo.html
+Then, browse to http://localhost:8000/src/imgui_manual.html
 
 ### Build instructions on desktop (linux, MacOS, Windows)
+
+Init the submodules:
+````
+git submodule update --init --recursive
+````
 
 Install third parties via vcpkg (SDL)
 ````
@@ -68,7 +73,7 @@ cmake .. -DCMAKE_TOOLCHAIN_FILE=../external/hello_imgui/vcpkg/scripts/buildsyste
 Build and run
 ````
 make -j 4
-./src/implot_demo
+./src/imgui_manual
 ````
 
 ---
