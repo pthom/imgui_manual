@@ -1,8 +1,9 @@
 {
    "cpp.buildConfigurations": [
-      {
-         "name": "Debug",
-         "directory": "/workspace/imgui_manual/build_emscripten"
-      }
-   ],
+    {
+        "name": "Debug",
+        "directory": "/workspace/imgui_manual/build_emscripten"
+    }
+],
+"cpp.clangdArgs": "--compile-commands-dir=/workspace/imgui_manual/build_emscripten",
 }
