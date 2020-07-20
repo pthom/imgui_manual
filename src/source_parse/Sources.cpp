@@ -130,16 +130,13 @@ std::vector<Library> acknowldegmentLibraries()
 }
 
 
-
-
-
-Source ReadSource(const std::string sourcePath)
+SourceFile ReadSource(const std::string sourcePath)
 {
     std::string assetPath = std::string("code/") + sourcePath;
     auto assetData = HelloImGui::LoadAssetFileData(assetPath.c_str());
     assert(assetData.data != nullptr);
 
-    Source r;
+    SourceFile r;
     r.sourcePath = sourcePath;
     r.sourceCode = std::string((const char *) assetData.data);
     HelloImGui::FreeAssetFileData(&assetData);

@@ -19,5 +19,5 @@ private:
 
     std::vector<SourceParse::Library> mLibraries;
     std::unordered_map<std::string, HelloImGui::ImageGlPtr> mTextureCache;
-    SourceParse::Source mCurrentSource;
+    SourceParse::SourceFile mCurrentSource;
 };

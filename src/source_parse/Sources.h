@@ -4,12 +4,17 @@
 #include <map>
 #include <ostream>
 
+
 namespace SourceParse
 {
-struct Source
+using SourceCode = std::string;
+using SourcePath = std::string;
+using LibraryFolderPath = std::string;
+
+struct SourceFile
 {
-    std::string sourcePath;
-    std::string sourceCode;
+    SourcePath sourcePath;
+    SourceCode sourceCode;
 };
 
 struct LineWithTag
@@ -25,17 +30,17 @@ using NumberedLines = std::vector<NumberedLine>;
 
 struct AnnotatedSource
 {
-    Source source;
+    SourceFile source;
     LinesWithTags linesWithTags;
 };
 
 struct Library
 {
-    std::string path;
+    LibraryFolderPath path;
     std::string name;
     std::string url;
     std::string shortDoc; // markdown
-    std::vector<std::string> sourcePaths;
+    std::vector<SourcePath> sourcePaths;
 };
 
 std::vector<Library> imguiLibrary();
@@ -45,7 +50,7 @@ std::vector<Library> otherLibraries();
 std::vector<Library> acknowldegmentLibraries();
 
 
-Source ReadSource(const std::string sourcePath);
+SourceFile ReadSource(const std::string sourcePath);
 
 inline std::ostream& operator<<(std::ostream& os, const SourceParse::LineWithTag& t)
 {

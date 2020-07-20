@@ -12,5 +12,5 @@ public:
         MarkdownHelper::Markdown(mSource.sourceCode);
     }
 private:
-    SourceParse::Source mSource;
+    SourceParse::SourceFile mSource;
 };
