@@ -1,5 +1,4 @@
 #include "Common_ExampleApp.h"
-#include "playground.h"
 
 // The code below was copy-pasted verbatim from imgui_demo.cpp
 // Do not edit!!!

@@ -1,4 +1,10 @@
 #include "imgui.h"
+#include "hello_imgui/hello_imgui.h"
+
+void Playground();
+
+#define DemoCode(x)
+#define DemoCode_(x)
 
 // Helpers macros
 // We normally try to not use many helpers in imgui_demo.cpp in order to make code easier to copy and paste,
@@ -31,4 +37,13 @@ static void HelpMarker(const char* desc)
         ImGui::PopTextWrapPos();
         ImGui::EndTooltip();
     }
+}
+
+
+int main(int, char **)
+{
+    HelloImGui::RunnerParams params;
+    params.imGuiWindowParams.defaultImGuiWindowType = HelloImGui::DefaultImGuiWindowType::NoDefaultWindow;
+    params.callbacks.ShowGui = Playground;
+    HelloImGui::Run(params);
 }
