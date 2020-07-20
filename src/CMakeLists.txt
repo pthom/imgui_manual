@@ -9,6 +9,7 @@ set(doctest_dir ${CMAKE_CURRENT_LIST_DIR}/../external/doctest/include)
 
 add_subdirectory(imgui_utilities)
 add_subdirectory(source_parse)
+add_subdirectory(make_example_apps)
 
 FILE(GLOB sources_imgui_manual
     ${CMAKE_CURRENT_LIST_DIR}/*.h

@@ -10,5 +10,6 @@ endfunction()
 file(CREATE_LINK ${CMAKE_BINARY_DIR}/src/assets ${CMAKE_CURRENT_BINARY_DIR}/assets SYMBOLIC)
 
 add_one_cpp_test(ImGuiHeaderDocParser_test.cpp)
+add_one_cpp_test(ImGuiDemoParser_test.cpp)
 add_one_cpp_test(HeaderTree_test.cpp)
 add_one_cpp_test(Tree_test.cpp)
