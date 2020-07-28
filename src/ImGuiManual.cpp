@@ -8,6 +8,7 @@
 #include "MenuTheme.h"
 
 #include "hello_imgui/hello_imgui.h"
+#include "JsClipboardTricks.h"
 
 HelloImGui::RunnerParams runnerParams;
 
@@ -164,7 +165,14 @@ int main(int, char **)
       MarkdownHelper::LoadFonts();
     };
 
+
     // Ready, set, go!
+#ifdef IMGUIMANUAL_CLIPBOARD_IMPORT_FROM_BROWSER
+    sapp_add_js_hook_clipboard();
+#endif
+
     HelloImGui::Run(runnerParams);
     return 0;
 }
+
+

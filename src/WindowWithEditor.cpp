@@ -3,6 +3,7 @@
 #include <fplus/fplus.hpp>
 #include <map>
 #include "WindowWithEditor.h"
+#include "JsClipboardTricks.h"
 
 std::vector<TextEditor *> gAllEditors;
 std::vector<WindowWithEditor *> gAllWindowWithEditors;
@@ -86,6 +87,34 @@ void RenderLongLinesOverlay(const std::string& currentCodeLine)
     }
 }
 
+#ifdef __EMSCRIPTEN__
+void WindowWithEditor::handleJsClipboardShortcuts()
+{
+  //if (!ImGui::IsItemFocused())
+  //    return;
+
+  ImGuiIO& io = ImGui::GetIO();
+  auto shift = io.KeyShift;
+  auto ctrl = io.ConfigMacOSXBehaviors ? io.KeySuper : io.KeyCtrl;
+  auto alt = io.ConfigMacOSXBehaviors ? io.KeyCtrl : io.KeyAlt;
+
+  bool shallFillBrowserClipboard = false;
+  if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Insert)))
+      shallFillBrowserClipboard = true;
+  else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_C)))
+      shallFillBrowserClipboard = true;
+  else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_X)))
+      shallFillBrowserClipboard = true;
+  else if (!ctrl && shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete)))
+      shallFillBrowserClipboard = true;
+
+  #ifdef IMGUIMANUAL_CLIPBOARD_EXPORT_TO_BROWSER
+  if (shallFillBrowserClipboard)
+      JsClipboard_SetClipboardText(mEditor.GetSelectedText().c_str());
+  #endif
+}
+#endif // #ifdef __EMSCRIPTEN__
+
 void WindowWithEditor::RenderEditor(const std::string &filename, VoidFunction additionalGui)
 {
     guiIconBar(additionalGui);
@@ -95,6 +124,9 @@ void WindowWithEditor::RenderEditor(const std::string &filename, VoidFunction ad
 
     ImGui::PushFont(gMonospaceFont);
     mEditor.Render(filename.c_str());
+#ifdef __EMSCRIPTEN__
+    handleJsClipboardShortcuts();
+#endif
     ImGui::PopFont();
     editorContextMenu();
 }
@@ -244,9 +276,19 @@ void WindowWithEditor::guiIconBar(VoidFunction additionalGui)
     if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_REDO, editor.CanRedo() && canWrite, "Redo", true))
         editor.Redo();
     if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_COPY, editor.HasSelection(), "Copy", true))
+    {
         editor.Copy();
+        #ifdef IMGUIMANUAL_CLIPBOARD_EXPORT_TO_BROWSER
+        JsClipboard_SetClipboardText(ImGui::GetClipboardText());
+        #endif
+    }
     if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_CUT, editor.HasSelection() && canWrite, "Cut", true))
-        editor.Cut();
+    {
+      editor.Cut();
+      #ifdef IMGUIMANUAL_CLIPBOARD_EXPORT_TO_BROWSER
+      JsClipboard_SetClipboardText(ImGui::GetClipboardText());
+      #endif
+    }
     if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_PASTE, (ImGui::GetClipboardText() != nullptr)  && canWrite, "Paste", true))
         editor.Paste();
 
