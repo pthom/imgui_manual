@@ -165,7 +165,6 @@ int main(int, char **)
       MarkdownHelper::LoadFonts();
     };
 
-
     // Ready, set, go!
 #ifdef IMGUIMANUAL_CLIPBOARD_IMPORT_FROM_BROWSER
     sapp_add_js_hook_clipboard();
