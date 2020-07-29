@@ -79,7 +79,7 @@ void RenderLongLinesOverlay(const std::string& currentCodeLine)
         }
         if (!comment.empty())
         {
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6, 1., 0.6, 1.));
+            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 1.f, 0.6f, 1.f));
             ImGui::TextWrapped("%s", comment.c_str());
             ImGui::PopStyleColor();
         }

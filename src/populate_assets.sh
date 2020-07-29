@@ -30,7 +30,7 @@ if [ ! -d ImGuiColorTextEdit ]; then
   mkdir ImGuiColorTextEdit
 fi
 cd ImGuiColorTextEdit
-cp -f $EXTERNAL_DIR/ImGuiColorTextEdit/* .
+cp -f $EXTERNAL_DIR/ImGuiColorTextEdit/*.* .
 cd ..
 
 
@@ -57,7 +57,7 @@ if [ ! -d imgui ]; then
   mkdir imgui
 fi
 cd imgui
-cp $IMGUI_DIR/* .
+cp $IMGUI_DIR/*.* .
 cp $IMGUI_DIR/docs/README.md .
 cp $IMGUI_DIR/docs/FAQ.md .
 cd ..

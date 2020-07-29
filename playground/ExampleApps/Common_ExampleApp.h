@@ -46,4 +46,5 @@ int main(int, char **)
     params.imGuiWindowParams.defaultImGuiWindowType = HelloImGui::DefaultImGuiWindowType::NoDefaultWindow;
     params.callbacks.ShowGui = Playground;
     HelloImGui::Run(params);
+    return 0;
 }
