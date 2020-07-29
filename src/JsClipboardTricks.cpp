@@ -68,9 +68,14 @@ extern "C"
 #ifdef IMGUIMANUAL_CLIPBOARD_EXPORT_TO_BROWSER
     void JsClipboard_SetClipboardText(const char* str)
     {
-    #ifdef __EMSCRIPTEN__
         sapp_js_write_clipboard(str);
-    #endif
+    }
+#endif
+
+#ifdef IMGUIMANUAL_CLIPBOARD_IMPORT_FROM_BROWSER
+    void JsClipboard_AddJsHook()
+    {
+        sapp_add_js_hook_clipboard();
     }
 #endif
 

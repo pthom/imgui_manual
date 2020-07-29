@@ -167,7 +167,7 @@ int main(int, char **)
 
     // Ready, set, go!
 #ifdef IMGUIMANUAL_CLIPBOARD_IMPORT_FROM_BROWSER
-    sapp_add_js_hook_clipboard();
+    JsClipboard_AddJsHook();
 #endif
 
     HelloImGui::Run(runnerParams);
