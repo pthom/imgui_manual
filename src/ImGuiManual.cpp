@@ -174,5 +174,3 @@ int main(int, char **)
     HelloImGui::Run(runnerParams);
     return 0;
 }
-
-
