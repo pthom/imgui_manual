@@ -4,12 +4,14 @@
 #include "hello_imgui/hello_imgui.h"
 #include <fplus/fplus.hpp>
 
+#ifdef HELLOIMGUI_HAS_OPENGL
 void DrawImage_FixedWith(const HelloImGui::ImageGlPtr& image, float width)
 {
     float ratio = width / image->imageSize.x;
     ImVec2 size(image->imageSize.x * ratio, image->imageSize.y * ratio);
     ImGui::Image(image->imTextureId, size);
 }
+#endif
 
 LibrariesCodeBrowser::LibrariesCodeBrowser(
     const std::string & windowName,
@@ -33,6 +35,7 @@ void LibrariesCodeBrowser::gui()
         MarkdownHelper::Markdown(mCurrentSource.sourceCode);
     else if (fplus::is_suffix_of(std::string(".png"), sourcePath))
     {
+#ifdef HELLOIMGUI_HAS_OPENGL
         if (mTextureCache.find(sourcePath) == mTextureCache.end())
         {
             std::string assetPath = std::string("code/") + sourcePath.c_str();
@@ -40,6 +43,7 @@ void LibrariesCodeBrowser::gui()
         }
 
         DrawImage_FixedWith(mTextureCache[sourcePath], ImGui::GetWindowSize().x - 30.f);
+#endif
     }
     else
         RenderEditor(mCurrentSource.sourcePath.c_str());

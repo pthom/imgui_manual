@@ -10,10 +10,10 @@
 #include "hello_imgui/hello_imgui.h"
 #include "JsClipboardTricks.h"
 
-HelloImGui::RunnerParams runnerParams;
-
-int main(int, char **)
+struct AppContext
 {
+    HelloImGui::RunnerParams runnerParams;
+
     // Our gui providers for the different windows
     ImGuiDemoBrowser imGuiDemoBrowser;
     ImGuiCppDocBrowser imGuiCppDocBrowser;
@@ -22,28 +22,35 @@ int main(int, char **)
     ImGuiReadmeBrowser imGuiReadmeBrowser;
     Acknowledgments acknowledgments;
     AboutWindow aboutWindow;
+};
 
+AppContext gAppContext;
+HelloImGui::RunnerParams * gRunnerParams = &gAppContext.runnerParams;
+
+
+void prepareAppContext()
+{
     //
     // Below, we will define all our application parameters and callbacks
     // before starting it.
     //
 
     // App window params
-    runnerParams.appWindowParams.windowTitle = "ImGui Manual";
-    runnerParams.appWindowParams.windowSize = { 1200, 800};
+    gRunnerParams->appWindowParams.windowTitle = "ImGui Manual";
+    gRunnerParams->appWindowParams.windowSize = { 1200, 800};
 
     // ImGui window params
-    runnerParams.imGuiWindowParams.defaultImGuiWindowType =
+    gRunnerParams->imGuiWindowParams.defaultImGuiWindowType =
             HelloImGui::DefaultImGuiWindowType::ProvideFullScreenDockSpace;
-    runnerParams.imGuiWindowParams.showMenuBar = true;
-    runnerParams.imGuiWindowParams.showStatusBar = true;
+    gRunnerParams->imGuiWindowParams.showMenuBar = true;
+    gRunnerParams->imGuiWindowParams.showStatusBar = true;
 
     // Split the screen in two parts (two "DockSpaces")
     // This will split the preexisting default dockspace "MainDockSpace"
     // in two parts:
     // "MainDockSpace" will be on the left, "CodeSpace" will be on the right
     // and occupy 65% of the app width.
-    runnerParams.dockingParams.dockingSplits = {
+    gRunnerParams->dockingParams.dockingSplits = {
         { "MainDockSpace", "CodeSpace", ImGuiDir_Right, 0.65f },
     };
 
@@ -56,7 +63,8 @@ int main(int, char **)
             dock_imguiDemoWindow.label = "Dear ImGui Demo";
             dock_imguiDemoWindow.dockSpaceName = "MainDockSpace";// This window goes into "MainDockSpace"
             dock_imguiDemoWindow.GuiFonction = [&dock_imguiDemoWindow] {
-                if (dock_imguiDemoWindow.isVisible)
+                bool isVisible = gRunnerParams->dockingParams.dockableWindowOfName("Dear ImGui Demo")->isVisible;
+                if (isVisible)
                     ImGui::ShowDemoWindow(nullptr);
             };
             dock_imguiDemoWindow.callBeginEnd = false;
@@ -64,27 +72,27 @@ int main(int, char **)
 
         HelloImGui::DockableWindow dock_imguiDemoCode;
         {
-            dock_imguiDemoCode.label = imGuiDemoBrowser.windowLabel();
+            dock_imguiDemoCode.label = gAppContext.imGuiDemoBrowser.windowLabel();
             dock_imguiDemoCode.dockSpaceName = "CodeSpace";// This window goes into "CodeSpace"
             dock_imguiDemoCode.isVisible = true;
-            dock_imguiDemoCode.GuiFonction = [&imGuiDemoBrowser] { imGuiDemoBrowser.gui(); };
+            dock_imguiDemoCode.GuiFonction = [] { gAppContext.imGuiDemoBrowser.gui(); };
             dock_imguiDemoCode.imGuiWindowFlags = ImGuiWindowFlags_HorizontalScrollbar;
         };
 
         HelloImGui::DockableWindow dock_imGuiCppDocBrowser;
         {
-            dock_imGuiCppDocBrowser.label = imGuiCppDocBrowser.windowLabel();
+            dock_imGuiCppDocBrowser.label = gAppContext.imGuiCppDocBrowser.windowLabel();
             dock_imGuiCppDocBrowser.dockSpaceName = "CodeSpace";
             dock_imGuiCppDocBrowser.isVisible = false;
-            dock_imGuiCppDocBrowser.GuiFonction = [&imGuiCppDocBrowser] { imGuiCppDocBrowser.gui(); };
+            dock_imGuiCppDocBrowser.GuiFonction = [] { gAppContext.imGuiCppDocBrowser.gui(); };
         };
 
         HelloImGui::DockableWindow dock_imGuiHeaderDocBrowser;
         {
-            dock_imGuiHeaderDocBrowser.label = imGuiHeaderDocBrowser.windowLabel();
+            dock_imGuiHeaderDocBrowser.label = gAppContext.imGuiHeaderDocBrowser.windowLabel();
             dock_imGuiHeaderDocBrowser.dockSpaceName = "CodeSpace";
             dock_imGuiHeaderDocBrowser.isVisible = true;
-            dock_imGuiHeaderDocBrowser.GuiFonction = [&imGuiHeaderDocBrowser] { imGuiHeaderDocBrowser.gui(); };
+            dock_imGuiHeaderDocBrowser.GuiFonction = [] { gAppContext.imGuiHeaderDocBrowser.gui(); };
         };
 
         HelloImGui::DockableWindow dock_imguiReadme;
@@ -92,7 +100,7 @@ int main(int, char **)
             dock_imguiReadme.label = "ImGui - Readme";
             dock_imguiReadme.dockSpaceName = "CodeSpace";
             dock_imguiReadme.isVisible = false;
-            dock_imguiReadme.GuiFonction = [&imGuiReadmeBrowser] { imGuiReadmeBrowser.gui(); };
+            dock_imguiReadme.GuiFonction = [] { gAppContext.imGuiReadmeBrowser.gui(); };
         };
 
         HelloImGui::DockableWindow dock_imguiCodeBrowser;
@@ -100,7 +108,7 @@ int main(int, char **)
             dock_imguiCodeBrowser.label = "ImGui - Code";
             dock_imguiCodeBrowser.dockSpaceName = "CodeSpace";
             dock_imguiCodeBrowser.isVisible = false;
-            dock_imguiCodeBrowser.GuiFonction = [&imGuiCodeBrowser] { imGuiCodeBrowser.gui(); };
+            dock_imguiCodeBrowser.GuiFonction = [] { gAppContext.imGuiCodeBrowser.gui(); };
         };
 
         HelloImGui::DockableWindow dock_acknowledgments;
@@ -109,7 +117,7 @@ int main(int, char **)
             dock_acknowledgments.dockSpaceName = "CodeSpace";
             dock_acknowledgments.isVisible = false;
             dock_acknowledgments.includeInViewMenu = false;
-            dock_acknowledgments.GuiFonction = [&acknowledgments] { acknowledgments.gui(); };
+            dock_acknowledgments.GuiFonction = [] { gAppContext.acknowledgments.gui(); };
         };
 
         HelloImGui::DockableWindow dock_about;
@@ -118,13 +126,13 @@ int main(int, char **)
             dock_about.dockSpaceName = "CodeSpace";
             dock_about.isVisible = false;
             dock_about.includeInViewMenu = false;
-            dock_about.GuiFonction = [&aboutWindow] { aboutWindow.gui(); };
+            dock_about.GuiFonction = [] { gAppContext.aboutWindow.gui(); };
         };
 
         //
         // Set our app dockable windows list
         //
-        runnerParams.dockingParams.dockableWindows = {
+        gRunnerParams->dockingParams.dockableWindows = {
             dock_imguiDemoCode,
             dock_imguiDemoWindow,
             dock_imGuiHeaderDocBrowser,
@@ -136,13 +144,13 @@ int main(int, char **)
     }
 
     // Set the app menu
-    runnerParams.callbacks.ShowMenus = []{
+    gRunnerParams->callbacks.ShowMenus = []{
         menuTheme();
 
         HelloImGui::DockableWindow *aboutWindow =
-            runnerParams.dockingParams.dockableWindowOfName("About this manual");
+            gRunnerParams->dockingParams.dockableWindowOfName("About this manual");
           HelloImGui::DockableWindow *acknowledgmentWindow =
-              runnerParams.dockingParams.dockableWindowOfName("Acknowledgments");
+              gRunnerParams->dockingParams.dockableWindowOfName("Acknowledgments");
         if (aboutWindow && ImGui::BeginMenu("About"))
         {
             if (ImGui::MenuItem("About this manual"))
@@ -154,22 +162,40 @@ int main(int, char **)
     };
 
     // Add some widgets in the status bar
-    runnerParams.callbacks.ShowStatus = [] {
+    gRunnerParams->callbacks.ShowStatus = [] {
         MarkdownHelper::Markdown("Dear ImGui Manual - [Repository](https://github.com/pthom/imgui_manual)");
     };
 
     // Set the custom fonts
-    runnerParams.callbacks.LoadAdditionalFonts = []() {
+    gRunnerParams->callbacks.LoadAdditionalFonts = []() {
       HelloImGui::ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons();
       LoadMonospaceFont();
       MarkdownHelper::LoadFonts();
     };
 
-    // Ready, set, go!
 #ifdef IMGUIMANUAL_CLIPBOARD_IMPORT_FROM_BROWSER
     JsClipboard_AddJsHook();
 #endif
+}
 
-    HelloImGui::Run(runnerParams);
+
+#ifdef HELLOIMGUI_USE_SOKOL
+
+#include "hello_imgui/sokol/hello_imgui_sokol.h"
+
+sapp_desc sokol_main(int argc, char* argv[])
+{
+    prepareAppContext();
+    return HelloImGui::Sokol::make_sapp_desc(gAppContext.runnerParams);
+}
+
+#else
+
+int main(int, char **)
+{
+    prepareAppContext();
+    HelloImGui::Run(gAppContext.runnerParams);
     return 0;
 }
+
+#endif

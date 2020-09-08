@@ -23,7 +23,10 @@ if (IMGUI_MANUAL_BUILD_TESTS)
     enable_testing()
 endif()
 
-set(HELLOIMGUI_USE_SDL_OPENGL3 ON CACHE STRING "" FORCE)
+if (NOT HELLOIMGUI_USE_SOKOL)
+    set(HELLOIMGUI_USE_SDL_OPENGL3 ON CACHE STRING "" FORCE)
+endif()
+
 add_subdirectory(external/hello_imgui)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${HELLOIMGUI_BASEPATH}/hello_imgui_cmake)
 if (EMSCRIPTEN)

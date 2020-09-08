@@ -18,6 +18,8 @@ private:
     bool guiSelectLibrarySource();
 
     std::vector<SourceParse::Library> mLibraries;
+#ifdef HELLOIMGUI_HAS_OPENGL
     std::unordered_map<std::string, HelloImGui::ImageGlPtr> mTextureCache;
+#endif
     SourceParse::SourceFile mCurrentSource;
 };

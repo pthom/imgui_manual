@@ -331,7 +331,7 @@ void WindowWithEditor::searchForFirstOccurence(const std::string& search)
         mEditor.SetCursorPosition({(int)line_idx.unsafe_get_just(), 0}, 3);
 }
 
-extern HelloImGui::RunnerParams runnerParams; // defined in ImGuiManual.cpp
+extern HelloImGui::RunnerParams* gRunnerParams; // defined in ImGuiManual.cpp
 
 void WindowWithEditor::searchForFirstOccurenceAndFocusWindow(
     const std::string& search,
@@ -343,7 +343,7 @@ void WindowWithEditor::searchForFirstOccurenceAndFocusWindow(
         if (windowWithEditor->windowLabel() == windowName)
         {
             windowWithEditor->searchForFirstOccurence(search);
-            runnerParams.dockingParams.focusDockableWindow(windowName);
+            gRunnerParams->dockingParams.focusDockableWindow(windowName);
         }
     }
 
