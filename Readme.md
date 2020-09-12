@@ -16,14 +16,30 @@ See also a [related demo for Implot](https://traineq.org/implot_demo/src/implot_
 [I'd love to read your feedback!](https://github.com/pthom/imgui_manual/issues/1). 
 
 
-# Instant develop
+# Test ImGui from your browser: no installation required!
 
-A related project enables you to develop small ImGui applications in 3 minutes, *without even installing anything*! No IDE, no text editor, no library, no compiler is required.
+This repository also enables you to get a feel of how easy it is to write ImGui applications by allowing you to write and run your own code in 3 minutes, *without even downloading or installing anything* : it runs on a dedicated cloud server on gitpod.io (which is free to use), so that you do not even need a compiler.
 
-[Test ImGui application instant develop](https://github.com/pthom/hello_imgui_my_app/tree/gitpod#instant-develop)
+For example, you could write and run this code online:
+
+````cpp
+#include "playground.h"
+void Playground() {
+    static int counter = 0;
+    if (ImGui::Button("Click me"))
+        ++counter;
+    ImGui::Text("counter=%i", counter);
+}
+````
+
+Just click on the link below: 
+
+[Open this repo in gitpod.io](https://gitpod.io/#https://github.com/pthom/imgui_manual)
+
+More info: [demo on youtube](https://www.youtube.com/watch?v=FJgObNNmuzo&feature=youtu.be)
 
 
-## Build instructions
+# Build instructions
 
 First, init the submodules:
 ````
