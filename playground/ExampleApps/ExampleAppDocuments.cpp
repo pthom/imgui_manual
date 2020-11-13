@@ -30,7 +30,7 @@ struct MyDocument
     void DoForceClose() { Open = false; Dirty = false; }
     void DoSave()       { Dirty = false; }
 
-    // Display dummy contents for the Document
+    // Display placeholder contents for the Document
     static void DisplayContents(MyDocument* doc)
     {
         DemoCode("Example/Documents/DisplayContents");
@@ -53,6 +53,7 @@ struct MyDocument
     {
         if (!ImGui::BeginPopupContextItem())
             return;
+            
         DemoCode("Examples/Documents/DisplayContextMenu");
         char buf[256];
         sprintf(buf, "Save %s", doc->Name);
