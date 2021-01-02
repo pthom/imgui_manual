@@ -287,6 +287,10 @@ LinesWithTags findImGuiHeaderDoc(const std::string &sourceCode)
             title = fplus::take(maxTitleLength, title) + "...";
 
         // title = std::to_string(headerLineInfo.headerLevel) + "-"s + title;
+
+        // remove [SECTION]
+        title = fplus::replace_tokens("[SECTION]"s, ""s, title);
+
         return title;
     };
 
