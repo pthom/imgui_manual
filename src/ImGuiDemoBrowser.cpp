@@ -17,7 +17,7 @@
 // used by this callback
 TextEditor *gEditorImGuiDemo = nullptr;
 extern HelloImGui::RunnerParams runnerParams; // defined in ImGuiManual.cpp
-void implImGuiDemoCallbackDemoCallback(int line_number)
+void implImGuiDemoCallbackDemoCallback(int line_number, const char* /*demo_title*/)
 {
     int cursorLineOnPage = 3;
     gEditorImGuiDemo->SetCursorPosition({line_number, 0}, cursorLineOnPage);
