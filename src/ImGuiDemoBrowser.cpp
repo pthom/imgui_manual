@@ -11,6 +11,10 @@
 
 #include "ImGuiDemoBrowser.h"
 
+// Redefinition of ImGuiDemoCallback, as defined in imgui_demo.cpp
+typedef void (*ImGuiDemoCallback)(int line_number, const char* demo_title);
+extern ImGuiDemoCallback gImGuiDemoCallback;
+
 // implImGuiDemoCallbackDemoCallback is the implementation
 // of imgui_demo.cpp's global callback (gImGuiDemoCallback)
 // And  gEditorImGuiDemo is a global reference to the text editor
