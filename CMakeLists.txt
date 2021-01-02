@@ -12,8 +12,9 @@ set(imgui_dir ${CMAKE_CURRENT_LIST_DIR}/external/imgui)
 add_library(imgui
     ${imgui_dir}/imgui_demo.cpp
     ${imgui_dir}/imgui_draw.cpp
-    ${imgui_dir}/imgui_internal.h
+    ${imgui_dir}/imgui_tables.cpp
     ${imgui_dir}/imgui_widgets.cpp
+    ${imgui_dir}/imgui_internal.h
     ${imgui_dir}/imgui.cpp
     ${imgui_dir}/imgui.h
     )
