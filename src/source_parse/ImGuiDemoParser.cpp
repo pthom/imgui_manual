@@ -8,20 +8,21 @@ namespace SourceParse
 
 LinesWithTags findImGuiDemoCodeLines(const std::string &sourceCode)
 {
-    static std::string regionToken = "DemoCode";
+    static std::string regionToken = "DEMO_MARKER";
 
     auto lines = fplus::split('\n', true, sourceCode);
     auto numberedLines = fplus::enumerate(lines);
 
     auto demoCodeLines = fplus::keep_if([](const NumberedLine& v) {
         return
-                 fplus::is_infix_of("DemoCode"s, v.second)
-            && ! fplus::is_prefix_of("#define"s, v.second);
+                 fplus::is_infix_of("DEMO_MARKER"s, v.second)
+            && ! fplus::is_prefix_of("#define"s, v.second)
+            && ! fplus::is_infix_of("ImGui::SetTooltip"s, v.second);
     }, numberedLines);
 
     LinesWithTags tags = fplus::transform([](const NumberedLine& v) {
         LineWithTag r;
-        // codeLine look like "    DemoCode("Menu/Tools");"
+        // codeLine look like "    DEMO_MARKER("Menu/Tools");"
         // And for a tag like this, the title should be "Tools", and the level should be 2
         std::string codeLine = v.second;
 

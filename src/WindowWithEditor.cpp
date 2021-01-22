@@ -180,7 +180,7 @@ void WindowWithEditor::guiFind()
         ImGui::SameLine();
         ImGui::TextDisabled("?");
         if (ImGui::IsItemHovered())
-            ImGui::SetTooltip("Filter using -exc,inc. For example search for '-widgets,DemoCode'");
+            ImGui::SetTooltip("Filter using -exc,inc. For example search for '-widgets,DEMO_MARKER'");
         ImGui::SameLine();
     }
     // If changed, check number of matches
