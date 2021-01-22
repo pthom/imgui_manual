@@ -15,7 +15,7 @@ static void ShowExampleAppLongText(bool* p_open)
         ImGui::End();
         return;
     }
-    DemoCode("Examples/Long text display");
+    DEMO_MARKER_BLANK_LINE("Examples/Long text display");
 
     static int test_type = 0;
     static ImGuiTextBuffer log;

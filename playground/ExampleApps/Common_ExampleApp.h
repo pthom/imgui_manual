@@ -3,8 +3,8 @@
 
 void Playground();
 
-#define DemoCode(x)
-#define DemoCode_(x)
+#define DEMO_MARKER(x)
+#define DEMO_MARKER_BLANK_LINE(x)
 
 // Helpers macros
 // We normally try to not use many helpers in imgui_demo.cpp in order to make code easier to copy and paste,

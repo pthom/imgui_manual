@@ -18,7 +18,7 @@ struct MyDocument
 
     MyDocument(const char* name, bool open = true, const ImVec4& color = ImVec4(1.0f, 1.0f, 1.0f, 1.0f))
     {
-        DemoCode("Examples/Documents");
+        DEMO_MARKER("Examples/Documents");
         Name = name;
         Open = OpenPrev = open;
         Dirty = false;
@@ -33,7 +33,7 @@ struct MyDocument
     // Display placeholder contents for the Document
     static void DisplayContents(MyDocument* doc)
     {
-        DemoCode("Example/Documents/DisplayContents");
+        DEMO_MARKER("Example/Documents/DisplayContents");
         ImGui::PushID(doc);
         ImGui::Text("Document \"%s\"", doc->Name);
         ImGui::PushStyleColor(ImGuiCol_Text, doc->Color);
@@ -54,7 +54,7 @@ struct MyDocument
         if (!ImGui::BeginPopupContextItem())
             return;
             
-        DemoCode("Examples/Documents/DisplayContextMenu");
+        DEMO_MARKER("Examples/Documents/DisplayContextMenu");
         char buf[256];
         sprintf(buf, "Save %s", doc->Name);
         if (ImGui::MenuItem(buf, "CTRL+S", false, doc->Open))
@@ -127,13 +127,14 @@ void ShowExampleAppDocuments(bool* p_open)
         ImGui::End();
         return;
     }
+    DEMO_MARKER_BLANK_LINE("Example/Documents");
 
     // Menu
     if (ImGui::BeginMenuBar())
     {
         if (ImGui::BeginMenu("File"))
         {
-            DemoCode("Example/Documents/Menu");
+            DEMO_MARKER("Example/Documents/Menu");
             int open_count = 0;
             for (int doc_n = 0; doc_n < app.Documents.Size; doc_n++)
                 open_count += app.Documents[doc_n].Open ? 1 : 0;

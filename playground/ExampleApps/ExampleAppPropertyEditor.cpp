@@ -62,7 +62,7 @@ static void ShowExampleAppPropertyEditor(bool* p_open)
         ImGui::End();
         return;
     }
-    DemoCode("Examples/Property Editor");
+    DEMO_MARKER_BLANK_LINE("Examples/Property Editor");
 
 
     HelpMarker(

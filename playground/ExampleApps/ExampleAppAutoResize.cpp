@@ -14,7 +14,7 @@ static void ShowExampleAppAutoResize(bool* p_open)
         ImGui::End();
         return;
     }
-    DemoCode("Examples/Auto-resizing window");
+    DEMO_MARKER_BLANK_LINE("Examples/Auto-resizing window");
 
     static int lines = 10;
     ImGui::TextUnformatted(

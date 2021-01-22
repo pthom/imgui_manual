@@ -63,7 +63,7 @@ void ShowExampleAppDockSpace(bool* p_open)
     ImGui::Begin("DockSpace Demo", p_open, window_flags);
     if (!opt_padding)
         ImGui::PopStyleVar();
-    DemoCode("Examples/Dockspace"); // See ShowExampleAppDockSpace() several lines before this tag
+    DEMO_MARKER("Examples/Dockspace"); // See ShowExampleAppDockSpace() several lines before this tag
 
     if (opt_fullscreen)
         ImGui::PopStyleVar(2);

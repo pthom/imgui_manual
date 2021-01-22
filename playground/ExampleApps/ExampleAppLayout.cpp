@@ -12,6 +12,7 @@ static void ShowExampleAppLayout(bool* p_open)
     ImGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
     if (ImGui::Begin("Example: Simple layout", p_open, ImGuiWindowFlags_MenuBar))
     {
+        DEMO_MARKER_BLANK_LINE("Examples/Simple layout");
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("File"))
@@ -21,7 +22,6 @@ static void ShowExampleAppLayout(bool* p_open)
             }
             ImGui::EndMenuBar();
         }
-        DemoCode("Examples/Simple layout");
 
         // Left
         static int selected = 0;
