@@ -12,7 +12,7 @@
 #include "ImGuiDemoBrowser.h"
 
 // Redefinition of ImGuiDemoCallback, as defined in imgui_demo.cpp
-typedef void (*ImGuiDemoCallback)(int line_number, const char* demo_title);
+typedef void (*ImGuiDemoCallback)(const char* file, int line_number, const char* demo_title);
 extern ImGuiDemoCallback gImGuiDemoCallback;
 
 // implImGuiDemoCallbackDemoCallback is the implementation
@@ -21,7 +21,7 @@ extern ImGuiDemoCallback gImGuiDemoCallback;
 // used by this callback
 TextEditor *gEditorImGuiDemo = nullptr;
 extern HelloImGui::RunnerParams runnerParams; // defined in ImGuiManual.cpp
-void implImGuiDemoCallbackDemoCallback(int line_number, const char* /*demo_title*/)
+void implImGuiDemoCallbackDemoCallback(const char* file, int line_number, const char* /*demo_title*/)
 {
     int cursorLineOnPage = 3;
     gEditorImGuiDemo->SetCursorPosition({line_number, 0}, cursorLineOnPage);
