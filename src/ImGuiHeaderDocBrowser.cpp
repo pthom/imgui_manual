@@ -21,16 +21,13 @@ ImGuiHeaderDocBrowser::ImGuiHeaderDocBrowser()
 
 void ImGuiHeaderDocBrowser::gui()
 {
-    static bool showHelp = true;
-    if (showHelp)
-    {
-        std::string help =
-            "imgui.h contains the detailed doc for the different widgets and features.\n"
-            "See the searchable table of content below (and for example, search for \"docking\")";
-        ImGui::TextWrapped("%s", help.c_str());
-        if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
-            showHelp = false;
-    }
+    std::string help =
+        "imgui.h contains the detailed doc for the different widgets and features.\n"
+        "See the searchable table of content below (and for example, search for \"docking\")";
+    ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.f, 1.0f), "(?)");
+    if (ImGui::IsItemHovered())
+        ImGui::SetTooltip("%s", help.c_str());
+    ImGui::SameLine(50.f);
     guiTags();
     RenderEditor("imgui.h", [this] { this->guiGithubButton(); });
 }

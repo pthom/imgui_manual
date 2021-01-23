@@ -2,7 +2,6 @@
 
 #include "imgui_utilities/HyperlinkHelper.h"
 #include "imgui_utilities/ImGuiExt.h"
-#include "imgui_utilities/MarkdownHelper.h"
 #include "source_parse/ImGuiDemoParser.h"
 
 #include "hello_imgui/hello_imgui.h"
@@ -34,7 +33,6 @@ ImGuiDemoBrowser::ImGuiDemoBrowser()
     , mAnnotatedSource(SourceParse::ReadImGuiDemoCode())
     , mGuiHeaderTree(mAnnotatedSource.linesWithTags)
 {
-    mGuiHeaderTree.setShowToc(false);
     setEditorAnnotatedSource(mAnnotatedSource);
 
     // Setup of imgui_demo.cpp's global callback
@@ -53,18 +51,15 @@ void ImGuiDemoBrowser::gui()
 
 void ImGuiDemoBrowser::guiHelp()
 {
-    static bool showHelp = true;
-    if (showHelp)
-    {
-        std::string help =
-            "This is the code of imgui_demo.cpp. It is the best way to learn about Dear ImGui! \n"
-            "On the left, you can see a demo that showcases all the widgets and features of ImGui: "
-            "Click on the \"Code\" buttons to see their code and learn about them. \n"
-            "Alternatively, you can also search for some features (try searching for \"widgets\", \"layout\", \"drag\", etc)\n";
-        MarkdownHelper::Markdown(help);
-        if (ImGui::Button(ICON_FA_THUMBS_UP " Got it"))
-            showHelp = false;
-    }
+    std::string help =
+        "This is the code of imgui_demo.cpp. It is the best way to learn about Dear ImGui! \n"
+        "On the left, you can see a demo that showcases all the widgets and features of ImGui: "
+        "Click on the \"Code\" buttons to see their code and learn about them. \n"
+        "Alternatively, you can also search for some features (try searching for \"widgets\", \"layout\", \"drag\", etc)\n";
+    ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.f, 1.0f), "(?)");
+    if (ImGui::IsItemHovered())
+        ImGui::SetTooltip("%s", help.c_str());
+    ImGui::SameLine(50.f);
 }
 
 void ImGuiDemoBrowser::guiSave()
