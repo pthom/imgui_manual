@@ -64,7 +64,6 @@ static void ShowExampleAppPropertyEditor(bool* p_open)
     }
     DEMO_MARKER_BLANK_LINE("Examples/Property Editor");
 
-
     HelpMarker(
         "This example shows how you may implement a property editor using two columns.\n"
         "All objects/fields data are dummies here.\n"

@@ -51,7 +51,7 @@ struct MyDocument
     {
         if (!ImGui::BeginPopupContextItem())
             return;
-            
+
         char buf[256];
         sprintf(buf, "Save %s", doc->Name);
         if (ImGui::MenuItem(buf, "CTRL+S", false, doc->Open))
