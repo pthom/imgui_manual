@@ -42,6 +42,11 @@ int GuiHeaderTree::guiImpl(int currentEditorLineNumber, const HeaderTree& header
         if ((diffLine >= 0) && (diffLine < 5))
             isSelected = true;
     }
+    if (mScrollToSelectedNextTime && isSelected)
+    {
+        ImGui::SetScrollHere();
+        mScrollToSelectedNextTime = false;
+    }
 
     ImGuiTreeNodeFlags treeNodeFlags = makeTreeNodeFlags(isLeafNode, isSelected);
 
@@ -70,7 +75,7 @@ int GuiHeaderTree::guiImpl(int currentEditorLineNumber, const HeaderTree& header
           int clickedLineNumber_Child = -1;
           for(const auto& headerTreeChild: headerTree.children_)
           {
-              int line = guiImpl(currentEditorLineNumber, headerTreeChild);
+              int line = guiImpl(currentEditorLineNumber, headerTreeChild, false);
               if (line > 0)
                   clickedLineNumber_Child = line;
           }

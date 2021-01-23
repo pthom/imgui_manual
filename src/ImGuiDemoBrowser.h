@@ -11,6 +11,7 @@ class ImGuiDemoBrowser: public WindowWithEditor
 public:
     ImGuiDemoBrowser();
     void gui();
+    void followDemo(int sourceLineNumber);
 
 private:
     void guiHelp();
@@ -19,5 +20,5 @@ private:
     void guiDemoCodeTags();
 
     SourceParse::AnnotatedSource mAnnotatedSource;
-    SourceParse::GuiHeaderTree mGuiHeaderTree;
+    SourceParse::GuiHeaderTree_FollowDemo mGuiHeaderTree;
 };

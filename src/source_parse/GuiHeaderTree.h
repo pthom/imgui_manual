@@ -12,12 +12,12 @@ namespace SourceParse
 
         // Show a tree gui with all the tags
         // return a line number if the user selected a tag, returns -1 otherwise
-        int gui(int currentEditorLineNumber);
+        virtual int gui(int currentEditorLineNumber);
 
         void setShowToc(bool v) { mShowToc = v; }
 
-    private:
-        int guiImpl(int currentEditorLineNumber, const HeaderTree& headerTree, bool isRootNode = false);
+    protected:
+        int guiImpl(int currentEditorLineNumber, const HeaderTree& headerTree, bool isRootNode);
         void applyTocFilter();
         void showExpandCollapseButtons();
         void showCommandLine();
@@ -26,6 +26,7 @@ namespace SourceParse
         HeaderTree mFilteredHeaderTree;
         ImGuiTextFilter mFilter;
         bool mShowToc = true;
+        bool mScrollToSelectedNextTime = false; // only valid for "follow" mode (in subclass)
 
         enum class ExpandCollapseAction
         {
@@ -34,6 +35,49 @@ namespace SourceParse
             NoAction
         };
         ExpandCollapseAction mExpandCollapseAction = ExpandCollapseAction::NoAction;
+    };
+
+
+    class GuiHeaderTree_FollowDemo: public GuiHeaderTree
+    {
+    public:
+        GuiHeaderTree_FollowDemo(const LinesWithTags & linesWithTags) : GuiHeaderTree(linesWithTags) {
+            setIsFollowActive(true);
+        }
+
+        int gui(int currentEditorLineNumber) override
+        {
+            bool follow = mIsFollowActive;
+            bool changed = ImGui::Checkbox("Follow Demo", &follow);
+            ImGui::SameLine();
+            if (changed)
+                setIsFollowActive(follow);
+            return GuiHeaderTree::gui(mIsFollowActive ? mCurrentFollowedLine : currentEditorLineNumber);
+        }
+
+        void setIsFollowActive(bool follow)
+        {
+            mIsFollowActive = follow;
+            if (follow)
+                mExpandCollapseAction = ExpandCollapseAction::ExpandAll;
+        }
+
+        void followShowTocElementForLine(int sourceLineNumber)
+        {
+            if (!mIsFollowActive)
+                return;
+            mCurrentFollowedLine = sourceLineNumber;
+            mScrollToSelectedNextTime = true;
+        }
+
+        bool isFollowActive()
+        {
+            return mIsFollowActive;
+        }
+
+    private:
+        bool mIsFollowActive = true;
+        int mCurrentFollowedLine = -1;
     };
 
 
