@@ -104,5 +104,10 @@ void ImGuiDemoBrowser::guiDemoCodeTags()
 
 void ImGuiDemoBrowser::followDemo(int sourceLineNumber)
 {
-    mGuiHeaderTree.followShowTocElementForLine(sourceLineNumber);
+    if (mGuiHeaderTree.isFollowActive())
+    {
+        mGuiHeaderTree.followShowTocElementForLine(sourceLineNumber);
+        mEditor.SetCursorPosition({sourceLineNumber, 0}, 3);
+    }
+
 }
