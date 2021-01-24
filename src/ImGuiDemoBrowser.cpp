@@ -77,10 +77,11 @@ void ImGuiDemoBrowser::guiSave()
 {
 #ifdef IMGUI_MANUAL_CAN_WRITE_IMGUI_DEMO_CPP
     if (ImGui::Button("Save"))
-        {
-            std::string fileSrc = IMGUI_MANUAL_REPO_DIR "/external/imgui/imgui_demo.cpp";
-            fplus::write_text_file(fileSrc, mEditor.GetText())();
-        }
+    {
+        std::string fileSrc = IMGUI_MANUAL_REPO_DIR "/external/imgui/imgui_demo.cpp";
+        fplus::write_text_file(fileSrc, mEditor.GetText())();
+    }
+    ImGui::SameLine();
 #endif
 }
 
