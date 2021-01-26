@@ -61,10 +61,10 @@ void ImGuiDemoBrowser::guiHelp()
         "This is the code of imgui_demo.cpp. It is the best way to learn about Dear ImGui! \n"
         "\n"
         "* On the left, you can see a demo that showcases all the widgets and features of ImGui:\n"
-        "  Click on the \"Code\" buttons in the demo to see the code corresponding to a given feature. \n"
+        "  If 'Follow Demo' is checked, the code editor and the the table of content will follow\n"
+        "  the mouse whenever you hover a demo.\n"
         "\n"
         "* Below, the table of content (TOC) shows all the available demos: click on any item to see its code.\n"
-        "  If 'Follow Demo' is checked, the TOC will follow the mouse whenever you hover a demo.\n"
         "  Alternatively, you can also search for some features (try searching for \"widgets\", \"layout\", \"drag\", etc)\n"
         ;
     ImGui::TextColored(ImVec4(0.9f, 0.9f, 0.f, 1.0f), "(?)");

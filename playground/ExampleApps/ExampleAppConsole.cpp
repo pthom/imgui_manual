@@ -85,7 +85,7 @@ struct ExampleAppConsole
                 *p_open = false;
             ImGui::EndPopup();
         }
-        
+
         DEMO_MARKER_BLANK_LINE("Examples/Console/Draw");
         ImGui::TextWrapped(
             "This example implements a console with basic coloring, completion (TAB key) and history (Up/Down keys). A more elaborate "
