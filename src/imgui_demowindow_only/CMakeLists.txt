@@ -1,0 +1,2 @@
+include(hello_imgui_add_app)
+hello_imgui_add_app(imgui_demowindow_only imgui_demowindow_only.cpp)
