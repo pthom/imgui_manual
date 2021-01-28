@@ -11,7 +11,7 @@
 #include "ImGuiDemoBrowser.h"
 
 // Redefinition of ImGuiDemoCallback, as defined in imgui_demo.cpp
-typedef void (*ImGuiDemoCallback)(const char* file, int line_number, const char* demo_title, bool hovering_zone_only);
+typedef void (*ImGuiDemoCallback)(bool clicked, const char* file, int line_number, const char* demo_title);
 extern ImGuiDemoCallback gImGuiDemoCallback;
 
 // implImGuiDemoCallbackDemoCallback is the implementation
@@ -19,18 +19,9 @@ extern ImGuiDemoCallback gImGuiDemoCallback;
 // And  gImGuiDemoBrowser is a global reference to the browser used by this callback
 ImGuiDemoBrowser *gImGuiDemoBrowser = nullptr;
 extern HelloImGui::RunnerParams runnerParams; // defined in ImGuiManual.cpp
-void implImGuiDemoCallbackDemoCallback(const char* file, int line_number, const char* /*demo_title*/, bool hovering_zone_only)
+void implImGuiDemoCallbackDemoCallback(bool clicked, const char* file, int line_number, const char* demo_title)
 {
-    if (hovering_zone_only)
-    {
-        gImGuiDemoBrowser->followDemo(line_number);
-    }
-    else
-    {
-        int cursorLineOnPage = 3;
-        gImGuiDemoBrowser->_GetTextEditorPtr()->SetCursorPosition({line_number, 0}, cursorLineOnPage);
-        runnerParams.dockingParams.focusDockableWindow("ImGui - Demo Code");
-    }
+    gImGuiDemoBrowser->ImGuiDemoCallback(clicked, file, line_number, demo_title);
 }
 
 
@@ -45,6 +36,15 @@ ImGuiDemoBrowser::ImGuiDemoBrowser()
     // (gImGuiDemoCallback belongs to imgui.cpp!)
     gImGuiDemoCallback = implImGuiDemoCallbackDemoCallback;
     gImGuiDemoBrowser = this;
+}
+
+void ImGuiDemoBrowser::ImGuiDemoCallback(bool clicked, const char* file, int line_number, const char* demo_title)
+{
+    int cursorLineOnPage = 3;
+    if (mGuiHeaderTree.isFollowActive())
+        mGuiHeaderTree.followShowTocElementForLine(line_number);
+    if (clicked || mGuiHeaderTree.isFollowActive())
+        mEditor.SetCursorPosition({line_number, 0}, cursorLineOnPage);
 }
 
 void ImGuiDemoBrowser::gui()
@@ -103,12 +103,3 @@ void ImGuiDemoBrowser::guiDemoCodeTags()
         mEditor.SetCursorPosition({selectedLine, 0}, 3);
 }
 
-void ImGuiDemoBrowser::followDemo(int sourceLineNumber)
-{
-    if (mGuiHeaderTree.isFollowActive())
-    {
-        mGuiHeaderTree.followShowTocElementForLine(sourceLineNumber);
-        mEditor.SetCursorPosition({sourceLineNumber, 0}, 3);
-    }
-
-}
