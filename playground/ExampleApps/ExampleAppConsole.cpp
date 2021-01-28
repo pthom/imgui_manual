@@ -86,7 +86,7 @@ struct ExampleAppConsole
             ImGui::EndPopup();
         }
 
-        DEMO_MARKER_BLANK_LINE("Examples/Console/Draw");
+        DEMO_MARKER("Examples/Console/Draw");
         ImGui::TextWrapped(
             "This example implements a console with basic coloring, completion (TAB key) and history (Up/Down keys). A more elaborate "
             "implementation may want to store entries along with extra data such as timestamp, emitter, etc.");

@@ -62,7 +62,7 @@ static void ShowExampleAppPropertyEditor(bool* p_open)
         ImGui::End();
         return;
     }
-    DEMO_MARKER_BLANK_LINE("Examples/Property Editor");
+    DEMO_MARKER("Examples/Property Editor");
 
     HelpMarker(
         "This example shows how you may implement a property editor using two columns.\n"

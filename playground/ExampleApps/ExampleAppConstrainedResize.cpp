@@ -41,7 +41,7 @@ static void ShowExampleAppConstrainedResize(bool* p_open)
     ImGuiWindowFlags flags = auto_resize ? ImGuiWindowFlags_AlwaysAutoResize : 0;
     if (ImGui::Begin("Example: Constrained Resize", p_open, flags))
     {
-        DEMO_MARKER_BLANK_LINE("Examples/Constrained Resizing window");
+        DEMO_MARKER("Examples/Constrained Resizing window");
         if (ImGui::IsWindowDocked())
             ImGui::Text("Warning: Sizing Constraints won't work if the window is docked!");
         if (ImGui::Button("200x200")) { ImGui::SetWindowSize(ImVec2(200, 200)); } ImGui::SameLine();

@@ -49,7 +49,7 @@ void FullExamplesBelowThisPoint()
 // (future version will add explicit flags to BeginMenu() to request processing shortcuts)
 static void ShowExampleMenuFile()
 {
-    DEMO_MARKER_BLANK_LINE("Examples/Menu File");
+    DEMO_MARKER("Examples/Menu File");
     ImGui::MenuItem("(demo menu)", NULL, false, false);
     if (ImGui::MenuItem("New")) {}
     if (ImGui::MenuItem("Open", "Ctrl+O")) {}
@@ -75,7 +75,7 @@ static void ShowExampleMenuFile()
     if (ImGui::MenuItem("Save As..")) {}
 
     ImGui::Separator();
-    DEMO_MARKER_BLANK_LINE("Examples/Menu File/Options");
+    DEMO_MARKER("Examples/Menu File/Options");
     if (ImGui::BeginMenu("Options"))
     {
         static bool enabled = true;
@@ -94,7 +94,7 @@ static void ShowExampleMenuFile()
 
     if (ImGui::BeginMenu("Colors"))
     {
-        DEMO_MARKER_BLANK_LINE("Examples/Menu File/Colors");
+        DEMO_MARKER("Examples/Menu File/Colors");
         float sz = ImGui::GetTextLineHeight();
         for (int i = 0; i < ImGuiCol_COUNT; i++)
         {
@@ -113,7 +113,7 @@ static void ShowExampleMenuFile()
     // In a real code-base using it would make senses to use this feature from very different code locations.
     if (ImGui::BeginMenu("Options")) // <-- Append!
     {
-        DEMO_MARKER_BLANK_LINE("Examples/Menu File/Append to an existing menu");
+        DEMO_MARKER("Examples/Menu File/Append to an existing menu");
         static bool b = true;
         ImGui::Checkbox("SomeOption", &b);
         ImGui::EndMenu();
@@ -123,7 +123,7 @@ static void ShowExampleMenuFile()
     {
         IM_ASSERT(0);
     }
-    DEMO_MARKER_BLANK_LINE("Examples/Menu File/Checked item");
+    DEMO_MARKER("Examples/Menu File/Checked item");
     if (ImGui::MenuItem("Checked", NULL, true)) {}
     if (ImGui::MenuItem("Quit", "Alt+F4")) {}
 }
