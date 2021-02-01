@@ -12,7 +12,7 @@
 
 // Redefinition of ImGuiDemoCallback, as defined in imgui_demo.cpp
 typedef void (*ImGuiDemoCallback)(bool clicked, const char* file, int line_number, const char* demo_title);
-extern ImGuiDemoCallback gImGuiDemoCallback;
+extern ImGuiDemoCallback GImGuiDemoCallback;
 
 // implImGuiDemoCallbackDemoCallback is the implementation
 // of imgui_demo.cpp's global callback (gImGuiDemoCallback)
@@ -34,7 +34,7 @@ ImGuiDemoBrowser::ImGuiDemoBrowser()
 
     // Setup of imgui_demo.cpp's global callback
     // (gImGuiDemoCallback belongs to imgui.cpp!)
-    gImGuiDemoCallback = implImGuiDemoCallbackDemoCallback;
+    GImGuiDemoCallback = implImGuiDemoCallbackDemoCallback;
     gImGuiDemoBrowser = this;
 }
 
