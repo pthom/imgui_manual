@@ -44,7 +44,7 @@ int GuiHeaderTree::guiImpl(int currentEditorLineNumber, const HeaderTree& header
     }
     if (mScrollToSelectedNextTime && isSelected)
     {
-        ImGui::SetScrollHere();
+        ImGui::SetScrollHereY();
         mScrollToSelectedNextTime = false;
     }
 
