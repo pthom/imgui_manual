@@ -11,7 +11,7 @@
 #include "ImGuiDemoBrowser.h"
 
 // Redefinition of ImGuiDemoCallback, as defined in imgui_demo.cpp
-typedef void (*ImGuiDemoCallback)(bool clicked, const char* file, int line_number, const char* demo_title);
+typedef void (*ImGuiDemoCallback)(const char* file, int line_number, const char* demo_title);
 extern ImGuiDemoCallback GImGuiDemoCallback;
 
 // implImGuiDemoCallbackDemoCallback is the implementation
@@ -19,9 +19,9 @@ extern ImGuiDemoCallback GImGuiDemoCallback;
 // And  gImGuiDemoBrowser is a global reference to the browser used by this callback
 ImGuiDemoBrowser *gImGuiDemoBrowser = nullptr;
 extern HelloImGui::RunnerParams runnerParams; // defined in ImGuiManual.cpp
-void implImGuiDemoCallbackDemoCallback(bool clicked, const char* file, int line_number, const char* demo_title)
+void implImGuiDemoCallbackDemoCallback(const char* file, int line_number, const char* demo_title)
 {
-    gImGuiDemoBrowser->ImGuiDemoCallback(clicked, file, line_number, demo_title);
+    gImGuiDemoBrowser->ImGuiDemoCallback(file, line_number, demo_title);
 }
 
 
@@ -38,13 +38,11 @@ ImGuiDemoBrowser::ImGuiDemoBrowser()
     gImGuiDemoBrowser = this;
 }
 
-void ImGuiDemoBrowser::ImGuiDemoCallback(bool clicked, const char* file, int line_number, const char* demo_title)
+void ImGuiDemoBrowser::ImGuiDemoCallback(const char* file, int line_number, const char* demo_title)
 {
     int cursorLineOnPage = 3;
-    if (DemoMarkerTools::FlagFollowMouse())
-        mGuiHeaderTree.followShowTocElementForLine(line_number);
-    if (clicked || DemoMarkerTools::FlagFollowMouse())
-        mEditor.SetCursorPosition({line_number, 0}, cursorLineOnPage);
+    mGuiHeaderTree.followShowTocElementForLine(line_number);
+    mEditor.SetCursorPosition({line_number, 0}, cursorLineOnPage);
 }
 
 void ImGuiDemoBrowser::gui()

@@ -60,8 +60,6 @@ namespace SourceParse
 
         void followShowTocElementForLine(int sourceLineNumber)
         {
-            if (!DemoMarkerTools::FlagFollowMouse())
-                return;
             mCurrentFollowedLine = sourceLineNumber;
             mScrollToSelectedNextTime = true;
         }

@@ -11,7 +11,7 @@ class ImGuiDemoBrowser: public WindowWithEditor
 public:
     ImGuiDemoBrowser();
     void gui();
-    void ImGuiDemoCallback(bool clicked, const char* file, int line_number, const char* demo_title);
+    void ImGuiDemoCallback(const char* file, int line_number, const char* demo_title);
 
 private:
     void guiHelp();
