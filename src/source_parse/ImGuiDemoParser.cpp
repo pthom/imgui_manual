@@ -37,19 +37,41 @@ LinesWithTags findImGuiDemoCodeLines(const std::string &sourceCode)
 
         r.lineNumber = (int)v.first;
         {
-            std::string demoCodeName;
-            {
-                auto tokens = fplus::split('"', true, codeLine);
-                if (tokens.size() >= 3)
-                    demoCodeName = tokens[1];
-            }
-            r.tag = fplus::split('/', false, demoCodeName).back();
-            r.level = (int)fplus::count('/', demoCodeName) + 1;
+            // codeLine look like
+            //          DEMO_MARKER("Menu/Tools");
+            // And in this case, we return {"Menu/Tools"}
+            auto tokens = fplus::split('"', true, codeLine);
+            assert(tokens.size() >= 3);
+            std::string tagsString = tokens[1];
+
+            r.tag = tagsString;
+            r.level = fplus::count('/', r.tag) + 1;
         }
         return r;
     }, demoCodeLines);
 
-    return tags;
+    LinesWithTags tags_with_added_missing_headers;
+    int last_level = 0;
+    for (auto tag_copy: tags)
+    {
+        std::vector<std::string> tag_levels = fplus::split('/', false, tag_copy.tag);
+        while (tag_copy.level > last_level + 1)
+        {
+            LineWithTag missing_tag = tag_copy;
+            missing_tag.level = last_level + 1;
+            missing_tag.lineNumber = tag_copy.lineNumber;
+            missing_tag.tag = tag_levels[last_level];
+            tags_with_added_missing_headers.push_back(missing_tag);
+
+            last_level = missing_tag.level;
+        }
+
+        tag_copy.tag = tag_levels.back();
+        tags_with_added_missing_headers.push_back(tag_copy);
+        last_level = tag_copy.level;
+    }
+
+    return tags_with_added_missing_headers;
 }
 
 
