@@ -16,7 +16,7 @@ LinesWithTags findImGuiDemoCodeLines(const std::string &sourceCode)
     // macro_definition_line_number line where #define DEMO_MARKER is written
     size_t macro_definition_line_number =
         fplus::keep_if(
-            [](const NumberedLine& v) { return fplus::is_prefix_of("#define DEMO_MARKER"s, v.second); },
+            [](const NumberedLine& v) { return fplus::is_prefix_of("#define DEMO_MARKER("s, v.second); },
             numberedLines
             )[0].first;
 
