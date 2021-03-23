@@ -41,9 +41,9 @@ ImGuiDemoBrowser::ImGuiDemoBrowser()
 void ImGuiDemoBrowser::ImGuiDemoCallback(bool clicked, const char* file, int line_number, const char* demo_title)
 {
     int cursorLineOnPage = 3;
-    if (mGuiHeaderTree.isFollowActive())
+    if (DemoMarkerTools::FlagFollowMouse())
         mGuiHeaderTree.followShowTocElementForLine(line_number);
-    if (clicked || mGuiHeaderTree.isFollowActive())
+    if (clicked || DemoMarkerTools::FlagFollowMouse())
         mEditor.SetCursorPosition({line_number, 0}, cursorLineOnPage);
 }
 
@@ -61,7 +61,7 @@ void ImGuiDemoBrowser::guiHelp()
         "This is the code of imgui_demo.cpp. It is the best way to learn about Dear ImGui! \n"
         "\n"
         "* On the left, you can see a demo that showcases all the widgets and features of ImGui:\n"
-        "  If 'Follow Demo' is checked, the code editor and the the table of content will follow\n"
+        "  If 'Code Lookup' is checked, the code editor and the the table of content will follow\n"
         "  the mouse whenever you hover a demo.\n"
         "\n"
         "* Below, the table of content (TOC) shows all the available demos: click on any item to see its code.\n"

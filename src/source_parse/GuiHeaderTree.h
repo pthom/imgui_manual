@@ -2,6 +2,13 @@
 #include "source_parse/HeaderTree.h"
 #include "imgui.h"
 
+// Decl of feature from imgui_demo.cpp
+namespace DemoMarkerTools
+{
+    bool FlagFollowMouse();
+    void SetFlagFollowMouse(bool v);
+}
+
 namespace SourceParse
 {
 
@@ -34,7 +41,7 @@ namespace SourceParse
             CollapseAll,
             NoAction
         };
-        ExpandCollapseAction mExpandCollapseAction = ExpandCollapseAction::NoAction;
+        ExpandCollapseAction mExpandCollapseAction = ExpandCollapseAction::ExpandAll;
     };
 
 
@@ -42,41 +49,24 @@ namespace SourceParse
     {
     public:
         GuiHeaderTree_FollowDemo(const LinesWithTags & linesWithTags) : GuiHeaderTree(linesWithTags) {
-            setIsFollowActive(true);
+            DemoMarkerTools::SetFlagFollowMouse(true);
         }
 
         int gui(int currentEditorLineNumber) override
         {
-            bool follow = mIsFollowActive;
-            bool changed = ImGui::Checkbox("Follow Demo", &follow);
             ImGui::SameLine();
-            if (changed)
-                setIsFollowActive(follow);
-            return GuiHeaderTree::gui(mIsFollowActive ? mCurrentFollowedLine : currentEditorLineNumber);
-        }
-
-        void setIsFollowActive(bool follow)
-        {
-            mIsFollowActive = follow;
-            if (follow)
-                mExpandCollapseAction = ExpandCollapseAction::ExpandAll;
+            return GuiHeaderTree::gui(DemoMarkerTools::FlagFollowMouse() ? mCurrentFollowedLine : currentEditorLineNumber);
         }
 
         void followShowTocElementForLine(int sourceLineNumber)
         {
-            if (!mIsFollowActive)
+            if (!DemoMarkerTools::FlagFollowMouse())
                 return;
             mCurrentFollowedLine = sourceLineNumber;
             mScrollToSelectedNextTime = true;
         }
 
-        bool isFollowActive()
-        {
-            return mIsFollowActive;
-        }
-
     private:
-        bool mIsFollowActive = true;
         int mCurrentFollowedLine = -1;
     };
 
