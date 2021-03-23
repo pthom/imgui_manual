@@ -55,11 +55,13 @@ static void ShowExampleMenuFile()
     if (ImGui::MenuItem("Open", "Ctrl+O")) {}
     if (ImGui::BeginMenu("Open Recent"))
     {
+        DEMO_MARKER("Examples/Menu File/Open Recent");
         ImGui::MenuItem("fish_hat.c");
         ImGui::MenuItem("fish_hat.inl");
         ImGui::MenuItem("fish_hat.h");
         if (ImGui::BeginMenu("More.."))
         {
+            DEMO_MARKER("Examples/Menu File/Open Recent/More");
             ImGui::MenuItem("Hello");
             ImGui::MenuItem("Sailor");
             if (ImGui::BeginMenu("Recurse.."))
@@ -75,9 +77,9 @@ static void ShowExampleMenuFile()
     if (ImGui::MenuItem("Save As..")) {}
 
     ImGui::Separator();
-    DEMO_MARKER("Examples/Menu File/Options");
     if (ImGui::BeginMenu("Options"))
     {
+        DEMO_MARKER("Examples/Menu File/Options");
         static bool enabled = true;
         ImGui::MenuItem("Enabled", "", &enabled);
         ImGui::BeginChild("child", ImVec2(0, 60), true);
