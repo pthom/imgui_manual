@@ -4,6 +4,14 @@
 #include "hello_imgui/hello_imgui.h"
 #include <fplus/fplus.hpp>
 
+namespace
+{
+    std::string MarkdownLinkString(const std::string &url)
+    {
+        return std::string("[") + url + "]" + "(" + url + ")";
+    }
+}
+
 void DrawImage_FixedWith(const HelloImGui::ImageGlPtr& image, float width)
 {
     float ratio = width / image->imageSize.x;
@@ -52,7 +60,7 @@ bool LibrariesCodeBrowser::guiSelectLibrarySource()
     {
         ImGui::Text("%s", librarySource.name.c_str());
         ImGui::SameLine(ImGui::GetWindowSize().x - 350.f );
-        ImGuiExt::Hyperlink(librarySource.url);
+        MarkdownHelper::Markdown(MarkdownLinkString(librarySource.url));
         MarkdownHelper::Markdown(librarySource.shortDoc);
         for (const auto & source: librarySource.sourcePaths)
         {

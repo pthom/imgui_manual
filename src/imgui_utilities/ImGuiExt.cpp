@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "hello_imgui.h"
 #include "HyperlinkHelper.h"
+#include "MarkdownHelper.h"
 #include <cstring>
 
 namespace ImGuiExt
@@ -14,17 +15,7 @@ namespace ImGuiExt
             ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
         return (ImGui::IsItemHovered() && ImGui::IsMouseDown(0));
     }
-
-    void Hyperlink(const std::string &url)
-    {
-        auto blue = ImGui::GetStyle().Colors[ImGuiCol_ButtonHovered];
-        ImGui::TextColored(blue, "%s", url.c_str());
-        if (ImGui::IsItemHovered() || ImGui::IsItemFocused())
-            ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-        if (ImGui::IsItemHovered() && ImGui::IsMouseDown(0))
-            HyperlinkHelper::OpenUrl(url);
-    }
-
+    
     void SameLine_IfPossible(float minRightMargin)
     {
         auto lastXPos = ImGui::GetItemRectMax().x - ImGui::GetWindowPos().x;
