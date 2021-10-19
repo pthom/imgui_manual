@@ -143,10 +143,24 @@ int main(int, char **)
             runnerParams.dockingParams.dockableWindowOfName("About this manual");
           HelloImGui::DockableWindow *acknowledgmentWindow =
               runnerParams.dockingParams.dockableWindowOfName("Acknowledgments");
-        if (aboutWindow && ImGui::BeginMenu("About"))
+        if (ImGui::BeginMenu("Links & About"))
         {
-            if (ImGui::MenuItem("About this manual"))
+            ImGui::TextDisabled("Links");
+            if (ImGui::MenuItem("ImGui Github repository"))
+                HyperlinkHelper::OpenUrl("https://github.com/ocornut/imgui");
+            if (ImGui::MenuItem("ImGui wiki"))
+                HyperlinkHelper::OpenUrl("https://github.com/ocornut/imgui/wiki");
+            if (ImGui::MenuItem("imgui-docs: nice third party ImGui Documentation"))
+                HyperlinkHelper::OpenUrl("https://possiblyashrub.github.io/imgui-docs/");
+
+            ImGui::Separator();
+            ImGui::TextDisabled("About this manual");
+            if (ImGui::MenuItem("About"))
                 aboutWindow->isVisible = true;
+            if (ImGui::MenuItem("Repository"))
+                HyperlinkHelper::OpenUrl("https://github.com/pthom/imgui_manual");
+            if (ImGui::MenuItem("Online interactive manual"))
+                HyperlinkHelper::OpenUrl("https://pthom.github.io/imgui_manual_online/");
             if (ImGui::MenuItem("Acknowledgments"))
                 acknowledgmentWindow->isVisible = true;
             ImGui::EndMenu();
