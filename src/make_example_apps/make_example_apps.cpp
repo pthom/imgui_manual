@@ -15,6 +15,7 @@ int main()
     std::unordered_map<std::string, SourceCode> exampleApps = FindExampleAppsCode();
     for (const auto& exampleApp: exampleApps)
     {
+        std::cout << "Processing " << exampleApp.first << "\n";
         std::string templateFile = APPS_FOLDER + "ExampleApp.cpp.template";
         std::string cppFile = APPS_FOLDER + exampleApp.first + ".cpp";
         auto code = fplus::read_text_file(templateFile)();
@@ -22,6 +23,13 @@ int main()
         code = fplus::replace_tokens("{ExampleAppName}"s, exampleApp.first, code);
         code = fplus::replace_tokens("{ExampleAppCode}"s, exampleApp.second, code);
 
+        if (exampleApp.first == "ExampleAppMainMenuBar")
+        {
+            code = fplus::replace_tokens(
+                "ShowExampleAppMainMenuBar(nullptr)"s,
+                "ShowExampleAppMainMenuBar()"s,
+                code);
+        }
         assert(fplus::write_text_file(cppFile, code)());
         std::cout << templateFile << " --> " << cppFile << "\n";
     }

@@ -10,6 +10,7 @@
 // Note: You can use most Docking facilities without calling any API. You DO NOT need to call DockSpace() to use Docking!
 // - Drag from window title bar or their tab to dock/undock. Hold SHIFT to disable docking.
 // - Drag from window menu button (upper-left button) to undock an entire node (all windows).
+// - When io.ConfigDockingWithShift == true, you instead need to hold SHIFT to _enable_ docking/undocking.
 // About dockspaces:
 // - Use DockSpace() to create an explicit dock node _within_ an existing window.
 // - Use DockSpaceOverViewport() to create an explicit dock node covering the screen or a specific viewport.
@@ -73,7 +74,6 @@ void ShowExampleAppDockSpace(bool* p_open)
     ImGui::Begin("DockSpace Demo", p_open, window_flags);
     if (!opt_padding)
         ImGui::PopStyleVar();
-    DEMO_MARKER("Examples/Dockspace"); // See ShowExampleAppDockSpace() several lines before this tag
 
     if (opt_fullscreen)
         ImGui::PopStyleVar(2);
@@ -115,8 +115,9 @@ void ShowExampleAppDockSpace(bool* p_open)
             "When docking is enabled, you can ALWAYS dock MOST window into another! Try it now!" "\n"
             "- Drag from window title bar or their tab to dock/undock." "\n"
             "- Drag from window menu button (upper-left button) to undock an entire node (all windows)." "\n"
-            "- Hold SHIFT to disable docking." "\n"
-            "This demo app has nothing to do with it!" "\n\n"
+            "- Hold SHIFT to disable docking (if io.ConfigDockingWithShift == false, default)" "\n"
+            "- Hold SHIFT to enable docking (if io.ConfigDockingWithShift == true)" "\n"
+            "This demo app has nothing to do with enabling docking!" "\n\n"
             "This demo app only demonstrate the use of ImGui::DockSpace() which allows you to manually create a docking node _within_ another window." "\n\n"
             "Read comments in ShowExampleAppDockSpace() for more details.");
 

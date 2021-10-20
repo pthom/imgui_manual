@@ -14,7 +14,7 @@ static void ShowExampleMenuFile();
 // Note the difference between BeginMainMenuBar() and BeginMenuBar():
 // - BeginMenuBar() = menu-bar inside current window (which needs the ImGuiWindowFlags_MenuBar flag!)
 // - BeginMainMenuBar() = helper to create menu-bar-sized window at the top of the main viewport + call BeginMenuBar() into it.
-static void ShowExampleAppMainMenuBar(bool *)
+static void ShowExampleAppMainMenuBar()
 {
     if (ImGui::BeginMainMenuBar())
     {
@@ -133,6 +133,6 @@ static void ShowExampleMenuFile()
 
 void Playground()
 {
-    ShowExampleAppMainMenuBar(nullptr);
+    ShowExampleAppMainMenuBar();
 }
 
