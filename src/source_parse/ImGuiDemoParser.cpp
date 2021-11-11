@@ -8,21 +8,21 @@ namespace SourceParse
 
 LinesWithTags findImGuiDemoCodeLines(const std::string &sourceCode)
 {
-    static std::string regionToken = "DEMO_MARKER";
+    static std::string regionToken = "IMGUI_DEMO_MARKER";
 
     auto lines = fplus::split('\n', true, sourceCode);
     auto numberedLines = fplus::enumerate(lines);
 
-    // macro_definition_line_number line where #define DEMO_MARKER is written
+    // macro_definition_line_number line where #define IMGUI_DEMO_MARKER is written
     size_t macro_definition_line_number =
         fplus::keep_if(
-            [](const NumberedLine& v) { return fplus::is_prefix_of("#define DEMO_MARKER("s, v.second); },
+            [](const NumberedLine& v) { return fplus::is_prefix_of("#define IMGUI_DEMO_MARKER("s, v.second); },
             numberedLines
             )[0].first;
 
     auto demoCodeLines = fplus::keep_if([macro_definition_line_number](const NumberedLine& v) {
         return
-                 fplus::is_infix_of("DEMO_MARKER("s, v.second)
+                 fplus::is_infix_of("IMGUI_DEMO_MARKER("s, v.second)
             && ! fplus::is_prefix_of("#define"s, v.second)
             && ! fplus::is_infix_of("ImGui::SetTooltip"s, v.second)
             && v.first > macro_definition_line_number
@@ -31,14 +31,14 @@ LinesWithTags findImGuiDemoCodeLines(const std::string &sourceCode)
 
     LinesWithTags tags = fplus::transform([](const NumberedLine& v) {
         LineWithTag r;
-        // codeLine look like "    DEMO_MARKER("Menu/Tools");"
+        // codeLine look like "    IMGUI_DEMO_MARKER("Menu/Tools");"
         // And for a tag like this, the title should be "Tools", and the level should be 2
         std::string codeLine = v.second;
 
         r.lineNumber = (int)v.first;
         {
             // codeLine look like
-            //          DEMO_MARKER("Menu/Tools");
+            //          IMGUI_DEMO_MARKER("Menu/Tools");
             // And in this case, we return {"Menu/Tools"}
             auto tokens = fplus::split('"', true, codeLine);
             assert(tokens.size() >= 3);
