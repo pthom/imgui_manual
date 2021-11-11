@@ -10,16 +10,17 @@
 
 #include "ImGuiDemoBrowser.h"
 
-// Redefinition of ImGuiDemoCallback, as defined in imgui_demo.cpp
-typedef void (*ImGuiDemoCallback)(const char* file, int line_number, const char* demo_title);
-extern ImGuiDemoCallback GImGuiDemoCallback;
+// Redefinition of ImGuiDemoMarkerCallback, as defined in imgui_demo.cpp
+typedef void (*ImGuiDemoMarkerCallback)(const char* file, int line, const char* section, void* user_data);
+extern ImGuiDemoMarkerCallback  GImGuiDemoMarkerCallback;
+extern void*                    GImGuiDemoMarkerCallbackUserData;
 
 // implImGuiDemoCallbackDemoCallback is the implementation
 // of imgui_demo.cpp's global callback (gImGuiDemoCallback)
 // And  gImGuiDemoBrowser is a global reference to the browser used by this callback
 ImGuiDemoBrowser *gImGuiDemoBrowser = nullptr;
 extern HelloImGui::RunnerParams runnerParams; // defined in ImGuiManual.cpp
-void implImGuiDemoCallbackDemoCallback(const char* file, int line_number, const char* demo_title)
+void implImGuiDemoCallbackDemoCallback(const char* file, int line_number, const char* demo_title, void* /*user_data*/)
 {
     gImGuiDemoBrowser->ImGuiDemoCallback(file, line_number, demo_title);
 }
@@ -33,8 +34,10 @@ ImGuiDemoBrowser::ImGuiDemoBrowser()
     setEditorAnnotatedSource(mAnnotatedSource);
 
     // Setup of imgui_demo.cpp's global callback
-    // (gImGuiDemoCallback belongs to imgui.cpp!)
-    GImGuiDemoCallback = implImGuiDemoCallbackDemoCallback;
+    // (GImGuiDemoMarkerCallback belongs to imgui.cpp!)
+    GImGuiDemoMarkerCallback = implImGuiDemoCallbackDemoCallback;
+    GImGuiDemoMarkerCallbackUserData = NULL;
+
     gImGuiDemoBrowser = this;
 }
 

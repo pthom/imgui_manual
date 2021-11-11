@@ -8,7 +8,6 @@
 // - ShowExampleAppMainMenuBar()
 // - ShowExampleMenuFile()
 //-----------------------------------------------------------------------------
-static void ShowExampleMenuFile();
 
 // Demonstrate creating a "main" fullscreen menu bar and populating it.
 // Note the difference between BeginMainMenuBar() and BeginMenuBar():
@@ -37,31 +36,21 @@ static void ShowExampleAppMainMenuBar()
     }
 }
 
-// Below we have examples centered around several topics, they are accessible from the main menu bar.
-void FullExamplesBelowThisPoint()
-{
-    // This function does nothing and is here just to add a Demo Code tag
-    IMGUI_DEMO_MARKER("Examples");
-}
-
-
 // Note that shortcuts are currently provided for display only
 // (future version will add explicit flags to BeginMenu() to request processing shortcuts)
 static void ShowExampleMenuFile()
 {
-    IMGUI_DEMO_MARKER("Examples/Menu File");
+    IMGUI_DEMO_MARKER("Examples/Menu");
     ImGui::MenuItem("(demo menu)", NULL, false, false);
     if (ImGui::MenuItem("New")) {}
     if (ImGui::MenuItem("Open", "Ctrl+O")) {}
     if (ImGui::BeginMenu("Open Recent"))
     {
-        IMGUI_DEMO_MARKER("Examples/Menu File/Open Recent");
         ImGui::MenuItem("fish_hat.c");
         ImGui::MenuItem("fish_hat.inl");
         ImGui::MenuItem("fish_hat.h");
         if (ImGui::BeginMenu("More.."))
         {
-            IMGUI_DEMO_MARKER("Examples/Menu File/Open Recent/More");
             ImGui::MenuItem("Hello");
             ImGui::MenuItem("Sailor");
             if (ImGui::BeginMenu("Recurse.."))
@@ -77,9 +66,9 @@ static void ShowExampleMenuFile()
     if (ImGui::MenuItem("Save As..")) {}
 
     ImGui::Separator();
+    IMGUI_DEMO_MARKER("Examples/Menu/Options");
     if (ImGui::BeginMenu("Options"))
     {
-        IMGUI_DEMO_MARKER("Examples/Menu File/Options");
         static bool enabled = true;
         ImGui::MenuItem("Enabled", "", &enabled);
         ImGui::BeginChild("child", ImVec2(0, 60), true);
@@ -94,9 +83,9 @@ static void ShowExampleMenuFile()
         ImGui::EndMenu();
     }
 
+    IMGUI_DEMO_MARKER("Examples/Menu/Colors");
     if (ImGui::BeginMenu("Colors"))
     {
-        IMGUI_DEMO_MARKER("Examples/Menu File/Colors");
         float sz = ImGui::GetTextLineHeight();
         for (int i = 0; i < ImGuiCol_COUNT; i++)
         {
@@ -115,7 +104,7 @@ static void ShowExampleMenuFile()
     // In a real code-base using it would make senses to use this feature from very different code locations.
     if (ImGui::BeginMenu("Options")) // <-- Append!
     {
-        IMGUI_DEMO_MARKER("Examples/Menu File/Append to an existing menu");
+        IMGUI_DEMO_MARKER("Examples/Menu/Append to an existing menu");
         static bool b = true;
         ImGui::Checkbox("SomeOption", &b);
         ImGui::EndMenu();
@@ -125,7 +114,6 @@ static void ShowExampleMenuFile()
     {
         IM_ASSERT(0);
     }
-    IMGUI_DEMO_MARKER("Examples/Menu File/Checked item");
     if (ImGui::MenuItem("Checked", NULL, true)) {}
     if (ImGui::MenuItem("Quit", "Alt+F4")) {}
 }
