@@ -3,10 +3,10 @@
 #include "imgui.h"
 
 // Decl of feature from imgui_demo.cpp
-namespace DemoMarkerTools
+namespace ImGuiDemoMarkerHighlight
 {
-    bool FlagFollowMouse();
-    void SetFlagFollowMouse(bool v);
+    bool FlagCodeHighlight();
+    void SetFlagCodeHighlight(bool v);
 }
 
 namespace SourceParse
@@ -49,13 +49,13 @@ namespace SourceParse
     {
     public:
         GuiHeaderTree_FollowDemo(const LinesWithTags & linesWithTags) : GuiHeaderTree(linesWithTags) {
-            DemoMarkerTools::SetFlagFollowMouse(true);
+            ImGuiDemoMarkerHighlight::SetFlagCodeHighlight(true);
         }
 
         int gui(int currentEditorLineNumber) override
         {
             ImGui::SameLine();
-            return GuiHeaderTree::gui(DemoMarkerTools::FlagFollowMouse() ? mCurrentFollowedLine : currentEditorLineNumber);
+            return GuiHeaderTree::gui(ImGuiDemoMarkerHighlight::FlagCodeHighlight() ? mCurrentFollowedLine : currentEditorLineNumber);
         }
 
         void followShowTocElementForLine(int sourceLineNumber)
