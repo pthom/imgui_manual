@@ -24,12 +24,8 @@ int main()
         code = fplus::replace_tokens("{ExampleAppCode}"s, exampleApp.second, code);
 
         if (exampleApp.first == "ExampleAppMainMenuBar")
-        {
-            code = fplus::replace_tokens(
-                "ShowExampleAppMainMenuBar(nullptr)"s,
-                "ShowExampleAppMainMenuBar()"s,
-                code);
-        }
+            continue;
+
         assert(fplus::write_text_file(cppFile, code)());
         std::cout << templateFile << " --> " << cppFile << "\n";
     }

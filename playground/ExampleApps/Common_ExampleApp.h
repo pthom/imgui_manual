@@ -3,8 +3,7 @@
 
 void Playground();
 
-#define DEMO_MARKER(x)
-#define DEMO_MARKER_BLANK_LINE(x)
+#define IMGUI_DEMO_MARKER(x)
 
 // Helpers macros
 // We normally try to not use many helpers in imgui_demo.cpp in order to make code easier to copy and paste,
@@ -39,6 +38,7 @@ static void HelpMarker(const char* desc)
     }
 }
 
+void ShowExampleMenuFile() {}
 
 int main(int, char **)
 {
