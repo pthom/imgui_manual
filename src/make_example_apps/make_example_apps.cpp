@@ -23,7 +23,7 @@ int main()
         code = fplus::replace_tokens("{ExampleAppName}"s, exampleApp.first, code);
         code = fplus::replace_tokens("{ExampleAppCode}"s, exampleApp.second, code);
 
-        if (exampleApp.first == "ExampleAppMainMenuBar")
+        if ((exampleApp.first == "ExampleAppMainMenuBar") || (exampleApp.first == "ExampleAppDocuments"))
             continue;
 
         assert(fplus::write_text_file(cppFile, code)());
