@@ -14,15 +14,27 @@
 typedef void (*ImGuiDemoMarkerCallback)(const char* file, int line, const char* section, void* user_data);
 extern ImGuiDemoMarkerCallback  GImGuiDemoMarkerCallback;
 extern void*                    GImGuiDemoMarkerCallbackUserData;
+extern bool                     GImGuiDemoMarker_IsActive;
+bool ImGuiDemoMarkerHighlightZone(int line_number);
 
 // implImGuiDemoCallbackDemoCallback is the implementation
 // of imgui_demo.cpp's global callback (gImGuiDemoCallback)
 // And  gImGuiDemoBrowser is a global reference to the browser used by this callback
 ImGuiDemoBrowser *gImGuiDemoBrowser = nullptr;
 extern HelloImGui::RunnerParams runnerParams; // defined in ImGuiManual.cpp
-void implImGuiDemoCallbackDemoCallback(const char* file, int line_number, const char* demo_title, void* /*user_data*/)
+void implImGuiDemoCallbackDemoCallback(const char* file, int line, const char* section, void* /*user_data*/)
 {
-    gImGuiDemoBrowser->ImGuiDemoCallback(file, line_number, demo_title);
+    if (!GImGuiDemoMarker_IsActive)
+        return;
+    if (ImGuiDemoMarkerHighlightZone(line))
+    {
+        ImGui::SetTooltip(
+            "Code Lookup\n"
+            "IMGUI_DEMO_MARKER(\"%s\") at imgui_demo.cpp:%d\n\n"
+            "Press \"Esc\" to exit this mode",
+            section, line);
+        gImGuiDemoBrowser->ImGuiDemoCallback(file, line, section);
+    }
 }
 
 
@@ -103,4 +115,3 @@ void ImGuiDemoBrowser::guiDemoCodeTags()
     if (selectedLine >= 0)
         mEditor.SetCursorPosition({selectedLine, 0}, 3);
 }
-

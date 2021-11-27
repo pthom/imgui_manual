@@ -13,20 +13,8 @@ LinesWithTags findImGuiDemoCodeLines(const std::string &sourceCode)
     auto lines = fplus::split('\n', true, sourceCode);
     auto numberedLines = fplus::enumerate(lines);
 
-    // macro_definition_line_number line where #define IMGUI_DEMO_MARKER is written
-    size_t macro_definition_line_number =
-        fplus::keep_if(
-            [](const NumberedLine& v) { return fplus::is_prefix_of("#define IMGUI_DEMO_MARKER("s, v.second); },
-            numberedLines
-            )[0].first;
-
-    auto demoCodeLines = fplus::keep_if([macro_definition_line_number](const NumberedLine& v) {
-        return
-                 fplus::is_infix_of("IMGUI_DEMO_MARKER("s, v.second)
-            && ! fplus::is_prefix_of("#define"s, v.second)
-            && ! fplus::is_infix_of("ImGui::SetTooltip"s, v.second)
-            && v.first > macro_definition_line_number
-            ;
+    auto demoCodeLines = fplus::keep_if([](const NumberedLine& v) {
+        return fplus::is_prefix_of("IMGUI_DEMO_MARKER("s, fplus::trim_whitespace_left(v.second));
     }, numberedLines);
 
     LinesWithTags tags = fplus::transform([](const NumberedLine& v) {

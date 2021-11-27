@@ -2,12 +2,7 @@
 #include "source_parse/HeaderTree.h"
 #include "imgui.h"
 
-// Decl of feature from imgui_demo.cpp
-namespace ImGuiDemoMarkerHighlight
-{
-    bool FlagCodeHighlight();
-    void SetFlagCodeHighlight(bool v);
-}
+extern bool                     GImGuiDemoMarker_IsActive;
 
 namespace SourceParse
 {
@@ -49,13 +44,13 @@ namespace SourceParse
     {
     public:
         GuiHeaderTree_FollowDemo(const LinesWithTags & linesWithTags) : GuiHeaderTree(linesWithTags) {
-            ImGuiDemoMarkerHighlight::SetFlagCodeHighlight(true);
+            GImGuiDemoMarker_IsActive = true;
         }
 
         int gui(int currentEditorLineNumber) override
         {
             ImGui::SameLine();
-            return GuiHeaderTree::gui(ImGuiDemoMarkerHighlight::FlagCodeHighlight() ? mCurrentFollowedLine : currentEditorLineNumber);
+            return GuiHeaderTree::gui(GImGuiDemoMarker_IsActive ? mCurrentFollowedLine : currentEditorLineNumber);
         }
 
         void followShowTocElementForLine(int sourceLineNumber)
