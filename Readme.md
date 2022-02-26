@@ -1,9 +1,12 @@
 Build:
 
-cd docker/
-docker build --no-cache -t jrpc-linux-buildsystem .
-cd ..
-docker-compose -p JRPC-linux-buildsystèmes -f /home/jeremi/Code/imgui_manual/docker/build-Linux.yaml up --no-deps --build
+change /external/hello_imgui/src/hello_imgui CMakeLists.txt line 89 to 
+`target_link_libraries(${target_name} PUBLIC SDL2 SDL2main)`
+
+`cd docker/`
+`docker build --no-cache -t jrpc-linux-buildsystem .`
+`cd ..`
+`docker-compose -p JRPC-linux-buildsystèmes -f /home/jeremi/Code/imgui_manual/docker/build-Linux.yaml up --no-deps --build`
 
 
 # Dear ImGui: an interactive manual
