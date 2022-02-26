@@ -1,3 +1,11 @@
+Build:
+
+cd docker/
+docker build --no-cache -t jrpc-linux-buildsystem .
+cd ..
+docker-compose -p JRPC-linux-buildsystèmes -f /home/jeremi/Code/imgui_manual/docker/build-Linux.yaml up --no-deps --build
+
+
 # Dear ImGui: an interactive manual
 
 Source for an online interactive manual for [Dear ImGui](https://github.com/ocornut/imgui).

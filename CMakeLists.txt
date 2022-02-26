@@ -3,8 +3,14 @@ project(my_app LANGUAGES C CXX)
 set(CMAKE_CXX_STANDARD 14)
 
 option(IMGUI_MANUAL_BUILD_TESTS "Build tests" OFF)
-option(IMGUI_MANUAL_BUILD_PLAYGROUND "Build playground" ON)
+option(IMGUI_MANUAL_BUILD_PLAYGROUND "Build playground" OFF)
 option(IMGUI_MANUAL_CAN_WRITE_IMGUI_DEMO_CPP "Allow writing to imgui_demo.cpp" OFF)
+
+INCLUDE(FindPkgConfig)
+
+PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
+
+INCLUDE_DIRECTORIES(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS})
 
 # Provide our own fork of imgui, disable the one provided by hello_imgui
 set (HELLOIMGUI_BUILD_IMGUI OFF CACHE BOOL "" FORCE)

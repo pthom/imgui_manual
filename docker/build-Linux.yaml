@@ -1,0 +1,15 @@
+version: '2'
+
+services:
+  jrpc:
+    container_name: jrpc-linux-buildsystem
+    image: jrpc-linux-buildsystem:latest
+    # build: 
+    #     context: ../
+    #     dockerfile: Dockerfile
+    restart: "no"
+    volumes:
+      - "/home/jeremi/Code/imgui_manual:/imgui_manual"
+    environment:
+      - SDL2_DIR = /usr/lib/x86_64-linux-gnu/cmake/SDL2
+    command: bash -c "python ../external/hello_imgui/tools/vcpkg_install_third_parties.py && cmake .. -DCMAKE_TOOLCHAIN_FILE=../external/hello_imgui/vcpkg/scripts/buildsystems/vcpkg.cmake && make -j 4"
