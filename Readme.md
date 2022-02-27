@@ -1,14 +1,3 @@
-Build:
-
-change /external/hello_imgui/src/hello_imgui CMakeLists.txt line 89 to 
-`target_link_libraries(${target_name} PUBLIC SDL2 SDL2main)`
-
-`cd docker/`
-`docker build --no-cache -t jrpc-linux-buildsystem .`
-`cd ..`
-`docker-compose -p JRPC-linux-buildsystèmes -f /home/jeremi/Code/imgui_manual/docker/build-Linux.yaml up --no-deps --build`
-
-
 # Dear ImGui: an interactive manual
 
 Source for an online interactive manual for [Dear ImGui](https://github.com/ocornut/imgui).
@@ -104,5 +93,31 @@ make -j 4
 ````
 
 ---
+
+
+Alternative build options:
+
+Build:
+
+1. `git clone https://github.com/jrynkiew/jrpc_beta` or get it some other way
+
+2. `cd jrpc_beta` (this is the name for the wrapper around hello_imgui)
+
+3. `sudo apt-get install docker`(you might need to do some extra configuration to get docker running for your user)
+
+4. `sudo apt-get install docker-compose`
+
+5. `git submodule update --init --recursive`
+
+4. `cd build`
+
+6. `docker build --no-cache -t jrpc-linux-buildsystem .`
+
+7. `docker-compose -p JRPC-linux-buildsystèmes -f build-Linux.yaml up --no-deps --build`
+
+change /external/hello_imgui/src/hello_imgui CMakeLists.txt line 89 to 
+`target_link_libraries(${target_name} PUBLIC SDL2 SDL2main)` (This has to be changed by pthom, in the hello_imgui dependency, or changed manually as described here)
+
+
 
 _ETFM! (Enjoy The Fine Manual!)_
