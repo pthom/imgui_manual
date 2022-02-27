@@ -4,11 +4,13 @@
 sudo apt-get install docker
 sudo apt-get install docker-compose
 
-#git submodule update --init --recursive
+git submodule update --init --recursive
 
 cd build
 
-#docker build --no-cache -t jrpc-linux-buildsystem .
+cp -R vcpkg ../external/hello_imgui/vcpkg
+
+docker build --no-cache -t jrpc-linux-buildsystem .
 
 docker-compose -p JRPC-linux-buildsystèmes -f ./build-Linux.yaml up --no-deps --build
 
