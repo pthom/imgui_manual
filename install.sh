@@ -8,10 +8,8 @@ git submodule update --init --recursive
 
 cd build
 
-cp -R vcpkg ../external/hello_imgui/
-cp CMakeLists.txt ../external/hello_imgui/src/hello_imgui
-
-#docker build --no-cache -t jrpc-linux-buildsystem .
+#we need to add [x11] parameter to vcpkg on line 25 like so - run("./vcpkg install glfw3 sdl2[x11]")
+cp vcpkg_install_third_parties.py ../external/hello_imgui/tools/
 
 docker-compose -p JRPC-linux-buildsystèmes -f ./build-Linux.yaml up --no-deps --build
 

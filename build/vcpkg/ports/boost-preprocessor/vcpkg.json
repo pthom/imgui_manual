@@ -1,9 +1,0 @@
-{
-  "name": "boost-preprocessor",
-  "version": "1.78.0",
-  "description": "Boost preprocessor module",
-  "homepage": "https://github.com/boostorg/preprocessor",
-  "dependencies": [
-    "boost-vcpkg-helpers"
-  ]
-}
