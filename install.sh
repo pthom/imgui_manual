@@ -8,9 +8,9 @@ git submodule update --init --recursive
 
 cd build
 
-cp -R vcpkg ../external/hello_imgui/vcpkg
+cp -R vcpkg ../external/hello_imgui/
 
-docker build --no-cache -t jrpc-linux-buildsystem .
+#docker build --no-cache -t jrpc-linux-buildsystem .
 
 docker-compose -p JRPC-linux-buildsystèmes -f ./build-Linux.yaml up --no-deps --build
 
