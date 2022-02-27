@@ -94,20 +94,34 @@ make -j 4
 
 ---
 
+First time Build:
 
-Alternative build options:
+1. `chmod +x install.sh`
 
-Build:
+2. `./install.sh` The resulting files will be in the bin directory. This is a very long build process.
 
-1. `git clone https://github.com/jrynkiew/jrpc_beta` or get it some other way
+Every other time build options: 
 
-2. `cd jrpc_beta` (this is the name for the wrapper around hello_imgui)
+If you made changes to the imgui_manual code and want to re-build the application, simply run 
+
+`docker-compose -p JRPC-linux-buildsystèmes -f build-Linux.yaml up --no-deps --build`
+
+Most of the time spent in the install.sh script is installing and building the image which is responsible for building your code. Once you have compiled it once, every other time you can just run it with the new codebase, and it will compile it. If you add more dependencies to this code, you might need to add those dependenies to the buildsystèmes Dockerfile and re-build the image.
+
+Full Build steps:
+
+1. `git clone https://github.com/jrynkiew/jrpc_beta` or get it some other way. The install.sh script is enough to compile the whole project.
+
+2. `cd jrpc_beta` (this is the name for the wrapper around imgui_manual)
 
 3. `sudo apt-get install docker`(you might need to do some extra configuration to get docker running for your user)
 
 4. `sudo apt-get install docker-compose`
 
-5. `git submodule update --init --recursive`
+5. `git submodule update --init --recursive` (initialize imgui_manual dependencies)
+
+change /external/hello_imgui/src/hello_imgui CMakeLists.txt line 89 to 
+`target_link_libraries(${target_name} PUBLIC SDL2 SDL2main)` (This has to be changed by pthom, in the hello_imgui dependency, or changed manually as described here)
 
 4. `cd build`
 
@@ -115,8 +129,7 @@ Build:
 
 7. `docker-compose -p JRPC-linux-buildsystèmes -f build-Linux.yaml up --no-deps --build`
 
-change /external/hello_imgui/src/hello_imgui CMakeLists.txt line 89 to 
-`target_link_libraries(${target_name} PUBLIC SDL2 SDL2main)` (This has to be changed by pthom, in the hello_imgui dependency, or changed manually as described here)
+
 
 
 
