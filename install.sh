@@ -9,6 +9,7 @@ git submodule update --init --recursive
 cd build
 
 cp -R vcpkg ../external/hello_imgui/
+cp CMakeLists.txt ../external/hello_imgui/src/hello_imgui
 
 #docker build --no-cache -t jrpc-linux-buildsystem .
 
