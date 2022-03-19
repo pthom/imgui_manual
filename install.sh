@@ -15,7 +15,7 @@ MODE_flag=$(case "$MODE" in
     echo "--no-deps --build" 
     sudo apt-get install docker >&-
     sudo apt-get install docker-compose >&- ;;
-    #git submodule update --init --recursive >&-;;
+    git submodule update --init --recursive >&-;;
   (A|a)    echo ""  ;;
 esac)
 
