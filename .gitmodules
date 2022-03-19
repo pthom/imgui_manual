@@ -15,3 +15,9 @@
 [submodule "external/imgui"]
 	path = external/imgui
 	url = https://github.com/pthom/imgui.git
+[submodule "external/JRPC"]
+	path = external/JRPC
+	url = https://github.com/jrynkiew/JRPC
+[submodule "external/imgui-node-editor"]
+	path = external/imgui-node-editor
+	url = https://github.com/jrynkiew/imgui-node-editor
