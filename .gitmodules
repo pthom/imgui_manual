@@ -21,3 +21,6 @@
 [submodule "external/imgui-node-editor"]
 	path = external/imgui-node-editor
 	url = https://github.com/jrynkiew/imgui-node-editor
+[submodule "external/pebble-tracker-firmware"]
+	path = external/pebble-tracker-firmware
+	url = https://github.com/jrynkiew/pebble-tracker-firmware.git
