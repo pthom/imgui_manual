@@ -1,32 +1,129 @@
-# Environment variables
-red=`tput setaf 1`
-purple=`tput setaf 93`
-blue=`tput setaf 21`
-green=`tput setaf 2`
-gold=`tput setaf 214`
-reset=`tput sgr0`
+#!/bin/bash
 
 . ./tools/setenv.sh 
 
+if [ -x "$(command -v git)" ]; then
+    echo "${red}git version${reset}"
+    git --version
+else
+    echo "Installing git"
+    sudo apt-get install git
+fi
+
+if [ -x "$(command -v docker)" ]; then
+    echo "${red}docker version${reset}"
+    docker --version
+else
+    echo "Installing docker"
+    sudo apt-get install docker
+fi
+
+if [ -x "$(command -v docker-compose)" ]; then
+    echo "${red}docker-compose version${reset}"
+    docker-compose --version
+else
+    echo "Installing docker-compose"
+    sudo apt-get install docker-compose
+fi
+
+echo -e "Initializing git repo and dependencies: \n${red}git submodule update --init --recursive${reset}"
+git submodule update --init --recursive
+
 # Getting necessary user input
-read -p "Do you want to perform a first-time installation (${red}F${reset}) or run the application (${green}A${reset})?: " MODE
-MODE_flag=$(case "$MODE" in
-  (F|f)    
-    echo "--no-deps --build" 
-    sudo apt-get install docker >&-
-    sudo apt-get install docker-compose >&-
-    git submodule update --init --recursive >&-;;
-  (A|a)    echo ""  ;;
-esac)
+read -p "What do you want to do? 
+  (${red}1${reset}): build and run the JRPC IoTeX Full Node install script
+  (${green}2${reset}): build a different JRPC Application
+" APPLICATION
+
+case $APPLICATION in
+  1) # Build IoTeX Full Node
+    cd $jrpc_beta/external/JRPC/
+    bash $jrpc_beta/external/JRPC/install.sh ;;
+
+  2) # Build Application
+    read -p "Choose the application to build:
+      (${red}1${reset}): Pebble Tracker Firmware 
+      (${green}2${reset}): JRPC Blockchain Visualiser Demo 
+      " APPLICATION_flag
+esac
+
+case $APPLICATION_flag in 
+  1) # Build Pebble Tracker Firmware Build System
+    cd $jrpc_beta/external/pebble-firmware/
+    bash $jrpc_beta/external/pebble-firmware/install.sh ;;
+
+  2) # Build JRPC Beta Data Visualiser
+    # cd $jrpc_beta/build
+    # bash $jrpc_beta/build/install.sh ;;
+    read -p "Do you want to do with the JRPC Blockchain Visualizer Demo?
+      (${red}1${reset}): Build Application 
+      (${green}2${reset}): Run the Docker container in Debug mode
+      " JRPC_Blockchain_Visualizer_flag
+
+    case $JRPC_Blockchain_Visualizer_flag in
+      1) # Build Application
+        export COMMAND="bash -c 'python ../external/hello_imgui/tools/vcpkg_install_third_parties.py && cmake .. -DCMAKE_TOOLCHAIN_FILE=../external/hello_imgui/vcpkg/scripts/buildsystems/vcpkg.cmake && make -j 4 && /imgui_manual/tools/emscripten_build.sh'"
+        echo -e "Installing custom third party build script: \n${green}cp vcpkg_install_third_parties.py $jrpc_beta/external/hello_imgui/tools/${reset}"
+        cp vcpkg_install_third_parties.py $jrpc_beta/external/hello_imgui/tools/
+        echo -e "Starting docker-compose script: \n${green}docker-compose -p JRPC-linux-buildsystèmes -f $jrpc_beta/build/build-Linux.yaml up --no-deps --build${reset}"
+        docker-compose -p JRPC-linux-buildsystèmes -f $jrpc_beta/build/build-Linux.yaml up --no-deps --build
+        echo -e "Starting Application: \n${green}$jrpc_beta/bin/src/imgui_manual${reset}"
+        cd $jrpc_beta/bin/src
+        $jrpc_beta/bin/src/imgui_manual ;;
+        
+      2) # Run the Docker container in Debug mode
+        export COMMAND="sleep infinity"
+        echo -e "Starting docker-compose script: \n${green}nohup docker-compose -p JRPC-linux-buildsystèmes -f $jrpc_beta/build/build-Linux.yaml up --no-deps --build &${reset}"
+        nohup docker-compose -p JRPC-linux-buildsystèmes -f $jrpc_beta/build/build-Linux.yaml up --no-deps --build &
+        sleep 5
+        echo -e "Entering into the Cocker container in debug mode: \n${green}docker exec -it jrpc-linux-buildsystem /bin/bash${reset}"
+        docker exec -it jrpc-linux-buildsystem /bin/bash 
+        echo -e "Stopping docker-compose script: \n${green}docker-compose -p JRPC-linux-buildsystèmes -f $jrpc_beta/build/build-Linux.yaml down${reset}"
+        docker-compose -p JRPC-linux-buildsystèmes -f $jrpc_beta/build/build-Linux.yaml down ;;
+    esac
+esac
+
+# MODE_flag=$(case "$MODE" in
+#   (1)    
+#     echo "--no-deps --build" 
+#     sudo apt-get install docker >&-
+#     sudo apt-get install docker-compose >&-
+#     git submodule update --init --recursive >&-;;
+#   (2)    echo ""  ;;
+# esac)
+
+# # Getting necessary user input
+# read -p "Choose your Destiny:
+#         (${red}1${reset}): Build Full IoTeX Node 
+#         (${green}2${reset}): Build a different Application 
+#         " APPLICATION
+
+
+# case APPLICATION in
+#   (1)
+#     cd $jrpc_beta/external/JRPC/
+#     bash $jrpc_beta/external/JRPC/install.sh ;;
+#   (2)
+#     read -p "Which Application do you want to build?
+#         (${red}F${reset}) IoTeX Full Node
+#         (${green}A${reset}) Pebble Tracker Firmware update buildkit
+#         " TYPE 
+
+
+
+# TYPE_flag=$(case "$TYPE" in
+#   (F|f)    
+#     cd $jrpc_beta/external/JRPC/
+#     bash $jrpc_beta/external/JRPC/install.sh ;;
+#   (A|a)    
+#     cd $jrpc_beta/external/pebble-firmware/
+#     bash $jrpc_beta/external/pebble-firmware/install.sh ;;
+# esac)
 
 # # Install dependencies
 # sudo apt-get install docker
 # sudo apt-get install docker-compose
 # git submodule update --init --recursive
-
-cd $jrpc_beta/external/JRPC/
-
-bash $jrpc_beta/external/JRPC/install.sh
 
 
 
@@ -186,15 +283,4 @@ bash $jrpc_beta/external/JRPC/install.sh
 
 
 
-cd $jrpc_beta/build
 
-#we need to add [x11] parameter to vcpkg on line 25 like so - run("./vcpkg install glfw3 sdl2[x11]")
-cp vcpkg_install_third_parties.py ../external/hello_imgui/tools/
-
-echo "docker-compose -p JRPC-linux-buildsystèmes -f ./build-Linux.yaml up $MODE_flag"
-
-docker-compose -p JRPC-linux-buildsystèmes -f ./build-Linux.yaml up $MODE_flag
-
-cd ../bin/src
-
-./imgui_manual
