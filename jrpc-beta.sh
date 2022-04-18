@@ -64,7 +64,7 @@ case $APPLICATION_flag in
       1) # Build Application
         export COMMAND="bash -c 'python ../external/hello_imgui/tools/vcpkg_install_third_parties.py && cmake .. -DCMAKE_TOOLCHAIN_FILE=../external/hello_imgui/vcpkg/scripts/buildsystems/vcpkg.cmake && make -j 4 && /imgui_manual/tools/emscripten_build.sh'"
         echo -e "Installing custom third party build script: \n${green}cp vcpkg_install_third_parties.py $jrpc_beta/external/hello_imgui/tools/${reset}"
-        cp vcpkg_install_third_parties.py $jrpc_beta/external/hello_imgui/tools/
+        cp $jrpc_beta/build/vcpkg_install_third_parties.py $jrpc_beta/external/hello_imgui/tools/
         echo -e "Starting docker-compose script: \n${green}docker-compose -p JRPC-linux-buildsystèmes -f $jrpc_beta/build/build-Linux.yaml up --no-deps --build${reset}"
         docker-compose -p JRPC-linux-buildsystèmes -f $jrpc_beta/build/build-Linux.yaml up --no-deps --build
         echo -e "Starting Application: \n${green}$jrpc_beta/bin/src/imgui_manual${reset}"
