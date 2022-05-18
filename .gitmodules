@@ -24,5 +24,4 @@
 	branch = master
 [submodule "external/JRPC"]
 	path = external/JRPC
-	url = https://github.com/jrynkiew/JRPC.git
-	branch = master
+	url = https://github.com/jrynkiew/JRPC
