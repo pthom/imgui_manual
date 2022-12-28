@@ -7,7 +7,7 @@ int main(int , char *[])
             ImGui::ShowDemoWindow();
         };
     runnerParams.appWindowParams.windowTitle = "imgui_demo_hellorun";
-    runnerParams.appWindowParams.windowSize = {1280.f, 720.f};
+    runnerParams.appWindowParams.windowGeometry.size = {1280, 720};
     HelloImGui::Run(runnerParams);
     return 0;
 }

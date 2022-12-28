@@ -17,11 +17,14 @@ static void ShowExampleAppLayout(bool* p_open)
         {
             if (ImGui::BeginMenu("File"))
             {
-                if (ImGui::MenuItem("Close")) *p_open = false;
+                if (ImGui::MenuItem("Close", "Ctrl+W")) { *p_open = false; }
                 ImGui::EndMenu();
             }
             ImGui::EndMenuBar();
         }
+
+        if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_W))
+            *p_open = false;
 
         // Left
         static int selected = 0;

@@ -6,8 +6,8 @@
 // [SECTION] Example App: Manipulating Window Titles / ShowExampleAppWindowTitles()
 //-----------------------------------------------------------------------------
 
-// Demonstrate using "##" and "###" in identifiers to manipulate ID generation.
-// This apply to all regular items as well.
+// Demonstrate the use of "##" and "###" in identifiers to manipulate ID generation.
+// This applies to all regular items as well.
 // Read FAQ section "How can I have multiple widgets with the same label?" for details.
 static void ShowExampleAppWindowTitles(bool*)
 {

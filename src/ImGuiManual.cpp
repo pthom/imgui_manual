@@ -5,7 +5,8 @@
 #include "ImGuiHeaderDocBrowser.h"
 #include "ImGuiDemoBrowser.h"
 #include "ImGuiReadmeBrowser.h"
-#include "MenuTheme.h"
+#include "imgui_utilities/HyperlinkHelper.h"
+
 
 #include "hello_imgui/hello_imgui.h"
 #include "JsClipboardTricks.h"
@@ -30,7 +31,7 @@ int main(int, char **)
 
     // App window params
     runnerParams.appWindowParams.windowTitle = "ImGui Manual";
-    runnerParams.appWindowParams.windowSize = { 1200, 800};
+    runnerParams.appWindowParams.windowGeometry.size = {1200, 800};
 
     // ImGui window params
     runnerParams.imGuiWindowParams.defaultImGuiWindowType =
@@ -55,7 +56,7 @@ int main(int, char **)
         {
             dock_imguiDemoWindow.label = "Dear ImGui Demo";
             dock_imguiDemoWindow.dockSpaceName = "MainDockSpace";// This window goes into "MainDockSpace"
-            dock_imguiDemoWindow.GuiFonction = [&dock_imguiDemoWindow] {
+            dock_imguiDemoWindow.GuiFunction = [&dock_imguiDemoWindow] {
                 if (dock_imguiDemoWindow.isVisible)
                     ImGui::ShowDemoWindow(nullptr);
             };
@@ -67,7 +68,7 @@ int main(int, char **)
             dock_imguiDemoCode.label = imGuiDemoBrowser.windowLabel();
             dock_imguiDemoCode.dockSpaceName = "CodeSpace";// This window goes into "CodeSpace"
             dock_imguiDemoCode.isVisible = true;
-            dock_imguiDemoCode.GuiFonction = [&imGuiDemoBrowser] { imGuiDemoBrowser.gui(); };
+            dock_imguiDemoCode.GuiFunction = [&imGuiDemoBrowser] { imGuiDemoBrowser.gui(); };
             dock_imguiDemoCode.imGuiWindowFlags = ImGuiWindowFlags_HorizontalScrollbar;
         };
 
@@ -76,7 +77,7 @@ int main(int, char **)
             dock_imGuiCppDocBrowser.label = imGuiCppDocBrowser.windowLabel();
             dock_imGuiCppDocBrowser.dockSpaceName = "CodeSpace";
             dock_imGuiCppDocBrowser.isVisible = false;
-            dock_imGuiCppDocBrowser.GuiFonction = [&imGuiCppDocBrowser] { imGuiCppDocBrowser.gui(); };
+            dock_imGuiCppDocBrowser.GuiFunction = [&imGuiCppDocBrowser] { imGuiCppDocBrowser.gui(); };
         };
 
         HelloImGui::DockableWindow dock_imGuiHeaderDocBrowser;
@@ -84,7 +85,7 @@ int main(int, char **)
             dock_imGuiHeaderDocBrowser.label = imGuiHeaderDocBrowser.windowLabel();
             dock_imGuiHeaderDocBrowser.dockSpaceName = "CodeSpace";
             dock_imGuiHeaderDocBrowser.isVisible = true;
-            dock_imGuiHeaderDocBrowser.GuiFonction = [&imGuiHeaderDocBrowser] { imGuiHeaderDocBrowser.gui(); };
+            dock_imGuiHeaderDocBrowser.GuiFunction = [&imGuiHeaderDocBrowser] { imGuiHeaderDocBrowser.gui(); };
         };
 
         HelloImGui::DockableWindow dock_imguiReadme;
@@ -92,7 +93,7 @@ int main(int, char **)
             dock_imguiReadme.label = "ImGui - Readme";
             dock_imguiReadme.dockSpaceName = "CodeSpace";
             dock_imguiReadme.isVisible = false;
-            dock_imguiReadme.GuiFonction = [&imGuiReadmeBrowser] { imGuiReadmeBrowser.gui(); };
+            dock_imguiReadme.GuiFunction = [&imGuiReadmeBrowser] { imGuiReadmeBrowser.gui(); };
         };
 
         HelloImGui::DockableWindow dock_imguiCodeBrowser;
@@ -100,7 +101,7 @@ int main(int, char **)
             dock_imguiCodeBrowser.label = "ImGui - Code";
             dock_imguiCodeBrowser.dockSpaceName = "CodeSpace";
             dock_imguiCodeBrowser.isVisible = false;
-            dock_imguiCodeBrowser.GuiFonction = [&imGuiCodeBrowser] { imGuiCodeBrowser.gui(); };
+            dock_imguiCodeBrowser.GuiFunction = [&imGuiCodeBrowser] { imGuiCodeBrowser.gui(); };
         };
 
         HelloImGui::DockableWindow dock_acknowledgments;
@@ -109,7 +110,7 @@ int main(int, char **)
             dock_acknowledgments.dockSpaceName = "CodeSpace";
             dock_acknowledgments.isVisible = false;
             dock_acknowledgments.includeInViewMenu = false;
-            dock_acknowledgments.GuiFonction = [&acknowledgments] { acknowledgments.gui(); };
+            dock_acknowledgments.GuiFunction = [&acknowledgments] { acknowledgments.gui(); };
         };
 
         HelloImGui::DockableWindow dock_about;
@@ -118,7 +119,7 @@ int main(int, char **)
             dock_about.dockSpaceName = "CodeSpace";
             dock_about.isVisible = false;
             dock_about.includeInViewMenu = false;
-            dock_about.GuiFonction = [&aboutWindow] { aboutWindow.gui(); };
+            dock_about.GuiFunction = [&aboutWindow] { aboutWindow.gui(); };
         };
 
         //
@@ -137,8 +138,6 @@ int main(int, char **)
 
     // Set the app menu
     runnerParams.callbacks.ShowMenus = []{
-        menuTheme();
-
         HelloImGui::DockableWindow *aboutWindow =
             runnerParams.dockingParams.dockableWindowOfName("About this manual");
           HelloImGui::DockableWindow *acknowledgmentWindow =
@@ -174,7 +173,7 @@ int main(int, char **)
 
     // Set the custom fonts
     runnerParams.callbacks.LoadAdditionalFonts = []() {
-      HelloImGui::ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons();
+      HelloImGui::ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons()();
       LoadMonospaceFont();
       MarkdownHelper::LoadFonts();
     };
