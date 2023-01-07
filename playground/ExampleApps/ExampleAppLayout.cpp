@@ -23,9 +23,6 @@ static void ShowExampleAppLayout(bool* p_open)
             ImGui::EndMenuBar();
         }
 
-        if (ImGui::Shortcut(ImGuiMod_Ctrl | ImGuiKey_W))
-            *p_open = false;
-
         // Left
         static int selected = 0;
         {
