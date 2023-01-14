@@ -174,7 +174,7 @@ int main(int, char **)
 
     // Set the custom fonts
     runnerParams.callbacks.LoadAdditionalFonts = []() {
-      HelloImGui::ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons()();
+      HelloImGui::ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons();
       LoadMonospaceFont();
       MarkdownHelper::LoadFonts();
     };
