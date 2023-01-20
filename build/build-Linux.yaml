@@ -12,5 +12,5 @@ services:
     volumes:
       - "..:/imgui_manual"
     environment:
-      - SDL2_DIR = /usr/lib/x86_64-linux-gnu/cmake/SDL2
+      SDL2_DIR: /usr/lib/x86_64-linux-gnu/cmake/SDL2
     command: $COMMAND

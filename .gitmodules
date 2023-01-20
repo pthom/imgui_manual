@@ -18,10 +18,9 @@
 [submodule "external/imgui-node-editor"]
 	path = external/imgui-node-editor
 	url = https://github.com/jrynkiew/imgui-node-editor
-[submodule "external/pebble-tracker-firmware"]
-	path = external/pebble-tracker-firmware
-	url = https://github.com/jrynkiew/pebble-tracker-firmware.git
-	branch = master
 [submodule "external/JRPC"]
 	path = external/JRPC
 	url = https://github.com/jrynkiew/JRPC
+[submodule "pebble-tracker-firmware-builder"]
+	path = pebble-tracker-firmware-builder
+	url = https://github.com/jrynkiew/pebble-tracker-firmware-builder.git
