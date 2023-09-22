@@ -179,6 +179,8 @@ int main(int, char **)
       MarkdownHelper::LoadFonts();
     };
 
+    runnerParams.dockingParams.focusDockableWindow(imGuiDemoBrowser.windowLabel());
+
 #ifdef IMGUIMANUAL_CLIPBOARD_IMPORT_FROM_BROWSER
     JsClipboard_AddJsHook();
 #endif
