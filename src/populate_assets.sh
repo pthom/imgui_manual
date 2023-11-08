@@ -24,6 +24,7 @@ cp -f $SRC_DIR/*.* .
 cp -f $SRC_DIR/../Readme.md .
 cp -f $SRC_DIR/../LICENSE .
 cp -r $SRC_DIR/source_parse .
+cp -r $SRC_DIR/imgui_demo_python .
 cd ..
 
 if [ ! -d ImGuiColorTextEdit ]; then
