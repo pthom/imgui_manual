@@ -66,7 +66,7 @@ int main(int, char **)
 
         HelloImGui::DockableWindow dock_imguiDemoCode;
         {
-            dock_imguiDemoCode.label = imGuiDemoBrowser.windowLabel();
+            dock_imguiDemoCode.label = "Demo Code";
             dock_imguiDemoCode.dockSpaceName = "CodeSpace";// This window goes into "CodeSpace"
             dock_imguiDemoCode.isVisible = true;
             dock_imguiDemoCode.GuiFunction = [&imGuiDemoBrowser] { imGuiDemoBrowser.gui(); };
@@ -179,7 +179,7 @@ int main(int, char **)
       MarkdownHelper::LoadFonts();
     };
 
-    runnerParams.dockingParams.focusDockableWindow(imGuiDemoBrowser.windowLabel());
+    runnerParams.dockingParams.focusDockableWindow("Demo Code");
 
 #ifdef IMGUIMANUAL_CLIPBOARD_IMPORT_FROM_BROWSER
     JsClipboard_AddJsHook();

@@ -1,7 +1,3 @@
-# noqa: E701
-# noqa: E702
-# noqa: E501
-
 # dear imgui, v1.90 WIP
 # (demo code)
 

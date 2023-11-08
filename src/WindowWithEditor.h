@@ -23,6 +23,7 @@ public:
     std::string windowLabel() const { return mWindowLabel; }
 
     TextEditor * _GetTextEditorPtr() { return &mEditor; }
+    TextEditor& InnerTextEditor() { return mEditor; }
 
 private:
     void guiStatusLine(const std::string& filename);
