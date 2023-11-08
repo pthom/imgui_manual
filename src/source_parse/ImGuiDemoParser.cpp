@@ -53,7 +53,7 @@ LinesWithTags findImGuiDemoCodeLines(const std::string &sourceCode)
 
             last_level = missing_tag.level;
         }
-
+        tag_copy._original_tag_full = tag_copy.tag;
         tag_copy.tag = tag_levels.back();
         tags_with_added_missing_headers.push_back(tag_copy);
         last_level = tag_copy.level;
@@ -71,6 +71,16 @@ AnnotatedSource ReadImGuiDemoCode()
     r.linesWithTags = findImGuiDemoCodeLines(r.source.sourceCode);
     return r;
 }
+
+AnnotatedSource ReadImGuiDemoCodePython()
+{
+    std::string sourcePath = "imgui_manual/imgui_demo_python/imgui_demo.py";
+    AnnotatedSource r;
+    r.source = ReadSource(sourcePath);
+    r.linesWithTags = findImGuiDemoCodeLines(r.source.sourceCode);
+    return r;
+}
+
 
 std::unordered_map<std::string, SourceCode> FindExampleAppsCode()
 {

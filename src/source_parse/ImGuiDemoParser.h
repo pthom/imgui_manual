@@ -5,5 +5,6 @@
 namespace SourceParse
 {
     AnnotatedSource ReadImGuiDemoCode();
+    AnnotatedSource ReadImGuiDemoCodePython();
     std::unordered_map<std::string, SourceCode> FindExampleAppsCode();
 } // namespace SourceParse

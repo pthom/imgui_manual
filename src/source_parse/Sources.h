@@ -22,6 +22,7 @@ struct LineWithTag
     int lineNumber;
     std::string tag; // tag can be an Id or a title
     int level = 0; // optional title level
+    std::string _original_tag_full; // Copy of the full tag if tag was simplified
 };
 using LinesWithTags = std::vector<LineWithTag>;
 
