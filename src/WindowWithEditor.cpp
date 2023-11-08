@@ -59,14 +59,15 @@ void RenderLongLinesOverlay(const std::string& currentCodeLine)
         | ImGuiWindowFlags_NoDocking
         | ImGuiWindowFlags_NoSavedSettings
         | ImGuiWindowFlags_NoFocusOnAppearing
+        | ImGuiWindowFlags_NoMove
         | ImGuiWindowFlags_NoNav;
 
     ImVec2 commentOverlaySize(ImVec2(ImGui::GetWindowWidth(), 60.f));
-    ImGui::SetNextWindowSize( commentOverlaySize, ImGuiCond_Appearing );
+    ImGui::SetNextWindowSize( commentOverlaySize, ImGuiCond_Always );
     ImGui::SetNextWindowPos(
         ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x - commentOverlaySize.x,
                ImGui::GetWindowPos().y + ImGui::GetWindowSize().y - commentOverlaySize.y),
-        ImGuiCond_Appearing
+        ImGuiCond_Always
         );
 
     if (ImGui::Begin("Comment Overlay", nullptr, window_flags))
@@ -119,15 +120,24 @@ void WindowWithEditor::RenderEditor(const std::string &filename, VoidFunction ad
 {
     guiIconBar(additionalGui);
     guiStatusLine(filename);
-    if (mShowLongLinesOverlay)
-        RenderLongLinesOverlay(mEditor.GetCurrentLineText());
 
     ImGui::PushFont(gMonospaceFont);
     mEditor.Render(filename.c_str());
+
+    bool lineTooLong = false;
+    {
+        float editorWidth = ImGui::GetItemRectSize().x;
+        float textWidth = ImGui::CalcTextSize(mEditor.GetCurrentLineText().c_str()).x + ImGui::GetFontSize() * 4.f;
+        lineTooLong = textWidth > editorWidth;
+    }
+    if (mShowLongLinesOverlay && lineTooLong)
+        RenderLongLinesOverlay(mEditor.GetCurrentLineText());
+
 #ifdef __EMSCRIPTEN__
     handleJsClipboardShortcuts();
 #endif
     ImGui::PopFont();
+
     editorContextMenu();
 }
 
@@ -265,10 +275,10 @@ void WindowWithEditor::guiIconBar(VoidFunction additionalGui)
         ImGui::SetTooltip("Enable editing this file");
     ImGui::SameLine();
 
-    if (ImGui::Checkbox(ICON_FA_BOOK, &mShowLongLinesOverlay))
-        editor.SetReadOnly(!canWrite);
+    ImGui::Checkbox(ICON_FA_BOOK, &mShowLongLinesOverlay);
     if (ImGui::IsItemHovered())
         ImGui::SetTooltip("Display wrapped line below the editor");
+
     ImGui::SameLine();
 
     if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_UNDO, editor.CanUndo() && canWrite, "Undo", true))
