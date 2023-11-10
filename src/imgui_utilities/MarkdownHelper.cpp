@@ -55,8 +55,10 @@ ImGui::MarkdownConfig factorMarkdownConfig()
 
 void Markdown(const std::string &markdown_)
 {
+    ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(0.5f, 0.5f, 1.f, 1.f)); // Hack MarkDown links color, which use ImGuiCol_ButtonHovered
     static ImGui::MarkdownConfig markdownConfig = factorMarkdownConfig();
     ImGui::Markdown(markdown_.c_str(), markdown_.length(), markdownConfig);
+    ImGui::PopStyleColor();
 }
 
 

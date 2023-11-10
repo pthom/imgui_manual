@@ -59,7 +59,7 @@ bool LibrariesCodeBrowser::guiSelectLibrarySource()
     for (const auto & librarySource: mLibraries)
     {
         ImGui::Text("%s", librarySource.name.c_str());
-        ImGui::SameLine(ImGui::GetWindowSize().x - 350.f );
+        ImGui::SameLine(150.f);
         MarkdownHelper::Markdown(MarkdownLinkString(librarySource.url));
         MarkdownHelper::Markdown(librarySource.shortDoc);
         for (const auto & source: librarySource.sourcePaths)

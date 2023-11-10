@@ -28,7 +28,7 @@ int main(int, char **)
     // Below, we will define all our application parameters and callbacks
     // before starting it.
     //
-    runnerParams.imGuiWindowParams.tweakedTheme.Theme = ImGuiTheme::ImGuiTheme_ImGuiColorsDark;
+    runnerParams.imGuiWindowParams.tweakedTheme.Theme = ImGuiTheme::ImGuiTheme_DarculaDarker;
 
     // App window params
     runnerParams.appWindowParams.windowTitle = "ImGui Manual";
@@ -169,7 +169,8 @@ int main(int, char **)
 
     // Add some widgets in the status bar
     runnerParams.callbacks.ShowStatus = [] {
-        MarkdownHelper::Markdown("Dear ImGui Manual - [Repository](https://github.com/pthom/imgui_manual)");
+        //MarkdownHelper::Markdown("Dear ImGui Manual - [Repository](https://github.com/pthom/imgui_manual)");
+        MarkdownHelper::Markdown("Dear ImGui Manual, a manual for [Dear ImGui](https://github.com/ocornut/imgui) - Made with [Dear ImGui Bundle](https://github.com/pthom/imgui_bundle/) and [Hello ImGui](https://github.com/pthom/hello_imgui)");
     };
 
     // Set the custom fonts
