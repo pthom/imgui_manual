@@ -1,4 +1,5 @@
 #include "hello_imgui/hello_imgui.h"
+#include "hello_imgui/icons_font_awesome_4.h"
 
 #include "imgui_markdown.h"       // https://github.com/juliettef/imgui_markdown
 #include "MarkdownHelper.h"

@@ -1,5 +1,6 @@
 #include "imgui_utilities/ImGuiExt.h"
-#include "hello_imgui.h"
+#include "hello_imgui/hello_imgui.h"
+#include "hello_imgui/icons_font_awesome_4.h"
 #include <fplus/fplus.hpp>
 #include <map>
 #include "WindowWithEditor.h"

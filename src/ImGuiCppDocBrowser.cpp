@@ -5,6 +5,7 @@
 #include "imgui_utilities/HyperlinkHelper.h"
 #include "imgui_utilities/ImGuiExt.h"
 #include "source_parse/ImGuiCodeParser.h"
+#include "hello_imgui/icons_font_awesome_4.h"
 
 ImGuiCppDocBrowser::ImGuiCppDocBrowser()
     : WindowWithEditor("imgui.cpp - Doc")

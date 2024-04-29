@@ -1,5 +1,6 @@
 #include "hello_imgui/hello_imgui.h"
 #include "imgui_utilities/MarkdownHelper.h"
+#include "hello_imgui/icons_font_awesome_4.h"
 #include "source_parse/Sources.h"
 #include "AboutWindow.h"
 
