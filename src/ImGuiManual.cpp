@@ -28,7 +28,8 @@ int main(int, char **)
     // Below, we will define all our application parameters and callbacks
     // before starting it.
     //
-    runnerParams.imGuiWindowParams.tweakedTheme.Theme = ImGuiTheme::ImGuiTheme_DarculaDarker;
+    // runnerParams.imGuiWindowParams.tweakedTheme.Theme = ImGuiTheme::ImGuiTheme_DarculaDarker;
+    runnerParams.imGuiWindowParams.tweakedTheme.Theme = ImGuiTheme::ImGuiTheme_ImGuiColorsDark;
 
     // App window params
     runnerParams.appWindowParams.windowTitle = "ImGui Manual";
