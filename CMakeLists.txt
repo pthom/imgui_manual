@@ -21,6 +21,7 @@ add_library(imgui
     ${imgui_dir}/misc/freetype/imgui_freetype.h
     )
 target_include_directories(imgui PUBLIC ${imgui_dir} ${imgui_dir}/misc/freetype)
+target_include_directories(imgui PUBLIC ${imgui_dir} ${imgui_dir}/misc/cpp)
 target_include_directories(imgui PUBLIC ${imgui_dir} ${imgui_dir}/backends)
 
 if (IMGUI_MANUAL_BUILD_TESTS)
