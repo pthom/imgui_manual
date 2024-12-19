@@ -30,7 +30,8 @@ void implImGuiDemoCallbackDemoCallback(const char* file, int line, const char* s
     {
         ImGui::SetTooltip(
             "Code Lookup\n"
-            "IMGUI_DEMO_MARKER(\"%s\") at imgui_demo.cpp:%d\n\n"
+            "\"%s\"\n"
+            "imgui_demo.cpp:%d\n\n"
             "Press \"Esc\" to exit this mode",
             section, line);
         gImGuiDemoBrowser->ImGuiDemoCallback(file, line, section);
@@ -65,6 +66,8 @@ std::optional<SourceParse::LineWithTag> findLineWithOriginalTag(const SourcePars
 
 void ImGuiDemoBrowser::ImGuiDemoCallback(const char* /*file*/, int /*line_number*/, const char* tag)
 {
+    if (strcmp(tag, "Menu") == 0)
+        return;
     for (auto sourceElements: AllSourceElements())
     {
         auto lineWithTag = findLineWithOriginalTag(sourceElements->AnnotatedSource, tag);

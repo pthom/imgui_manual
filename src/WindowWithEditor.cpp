@@ -101,13 +101,13 @@ void WindowWithEditor::handleJsClipboardShortcuts()
   auto alt = io.ConfigMacOSXBehaviors ? io.KeyCtrl : io.KeyAlt;
 
   bool shallFillBrowserClipboard = false;
-  if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Insert)))
+  if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGuiKey_Insert))
       shallFillBrowserClipboard = true;
-  else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_C)))
+  else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGuiKey_C))
       shallFillBrowserClipboard = true;
-  else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_X)))
+  else if (ctrl && !shift && !alt && ImGui::IsKeyPressed(ImGuiKey_X))
       shallFillBrowserClipboard = true;
-  else if (!ctrl && shift && !alt && ImGui::IsKeyPressed(ImGui::GetKeyIndex(ImGuiKey_Delete)))
+  else if (!ctrl && shift && !alt && ImGui::IsKeyPressed(ImGuiKey_Delete))
       shallFillBrowserClipboard = true;
 
   #ifdef IMGUIMANUAL_CLIPBOARD_EXPORT_TO_BROWSER
@@ -174,10 +174,10 @@ void WindowWithEditor::guiStatusLine(const std::string &filename)
 {
     auto & editor = mEditor;
     auto cpos = editor.GetCursorPosition();
-    ImGui::Text("%6d/%-6d %6d lines  | %s | %s | %s | %s", cpos.mLine + 1, cpos.mColumn + 1, editor.GetTotalLines(),
+    ImGui::Text("%6d/%-6d %6d lines  | %s | %s | %s", cpos.mLine + 1, cpos.mColumn + 1, editor.GetTotalLines(),
                 editor.IsOverwrite() ? "Ovr" : "Ins",
                 editor.CanUndo() ? "*" : " ",
-                editor.GetLanguageDefinition().mName.c_str(), filename.c_str());
+                filename.c_str());
 }
 
 void WindowWithEditor::guiFind()
