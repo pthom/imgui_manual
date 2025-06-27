@@ -33,7 +33,7 @@ inline ImGui::MarkdownImageData ImageCallback(ImGui::MarkdownLinkCallbackData da
 {
     (void)data_;
     // In your application you would load an image based on data_ input. Here we just use the imgui font texture.
-    ImTextureID image = ImGui::GetIO().Fonts->TexID;
+    ImTextureID image = -1; // ImGui::GetIO().Fonts->TexID;
     ImGui::MarkdownImageData imageData{true, false, image, ImVec2(40.0f, 20.0f)};
     return imageData;
 }
