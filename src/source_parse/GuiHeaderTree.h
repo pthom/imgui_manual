@@ -36,7 +36,7 @@ namespace SourceParse
             CollapseAll,
             NoAction
         };
-        ExpandCollapseAction mExpandCollapseAction = ExpandCollapseAction::ExpandAll;
+        ExpandCollapseAction mExpandCollapseAction = ExpandCollapseAction::CollapseAll;
     };
 
 

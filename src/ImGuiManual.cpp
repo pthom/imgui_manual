@@ -1,15 +1,12 @@
-#include "AboutWindow.h"
-#include "Acknowledgments.h"
-#include "ImGuiCodeBrowser.h"
 #include "ImGuiCppDocBrowser.h"
 #include "ImGuiHeaderDocBrowser.h"
 #include "ImGuiDemoBrowser.h"
-#include "ImGuiReadmeBrowser.h"
 #include "imgui_utilities/HyperlinkHelper.h"
 
 
 #include "hello_imgui/hello_imgui.h"
 #include "JsClipboardTricks.h"
+#include "imgui_utilities/MarkdownHelper.h"
 
 HelloImGui::RunnerParams runnerParams;
 
@@ -19,10 +16,6 @@ int main(int, char **)
     ImGuiDemoBrowser imGuiDemoBrowser;
     ImGuiCppDocBrowser imGuiCppDocBrowser;
     ImGuiHeaderDocBrowser imGuiHeaderDocBrowser;
-    ImGuiCodeBrowser imGuiCodeBrowser;
-    ImGuiReadmeBrowser imGuiReadmeBrowser;
-    Acknowledgments acknowledgments;
-    AboutWindow aboutWindow;
 
     //
     // Below, we will define all our application parameters and callbacks
@@ -32,7 +25,7 @@ int main(int, char **)
     runnerParams.imGuiWindowParams.tweakedTheme.Theme = ImGuiTheme::ImGuiTheme_ImGuiColorsDark;
 
     // App window params
-    runnerParams.appWindowParams.windowTitle = "ImGui Manual";
+    runnerParams.appWindowParams.windowTitle = "Dear ImGui Manual";
     runnerParams.appWindowParams.windowGeometry.size = {1200, 800};
 
     // ImGui window params
@@ -63,6 +56,7 @@ int main(int, char **)
                     ImGui::ShowDemoWindow(nullptr);
             };
             dock_imguiDemoWindow.callBeginEnd = false;
+            dock_imguiDemoWindow.includeInViewMenu = false;
         };
 
         HelloImGui::DockableWindow dock_imguiDemoCode;
@@ -72,6 +66,7 @@ int main(int, char **)
             dock_imguiDemoCode.isVisible = true;
             dock_imguiDemoCode.GuiFunction = [&imGuiDemoBrowser] { imGuiDemoBrowser.gui(); };
             dock_imguiDemoCode.imGuiWindowFlags = ImGuiWindowFlags_HorizontalScrollbar;
+            dock_imguiDemoCode.includeInViewMenu = false;
         };
 
         HelloImGui::DockableWindow dock_imGuiCppDocBrowser;
@@ -86,42 +81,8 @@ int main(int, char **)
         {
             dock_imGuiHeaderDocBrowser.label = imGuiHeaderDocBrowser.windowLabel();
             dock_imGuiHeaderDocBrowser.dockSpaceName = "CodeSpace";
-            dock_imGuiHeaderDocBrowser.isVisible = true;
+            dock_imGuiHeaderDocBrowser.isVisible = false;
             dock_imGuiHeaderDocBrowser.GuiFunction = [&imGuiHeaderDocBrowser] { imGuiHeaderDocBrowser.gui(); };
-        };
-
-        HelloImGui::DockableWindow dock_imguiReadme;
-        {
-            dock_imguiReadme.label = "ImGui - Readme";
-            dock_imguiReadme.dockSpaceName = "CodeSpace";
-            dock_imguiReadme.isVisible = false;
-            dock_imguiReadme.GuiFunction = [&imGuiReadmeBrowser] { imGuiReadmeBrowser.gui(); };
-        };
-
-        HelloImGui::DockableWindow dock_imguiCodeBrowser;
-        {
-            dock_imguiCodeBrowser.label = "ImGui - Code";
-            dock_imguiCodeBrowser.dockSpaceName = "CodeSpace";
-            dock_imguiCodeBrowser.isVisible = false;
-            dock_imguiCodeBrowser.GuiFunction = [&imGuiCodeBrowser] { imGuiCodeBrowser.gui(); };
-        };
-
-        HelloImGui::DockableWindow dock_acknowledgments;
-        {
-            dock_acknowledgments.label = "Acknowledgments";
-            dock_acknowledgments.dockSpaceName = "CodeSpace";
-            dock_acknowledgments.isVisible = false;
-            dock_acknowledgments.includeInViewMenu = false;
-            dock_acknowledgments.GuiFunction = [&acknowledgments] { acknowledgments.gui(); };
-        };
-
-        HelloImGui::DockableWindow dock_about;
-        {
-            dock_about.label = "About this manual";
-            dock_about.dockSpaceName = "CodeSpace";
-            dock_about.isVisible = false;
-            dock_about.includeInViewMenu = false;
-            dock_about.GuiFunction = [&aboutWindow] { aboutWindow.gui(); };
         };
 
         //
@@ -132,10 +93,7 @@ int main(int, char **)
             dock_imguiDemoWindow,
             dock_imGuiHeaderDocBrowser,
             dock_imGuiCppDocBrowser,
-            // dock_imguiReadme,
-            dock_imguiCodeBrowser,
-            dock_acknowledgments,
-            dock_about};
+        };
     }
 
     // Set the app menu
@@ -146,24 +104,31 @@ int main(int, char **)
               runnerParams.dockingParams.dockableWindowOfName("Acknowledgments");
         if (ImGui::BeginMenu("Links & About"))
         {
-            ImGui::TextDisabled("Links");
-            if (ImGui::MenuItem("ImGui Github repository"))
+            ImGui::SeparatorText("Links");
+            if (ImGui::MenuItem("Dear ImGui - Github repository"))
                 HyperlinkHelper::OpenUrl("https://github.com/ocornut/imgui");
-            if (ImGui::MenuItem("ImGui wiki"))
-                HyperlinkHelper::OpenUrl("https://github.com/ocornut/imgui/wiki");
-            if (ImGui::MenuItem("imgui-docs: nice third party ImGui Documentation"))
-                HyperlinkHelper::OpenUrl("https://possiblyashrub.github.io/imgui-docs/");
+            if (ImGui::MenuItem("Dear ImGui - FAQ"))
+                HyperlinkHelper::OpenUrl("https://github.com/ocornut/imgui/blob/master/docs/FAQ.md");
+            if (ImGui::MenuItem("dearimgui.com"))
+                HyperlinkHelper::OpenUrl("https://www.dearimgui.com/");
+            ImGui::SetItemTooltip("The exciting placeholder webpage! - Features Dear ImGui Logo");
 
-            ImGui::Separator();
-            ImGui::TextDisabled("About this manual");
-            if (ImGui::MenuItem("About"))
-                aboutWindow->isVisible = true;
+            // Not up to date anymore (2025-09), misses info about v1.92
+            // if (ImGui::MenuItem("imgui-docs: nice third party ImGui Documentation"))
+            //     HyperlinkHelper::OpenUrl("https://possiblyashrub.github.io/imgui-docs/");
+
+            ImGui::SeparatorText("Wiki");
+            if (ImGui::MenuItem("Dear ImGui - wiki"))
+                HyperlinkHelper::OpenUrl("https://github.com/ocornut/imgui/wiki");
+            if (ImGui::MenuItem("Bindings"))
+                HyperlinkHelper::OpenUrl("https://github.com/ocornut/imgui/wiki/Bindings");
+            if (ImGui::MenuItem("Useful Extensions"))
+                HyperlinkHelper::OpenUrl("https://github.com/ocornut/imgui/wiki/Useful-Extensions");
+
+
+            ImGui::SeparatorText("About this manual");
             if (ImGui::MenuItem("Repository"))
                 HyperlinkHelper::OpenUrl("https://github.com/pthom/imgui_manual");
-            if (ImGui::MenuItem("Online interactive manual"))
-                HyperlinkHelper::OpenUrl("https://pthom.github.io/imgui_manual_online/");
-            if (ImGui::MenuItem("Acknowledgments"))
-                acknowledgmentWindow->isVisible = true;
             ImGui::EndMenu();
         }
     };
