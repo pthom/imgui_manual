@@ -2,7 +2,7 @@
 #include "source_parse/HeaderTree.h"
 #include "imgui.h"
 
-extern bool                     GImGuiDemoMarker_IsActive;
+extern bool                     GDemoMarker_FlagFollowSource;
 
 namespace SourceParse
 {
@@ -44,13 +44,13 @@ namespace SourceParse
     {
     public:
         GuiHeaderTree_FollowDemo(const LinesWithTags & linesWithTags) : GuiHeaderTree(linesWithTags) {
-            GImGuiDemoMarker_IsActive = true;
+            GDemoMarker_FlagFollowSource = true;
         }
 
         int gui(int currentEditorLineNumber) override
         {
             ImGui::SameLine();
-            return GuiHeaderTree::gui(GImGuiDemoMarker_IsActive ? mCurrentFollowedLine : currentEditorLineNumber);
+            return GuiHeaderTree::gui(GDemoMarker_FlagFollowSource ? mCurrentFollowedLine : currentEditorLineNumber);
         }
 
         void followShowTocElementForLine(int sourceLineNumber)
