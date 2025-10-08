@@ -10,7 +10,7 @@
 
 
 #ifdef IMGUIMANUAL_CLIPBOARD_EXPORT_TO_BROWSER
-void JsClipboard_SetClipboardText(const char* str);
+void JsClipboard_InstallPlaformSetClipboardText();
 #endif
 
 #ifdef IMGUIMANUAL_CLIPBOARD_IMPORT_FROM_BROWSER

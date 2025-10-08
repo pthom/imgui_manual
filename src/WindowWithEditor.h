@@ -30,9 +30,6 @@ private:
     void guiFind();
     void guiIconBar(VoidFunction additionalGui);
     void editorContextMenu();
-    #ifdef __EMSCRIPTEN__
-    void handleJsClipboardShortcuts();
-    #endif
 
 protected:
     std::string mWindowLabel;

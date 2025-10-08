@@ -144,6 +144,10 @@ int main(int, char **)
       HelloImGui::ImGuiDefaultSettings::LoadDefaultFont_WithFontAwesomeIcons();
       LoadMonospaceFont();
       MarkdownHelper::LoadFonts();
+
+      #ifdef __EMSCRIPTEN__
+      JsClipboard_InstallPlaformSetClipboardText();
+      #endif
     };
 
     runnerParams.dockingParams.focusDockableWindow("Demo Code");

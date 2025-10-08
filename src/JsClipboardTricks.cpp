@@ -1,4 +1,5 @@
 #include "imgui.h"
+#include "imgui_internal.h"
 #include "JsClipboardTricks.h"
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
@@ -66,10 +67,18 @@ extern "C"
 #endif
 
 #ifdef IMGUIMANUAL_CLIPBOARD_EXPORT_TO_BROWSER
-    void JsClipboard_SetClipboardText(const char* str)
+    void _Emscripten_SetClipboardTextFn(ImGuiContext* ctx, const char* text)
     {
-        sapp_js_write_clipboard(str);
+        (void)ctx;
+        sapp_js_write_clipboard(text);
     }
+
+    void JsClipboard_InstallPlaformSetClipboardText()
+    {
+        auto &g = *ImGui::GetCurrentContext();
+        g.PlatformIO.Platform_SetClipboardTextFn = _Emscripten_SetClipboardTextFn;
+    }
+
 #endif
 
 #ifdef IMGUIMANUAL_CLIPBOARD_IMPORT_FROM_BROWSER
