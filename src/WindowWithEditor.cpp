@@ -13,7 +13,7 @@ ImFont * gMonospaceFont = nullptr;
 
 void LoadMonospaceFont()
 {
-    float fontSize = 14.f;
+    float fontSize = 15.f;
     std::string fontFilename = "fonts/Inconsolata-Regular.ttf";
     gMonospaceFont = HelloImGui::LoadFontTTF(fontFilename, fontSize);
     // MergeFontAwesomeToLastFont(fontSize);
