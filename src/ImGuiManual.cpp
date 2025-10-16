@@ -2,10 +2,7 @@
 #include "ImGuiHeaderDocBrowser.h"
 #include "ImGuiDemoBrowser.h"
 #include "imgui_utilities/HyperlinkHelper.h"
-
-
 #include "hello_imgui/hello_imgui.h"
-#include "JsClipboardTricks.h"
 #include "imgui_utilities/MarkdownHelper.h"
 
 HelloImGui::RunnerParams runnerParams;
@@ -145,16 +142,16 @@ int main(int, char **)
       LoadMonospaceFont();
       MarkdownHelper::LoadFonts();
 
-      #ifdef __EMSCRIPTEN__
-      JsClipboard_InstallPlaformSetClipboardText();
-      #endif
+      // #ifdef __EMSCRIPTEN__
+      // JsClipboard_InstallPlaformSetClipboardText();
+      // #endif
     };
 
     runnerParams.dockingParams.focusDockableWindow("Demo Code");
 
-#ifdef IMGUIMANUAL_CLIPBOARD_IMPORT_FROM_BROWSER
-    JsClipboard_AddJsHook();
-#endif
+    // #ifdef IMGUIMANUAL_CLIPBOARD_IMPORT_FROM_BROWSER
+    //     JsClipboard_AddJsHook();
+    // #endif
 
     HelloImGui::Run(runnerParams);
     return 0;

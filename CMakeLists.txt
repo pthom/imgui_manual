@@ -28,8 +28,11 @@ if (IMGUI_MANUAL_BUILD_TESTS)
     enable_testing()
 endif()
 
-set(HELLOIMGUI_USE_SDL2 ON CACHE STRING "" FORCE)
-set(HELLOIMGUI_HAS_OPENGL3 ON CACHE STRING "" FORCE)
+# We use OpenGL3 + GLFW3 for desktop *and* emscripten
+# (using pongasoft/emscripten-glfw, which has a good support for the clipboard)
+set(HELLOIMGUI_USE_GLFW3 ON CACHE BOOL "" FORCE)
+set(HELLOIMGUI_HAS_OPENGL3 ON CACHE BOOL "" FORCE)
+
 set(HELLOIMGUI_IMGUI_SOURCE_DIR ${CMAKE_CURRENT_LIST_DIR}/external/imgui CACHE STRING "" FORCE)
 add_subdirectory(external/hello_imgui)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${HELLOIMGUI_BASEPATH}/hello_imgui_cmake)
