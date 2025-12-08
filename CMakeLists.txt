@@ -17,6 +17,8 @@ add_library(imgui
     ${imgui_dir}/imgui_internal.h
     ${imgui_dir}/imgui.cpp
     ${imgui_dir}/imgui.h
+    ${imgui_dir}/imgui_demo_marker_hooks.cpp
+    ${imgui_dir}/imgui_demo_marker_hooks.h
     ${imgui_dir}/misc/freetype/imgui_freetype.cpp
     ${imgui_dir}/misc/freetype/imgui_freetype.h
     )
