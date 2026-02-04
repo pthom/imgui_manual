@@ -5,14 +5,11 @@
 #include "source_parse/ImGuiDemoParser.h"
 
 #include "hello_imgui/hello_imgui.h"
+#include "imgui_demo_marker_hooks.h"
 
 #include <fplus/fplus.hpp>
 
 #include "ImGuiDemoBrowser.h"
-
-// Redefinition of ImGuiDemoMarkerCallback, as defined in imgui_demo.cpp
-typedef void (*ImGuiDemoMarkerCallback)(const char* file, int line, const char* section, void* user_data);
-extern ImGuiDemoMarkerCallback  GImGuiDemoMarkerCallback;
 
 
 // implImGuiDemoCallbackDemoCallback is the implementation
@@ -20,7 +17,7 @@ extern ImGuiDemoMarkerCallback  GImGuiDemoMarkerCallback;
 // And  gImGuiDemoBrowser is a global reference to the browser used by this callback
 ImGuiDemoBrowser *gImGuiDemoBrowser = nullptr;
 extern HelloImGui::RunnerParams runnerParams; // defined in ImGuiManual.cpp
-void implImGuiDemoCallbackDemoCallback(const char* file, int line, const char* section, void* /*user_data*/)
+void implImGuiDemoCallbackDemoCallback(const char* file, int line, const char* section)
 {
     gImGuiDemoBrowser->ImGuiDemoCallback(file, line, section);
 }
