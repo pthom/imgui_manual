@@ -5,6 +5,18 @@ set(CMAKE_CXX_STANDARD 17)
 option(IMGUI_MANUAL_BUILD_TESTS "Build tests" OFF)
 option(IMGUI_MANUAL_CAN_WRITE_IMGUI_DEMO_CPP "Allow writing to imgui_demo.cpp" OFF)
 
+# force-include a header file (use later to define IMGUI_DEMO_MARKER before the #ifndef guard in imgui_demo.cpp)
+function(force_include target header)
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+        target_compile_options(${target} PUBLIC -include${header})
+    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        target_compile_options(${target} PUBLIC /FI${header})
+    else()
+        message(FATAL_ERROR "Unsupported compiler: ${CMAKE_CXX_COMPILER_ID}")
+    endif()
+endfunction()
+
+
 # Provide our own fork of imgui, disable the one provided by hello_imgui
 set (HELLOIMGUI_BUILD_IMGUI OFF CACHE BOOL "" FORCE)
 set(HELLOIMGUI_MACOS_NO_BUNDLE ON CACHE BOOL "Don't create a bundle on macOS")
@@ -17,14 +29,13 @@ add_library(imgui
     ${imgui_dir}/imgui_internal.h
     ${imgui_dir}/imgui.cpp
     ${imgui_dir}/imgui.h
-    ${imgui_dir}/imgui_demo_marker_hooks.cpp
-    ${imgui_dir}/imgui_demo_marker_hooks.h
     ${imgui_dir}/misc/freetype/imgui_freetype.cpp
     ${imgui_dir}/misc/freetype/imgui_freetype.h
     )
 target_include_directories(imgui PUBLIC ${imgui_dir} ${imgui_dir}/misc/freetype)
 target_include_directories(imgui PUBLIC ${imgui_dir} ${imgui_dir}/misc/cpp)
 target_include_directories(imgui PUBLIC ${imgui_dir} ${imgui_dir}/backends)
+force_include(imgui ${CMAKE_CURRENT_LIST_DIR}/src/imgui_demo_marker_hooks.h)
 
 if (IMGUI_MANUAL_BUILD_TESTS)
     enable_testing()

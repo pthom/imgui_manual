@@ -29,7 +29,7 @@ ImGuiDemoBrowser::ImGuiDemoBrowser():
 {
     // Setup of imgui_demo.cpp's global callback
     // (GImGuiDemoMarkerCallback belongs to imgui.cpp!)
-    GImGuiDemoMarkerCallback = implImGuiDemoCallbackDemoCallback;
+    GImGuiDemoMarkerHook = implImGuiDemoCallbackDemoCallback;
 
     gImGuiDemoBrowser = this;
 }
