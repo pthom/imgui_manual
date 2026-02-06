@@ -39,57 +39,6 @@ void WindowWithEditor::setEditorAnnotatedSource(const SourceParse::AnnotatedSour
     mEditor.SetBreakpoints(lineNumbers);
 }
 
-void RenderLongLinesOverlay(const std::string& currentCodeLine)
-{
-    using namespace std::literals;
-
-    std::string code, comment;
-    {
-        auto commentPosition = fplus::find_first_instance_of_token("//"s, currentCodeLine);
-        if (commentPosition.is_nothing())
-            code = currentCodeLine;
-        else
-        {
-            code = fplus::trim_whitespace(fplus::take(commentPosition.unsafe_get_just(), currentCodeLine));
-            comment = fplus::drop(commentPosition.unsafe_get_just() + 2, currentCodeLine);
-        }
-    }
-
-    ImGui::SetNextWindowBgAlpha(0.75f); // Transparent background
-    ImGuiWindowFlags window_flags =
-          ImGuiWindowFlags_NoDecoration
-        | ImGuiWindowFlags_NoDocking
-        | ImGuiWindowFlags_NoSavedSettings
-        | ImGuiWindowFlags_NoFocusOnAppearing
-        | ImGuiWindowFlags_NoMove
-        | ImGuiWindowFlags_NoNav;
-
-    ImVec2 commentOverlaySize(ImVec2(ImGui::GetWindowWidth(), 60.f));
-    ImGui::SetNextWindowSize( commentOverlaySize, ImGuiCond_Always );
-    ImGui::SetNextWindowPos(
-        ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowSize().x - commentOverlaySize.x,
-               ImGui::GetWindowPos().y + ImGui::GetWindowSize().y - commentOverlaySize.y),
-        ImGuiCond_Always
-        );
-
-    if (ImGui::Begin("Comment Overlay", nullptr, window_flags))
-    {
-        if (!code.empty())
-        {
-            ImGui::PushFont(gMonospaceFont);
-            ImGui::TextWrapped("%s", code.c_str());
-            ImGui::PopFont();
-        }
-        if (!comment.empty())
-        {
-            ImGui::PushStyleColor(ImGuiCol_Text, ImVec4(0.6f, 1.f, 0.6f, 1.f));
-            ImGui::TextWrapped("%s", comment.c_str());
-            ImGui::PopStyleColor();
-        }
-        ImGui::End();
-    }
-}
-
 
 
 void WindowWithEditor::RenderEditor(const std::string &filename, VoidFunction additionalGui)
@@ -106,8 +55,6 @@ void WindowWithEditor::RenderEditor(const std::string &filename, VoidFunction ad
         float textWidth = ImGui::CalcTextSize(mEditor.GetCurrentLineText().c_str()).x + ImGui::GetFontSize() * 4.f;
         lineTooLong = textWidth > editorWidth;
     }
-    if (mShowLongLinesOverlay && lineTooLong)
-        RenderLongLinesOverlay(mEditor.GetCurrentLineText());
 
     ImGui::PopFont();
 
@@ -241,47 +188,21 @@ void WindowWithEditor::guiFind()
 void WindowWithEditor::guiIconBar(VoidFunction additionalGui)
 {
     auto & editor = mEditor;
-    static bool canWrite = ! editor.IsReadOnly();
-    if (ImGui::Checkbox(ICON_FA_EDIT, &canWrite))
-        editor.SetReadOnly(!canWrite);
-    if (ImGui::IsItemHovered())
-        ImGui::SetTooltip("Enable editing this file");
-    ImGui::SameLine();
 
-    ImGui::Checkbox(ICON_FA_BOOK, &mShowLongLinesOverlay);
-    if (ImGui::IsItemHovered())
-        ImGui::SetTooltip("Display wrapped line below the editor");
-
-    ImGui::SameLine();
-
-    if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_UNDO, editor.CanUndo() && canWrite, "Undo", true))
-        editor.Undo();
-    if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_REDO, editor.CanRedo() && canWrite, "Redo", true))
-        editor.Redo();
     if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_COPY, editor.HasSelection(), "Copy", true))
     {
         editor.Copy();
     }
-    if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_CUT, editor.HasSelection() && canWrite, "Cut", true))
-    {
-      editor.Cut();
-    }
-    if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_PASTE, (ImGui::GetClipboardText() != nullptr)  && canWrite, "Paste", true))
-        editor.Paste();
 
-    // missing icon from font awesome
-    // if (ImGuiExt::SmallButton_WithEnabledFlag(ICON_FA_SELECT_ALL, ImGui::GetClipboardText() != nullptr, true))
-    //      editor.PASTE();
-
-    #ifdef __EMSCRIPTEN__
-    ImGui::TextDisabled("?");
-    if (ImGui::IsItemHovered())
-        ImGui::SetTooltip("Due to browser security limitations, this app will not communicate \n"
-                          "with your computer's clipboard\n"
-                          "Use the \"view on github\" button if you want to copy-paste \n"
-                          "to an external IDE or application");
-    ImGui::SameLine();
-    #endif
+    // #ifdef __EMSCRIPTEN__
+    // ImGui::TextDisabled("?");
+    // if (ImGui::IsItemHovered())
+    //     ImGui::SetTooltip("Due to browser security limitations, this app will not communicate \n"
+    //                       "with your computer's clipboard\n"
+    //                       "Use the \"view on github\" button if you want to copy-paste \n"
+    //                       "to an external IDE or application");
+    // ImGui::SameLine();
+    // #endif
 
     guiFind();
 

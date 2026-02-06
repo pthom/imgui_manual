@@ -36,7 +36,6 @@ protected:
     TextEditor mEditor;
     ImGuiTextFilter mFilter;
     int mNbFindMatches = 0;
-    bool mShowLongLinesOverlay = true;
 };
 
 void menuEditorTheme();
