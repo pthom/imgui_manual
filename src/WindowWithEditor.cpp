@@ -69,7 +69,7 @@ void WindowWithEditor::editorContextMenu()
     {
         std::map<std::string, std::string> fileAndEditorWindowName
             {
-                {"imgui.h", "imgui.h - Doc"},
+                {"imgui.h", "imgui.h"},
                 // {"imgui.cpp", "imgui.cpp - Doc"},
                 {"imgui_demo.cpp", "ImGui - Demo Code"}
             };

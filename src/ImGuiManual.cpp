@@ -1,4 +1,3 @@
-#include "ImGuiCppDocBrowser.h"
 #include "ImGuiHeaderDocBrowser.h"
 #include "ImGuiDemoBrowser.h"
 #include "imgui_utilities/HyperlinkHelper.h"
@@ -11,7 +10,6 @@ int main(int, char **)
 {
     // Our gui providers for the different windows
     ImGuiDemoBrowser imGuiDemoBrowser;
-    ImGuiCppDocBrowser imGuiCppDocBrowser;
     ImGuiHeaderDocBrowser imGuiHeaderDocBrowser;
 
     //
@@ -66,14 +64,6 @@ int main(int, char **)
             dock_imguiDemoCode.includeInViewMenu = false;
         };
 
-        HelloImGui::DockableWindow dock_imGuiCppDocBrowser;
-        {
-            dock_imGuiCppDocBrowser.label = imGuiCppDocBrowser.windowLabel();
-            dock_imGuiCppDocBrowser.dockSpaceName = "CodeSpace";
-            dock_imGuiCppDocBrowser.isVisible = false;
-            dock_imGuiCppDocBrowser.GuiFunction = [&imGuiCppDocBrowser] { imGuiCppDocBrowser.gui(); };
-        };
-
         HelloImGui::DockableWindow dock_imGuiHeaderDocBrowser;
         {
             dock_imGuiHeaderDocBrowser.label = imGuiHeaderDocBrowser.windowLabel();
@@ -89,7 +79,6 @@ int main(int, char **)
             dock_imguiDemoCode,
             dock_imguiDemoWindow,
             dock_imGuiHeaderDocBrowser,
-            dock_imGuiCppDocBrowser,
         };
     }
 

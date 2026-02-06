@@ -125,24 +125,26 @@ bool DrawImGuiTextFilterWithTooltip(
 // return a line number if the user selected a tag, returns -1 otherwise
 int GuiHeaderTree::gui(int currentEditorLineNumber)
 {
-    ImGui::Checkbox("Show Table Of Content", &mShowToc);
-    if (!mShowToc)
-        return -1;
+    return -1;
 
-    ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
-    bool border = true;
-    ImVec2 guiSize(0, ImGui::GetWindowHeight() / 4.f);
-    ImGui::BeginChild("ChildR", guiSize, border, window_flags);
-        ImGui::BeginMenuBar();
-            showCommandLine();
-        ImGui::EndMenuBar();
-
-        int lineNumber = guiImpl(currentEditorLineNumber, mFilteredHeaderTree, true);
-    ImGui::EndChild();
-
-    mExpandCollapseAction = ExpandCollapseAction::NoAction;
-
-    return lineNumber;
+    // ImGui::Checkbox("Show Table Of Content", &mShowToc);
+    // if (!mShowToc)
+    //     return -1;
+    //
+    // ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar;
+    // bool border = true;
+    // ImVec2 guiSize(0, ImGui::GetWindowHeight() / 4.f);
+    // ImGui::BeginChild("ChildR", guiSize, border, window_flags);
+    //     ImGui::BeginMenuBar();
+    //         showCommandLine();
+    //     ImGui::EndMenuBar();
+    //
+    //     int lineNumber = guiImpl(currentEditorLineNumber, mFilteredHeaderTree, true);
+    // ImGui::EndChild();
+    //
+    // mExpandCollapseAction = ExpandCollapseAction::NoAction;
+    //
+    // return lineNumber;
 }
 
 void GuiHeaderTree::showCommandLine()

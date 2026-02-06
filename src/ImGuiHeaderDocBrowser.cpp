@@ -11,7 +11,7 @@
 ImGuiHeaderDocBrowser * gInstance;
 
 ImGuiHeaderDocBrowser::ImGuiHeaderDocBrowser()
-    : WindowWithEditor("imgui.h - Doc")
+    : WindowWithEditor("imgui.h")
     , mAnnotatedSource(SourceParse::ReadImGuiHeaderDoc())
     , mGuiHeaderTree(mAnnotatedSource.linesWithTags)
 {

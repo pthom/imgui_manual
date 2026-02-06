@@ -57,7 +57,7 @@ void ImGuiDemoBrowser::ImGuiDemoCallback(const char* /*file*/, int /*line_number
         if (!lineWithTag.has_value())
             continue ;
 
-        int line_number = lineWithTag->lineNumber + 1;
+        int line_number = lineWithTag->lineNumber;// + 1;
         int cursorLineOnPage = 3;
         sourceElements->mGuiHeaderTree.followShowTocElementForLine(line_number);
         sourceElements->mWindowWithEditor.InnerTextEditor().SetCursorPosition({line_number, 0}, cursorLineOnPage);
