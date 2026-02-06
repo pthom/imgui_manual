@@ -25,6 +25,7 @@ WindowWithEditor::WindowWithEditor(const std::string& windowLabel)
     mEditor.SetPalette(TextEditor::GetLightPalette());
     mEditor.SetLanguageDefinition(TextEditor::LanguageDefinition::CPlusPlus());
     mEditor.SetReadOnly(true);
+    mEditor.SetShowWhitespaces(false);
     gAllEditors.push_back(&mEditor);
     gAllWindowWithEditors.push_back(this);
 }
