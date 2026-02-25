@@ -30,12 +30,6 @@
 
 #include "implot.h"
 #ifndef IMGUI_DISABLE
-
-#ifdef IMGUI_HAS_DEMO_MARKER_CALLBACK
-#define IMGUI_DEMO_MARKER(section)  do { if (GImGuiDemoMarkerCallback) GImGuiDemoMarkerCallback("implot_demo", __LINE__, section, GImGuiDemoMarkerCallbackUserData); } while (0)
-#else
-#define IMGUI_DEMO_MARKER(section)
-#endif
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -50,6 +44,12 @@
 #endif
 
 #define CHECKBOX_FLAG(flags, flag) ImGui::CheckboxFlags(#flag, (unsigned int*)&flags, flag)
+
+// Helper to wire demo markers located in code to an interactive browser (e.g. imgui_manual)
+#if IMGUI_VERSION_NUM >= 19263
+namespace ImGui { extern IMGUI_API void DemoMarker(const char* file, int line, const char* section); };
+#define IMGUI_DEMO_MARKER(section)  do { ImGui::DemoMarker("implot_demo.cpp", __LINE__, section); } while (0)
+#endif
 
 #if !defined(IMGUI_DISABLE_DEMO_WINDOWS)
 

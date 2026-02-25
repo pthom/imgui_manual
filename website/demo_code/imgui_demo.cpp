@@ -294,26 +294,16 @@ static void ShowDockingDisabledMessage()
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 }
 
-//-----------------------------------------------------------------------------
-// Demo marker callback: allows interactive code browsers (e.g. imgui_manual) to link UI elements to their source code.
-//-----------------------------------------------------------------------------
-// Define globals
-ImGuiDemoMarkerCallback  GImGuiDemoMarkerCallback = NULL;
-void*                    GImGuiDemoMarkerCallbackUserData = NULL;
-// Implement IMGUI_DEMO_MARKER
-#define IMGUI_DEMO_MARKER(section)  do { if (GImGuiDemoMarkerCallback) GImGuiDemoMarkerCallback("imgui_demo", __LINE__, section, GImGuiDemoMarkerCallbackUserData); } while (0)
-// Other libraries demo may use the pattern below:
-//    #ifdef IMGUI_HAS_DEMO_MARKER_CALLBACK
-//    #define IMGUI_DEMO_MARKER(section)  do { if (GImGuiDemoMarkerCallback) GImGuiDemoMarkerCallback("library_demo", __LINE__, section, GImGuiDemoMarkerCallbackUserData); } while (0)
-//    #else
-//    #define IMGUI_DEMO_MARKER(section)
-//    #endif
+// Helper to wire demo markers located in code to an interactive browser (e.g. imgui_manual)
+#if IMGUI_VERSION_NUM >= 19263
+namespace ImGui { extern IMGUI_API void DemoMarker(const char* file, int line, const char* section); };
+#define IMGUI_DEMO_MARKER(section)  do { ImGui::DemoMarker("imgui_demo.cpp", __LINE__, section); } while (0)
+#endif
 
 // Sneakily forward declare functions which aren't worth putting in public API yet
 namespace ImGui
 {
     IMGUI_API void ShowFontAtlas(ImFontAtlas* atlas);
-    IMGUI_API bool TreeNodeGetOpen(ImGuiID storage_id);
     IMGUI_API void TreeNodeSetOpen(ImGuiID storage_id, bool is_open);
 }
 
@@ -842,7 +832,7 @@ struct ExampleTreeNode
     int                         UID = 0;
     ExampleTreeNode*            Parent = NULL;
     ImVector<ExampleTreeNode*>  Childs;
-    unsigned short              IndexInParent = 0;  // Maintaining this allows us to implement linear traversal more easily
+    int                         IndexInParent = 0;  // Maintaining this allows us to implement linear traversal more easily
 
     // Leaf Data
     bool                        HasData = false;    // All leaves have data
@@ -876,7 +866,7 @@ static ExampleTreeNode* ExampleTree_CreateNode(const char* name, int uid, Exampl
     snprintf(node->Name, IM_COUNTOF(node->Name), "%s", name);
     node->UID = uid;
     node->Parent = parent;
-    node->IndexInParent = parent ? (unsigned short)parent->Childs.Size : 0;
+    node->IndexInParent = parent ? parent->Childs.Size : 0;
     if (parent)
         parent->Childs.push_back(node);
     return node;
@@ -890,18 +880,25 @@ static void ExampleTree_DestroyNode(ExampleTreeNode* node)
 }
 
 // Create example tree data
-// (this allocates _many_ more times than most other code in all of Dear ImGui or others demo)
+// (warning: this can allocates MANY MANY more times than other code in all of Dear ImGui + demo combined)
+// (a real application managing one million nodes would likely store its tree data differently)
 static ExampleTreeNode* ExampleTree_CreateDemoTree()
 {
-    static const char* root_names[] = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pear", "Pineapple", "Strawberry", "Watermelon" };
+    //     20 root nodes ->    211 total nodes,   ~261 allocs.
+    //   1000 root nodes ->   ~11K total nodes,   ~14K allocs.
+    //  10000 root nodes ->  ~123K total nodes,  ~154K allocs.
+    // 100000 root nodes -> ~1338K total nodes, ~1666K allocs.
+    const int ROOT_ITEMS_COUNT = 20;
+
+    static const char* category_names[] = { "Apple", "Banana", "Cherry", "Kiwi", "Mango", "Orange", "Pear", "Pineapple", "Strawberry", "Watermelon" };
+    const int category_count = IM_COUNTOF(category_names);
     const size_t NAME_MAX_LEN = sizeof(ExampleTreeNode::Name);
     char name_buf[NAME_MAX_LEN];
     int uid = 0;
     ExampleTreeNode* node_L0 = ExampleTree_CreateNode("<ROOT>", ++uid, NULL);
-    const int root_items_multiplier = 2;
-    for (int idx_L0 = 0; idx_L0 < IM_COUNTOF(root_names) * root_items_multiplier; idx_L0++)
+    for (int idx_L0 = 0; idx_L0 < ROOT_ITEMS_COUNT; idx_L0++)
     {
-        snprintf(name_buf, IM_COUNTOF(name_buf), "%s %d", root_names[idx_L0 / root_items_multiplier], idx_L0 % root_items_multiplier);
+        snprintf(name_buf, IM_COUNTOF(name_buf), "%s %d", category_names[idx_L0 / (ROOT_ITEMS_COUNT / category_count)], idx_L0 % (ROOT_ITEMS_COUNT / category_count));
         ExampleTreeNode* node_L1 = ExampleTree_CreateNode(name_buf, ++uid, node_L0);
         const int number_of_childs = (int)strlen(node_L1->Name);
         for (int idx_L1 = 0; idx_L1 < number_of_childs; idx_L1++)
@@ -4218,6 +4215,16 @@ static void DemoWindowWidgetsTreeNodes()
                 ImGui::TreePop();
             }
 
+            ImGui::TreePop();
+        }
+
+        if (ImGui::TreeNode("Clipping Large Trees"))
+        {
+            IMGUI_DEMO_MARKER("Widgets/Tree Nodes/Clipping Large Trees");
+            ImGui::TextWrapped(
+                "- Using ImGuiListClipper with trees is a less easy than on arrays or grids.\n"
+                "- Refer to 'Demo->Examples->Property Editor' for an example of how to do that.\n"
+                "- Discuss in #3823");
             ImGui::TreePop();
         }
 
@@ -9033,13 +9040,13 @@ static void ShowExampleAppMainMenuBar()
     {
         if (ImGui::BeginMenu("File"))
         {
-            IMGUI_DEMO_MARKER("ShowExampleAppMainMenuBar - Menu File");
+            IMGUI_DEMO_MARKER("Menu/File");
             ShowExampleMenuFile();
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("Edit"))
         {
-            IMGUI_DEMO_MARKER("ShowExampleAppMainMenuBar - Menu Edit");
+            IMGUI_DEMO_MARKER("Menu/Edit");
             if (ImGui::MenuItem("Undo", "Ctrl+Z")) {}
             if (ImGui::MenuItem("Redo", "Ctrl+Y", false, false)) {} // Disabled item
             ImGui::Separator();
@@ -9207,6 +9214,7 @@ struct ExampleAppConsole
             ImGui::End();
             return;
         }
+        IMGUI_DEMO_MARKER("Examples/Console");
 
         // As a specific feature guaranteed by the library, after calling Begin() the last Item represent the title bar.
         // So e.g. IsItemHovered() will return true when hovering the title bar.
@@ -9217,8 +9225,6 @@ struct ExampleAppConsole
                 *p_open = false;
             ImGui::EndPopup();
         }
-
-        IMGUI_DEMO_MARKER("ExamplesAppConsole::Draw");
 
         ImGui::TextWrapped(
             "This example implements a console with basic coloring, completion (TAB key) and history (Up/Down keys). A more elaborate "
@@ -9640,7 +9646,7 @@ static void ShowExampleAppLog(bool* p_open)
     // Most of the contents of the window will be added by the log.Draw() call.
     ImGui::SetNextWindowSize(ImVec2(500, 400), ImGuiCond_FirstUseEver);
     ImGui::Begin("Example: Log", p_open);
-    IMGUI_DEMO_MARKER("ShowExampleAppLog");
+    IMGUI_DEMO_MARKER("Examples/Log");
     if (ImGui::SmallButton("[Debug] Add 5 entries"))
     {
         static int counter = 0;
@@ -9671,7 +9677,7 @@ static void ShowExampleAppLayout(bool* p_open)
     ImGui::SetNextWindowSize(ImVec2(500, 440), ImGuiCond_FirstUseEver);
     if (ImGui::Begin("Example: Simple layout", p_open, ImGuiWindowFlags_MenuBar))
     {
-        IMGUI_DEMO_MARKER("ShowExampleAppLayout");
+        IMGUI_DEMO_MARKER("Examples/Simple layout");
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("File"))
@@ -9740,26 +9746,33 @@ struct ExampleAppPropertyEditor
 {
     ImGuiTextFilter     Filter;
     ExampleTreeNode*    SelectedNode = NULL;
+    bool                UseClipper = false;
 
     void Draw(ExampleTreeNode* root_node)
     {
-        IMGUI_DEMO_MARKER("ExampleAppPropertyEditor::Draw");
+        IMGUI_DEMO_MARKER("Examples/Property editor");
+
         // Left side: draw tree
         // - Currently using a table to benefit from RowBg feature
+        // - Our tree node are all of equal height, facilitating the use of a clipper.
         if (ImGui::BeginChild("##tree", ImVec2(300, 0), ImGuiChildFlags_ResizeX | ImGuiChildFlags_Borders | ImGuiChildFlags_NavFlattened))
         {
+            ImGui::PushItemFlag(ImGuiItemFlags_NoNavDefaultFocus, true);
+            ImGui::Checkbox("Use Clipper", &UseClipper);
+            ImGui::SameLine();
+            ImGui::Text("(%d root nodes)", root_node->Childs.Size);
             ImGui::SetNextItemWidth(-FLT_MIN);
             ImGui::SetNextItemShortcut(ImGuiMod_Ctrl | ImGuiKey_F, ImGuiInputFlags_Tooltip);
-            ImGui::PushItemFlag(ImGuiItemFlags_NoNavDefaultFocus, true);
             if (ImGui::InputTextWithHint("##Filter", "incl,-excl", Filter.InputBuf, IM_COUNTOF(Filter.InputBuf), ImGuiInputTextFlags_EscapeClearsAll))
                 Filter.Build();
             ImGui::PopItemFlag();
 
             if (ImGui::BeginTable("##list", 1, ImGuiTableFlags_RowBg))
             {
-                for (ExampleTreeNode* node : root_node->Childs)
-                    if (Filter.PassFilter(node->Name)) // Filter root node
-                        DrawTreeNode(node);
+                if (UseClipper)
+                    DrawClippedTree(root_node);
+                else
+                    DrawTree(root_node);
                 ImGui::EndTable();
             }
         }
@@ -9832,34 +9845,121 @@ struct ExampleAppPropertyEditor
         ImGui::EndGroup();
     }
 
-    void DrawTreeNode(ExampleTreeNode* node)
+    // Custom search filter
+    // - Here we apply on root node only.
+    // - This does a case insensitive stristr which is pretty heavy. In a real large-scale app you would likely store a filtered list which in turns would be trivial to linearize.
+    inline bool IsNodePassingFilter(ExampleTreeNode* node)
+    {
+        return node->Parent->Parent != NULL || Filter.PassFilter(node->Name);
+    }
+
+    // Basic version, recursive. This is how you would generally draw a tree.
+    // - Simple but going to be noticeably costly if you have a large amount of nodes as DrawTreeNode() is called for all of them.
+    // - On my desktop PC (2020), for 10K nodes in an optimized build this takes ~1.2 ms
+    // - Unlike arrays or grids which are very easy to clip, trees are currently more difficult to clip.
+    void DrawTree(ExampleTreeNode* node)
+    {
+        for (ExampleTreeNode* child : node->Childs)
+            if (IsNodePassingFilter(child) && DrawTreeNode(child))
+            {
+                DrawTree(child);
+                ImGui::TreePop();
+            }
+    }
+
+    // More advanced version. Use a alternative clipping technique: fast-forwarding through non-visible chunks.
+    // - On my desktop PC (2020), for 10K nodes in an optimized build this takes ~0.1 ms
+    //   (in ExampleTree_CreateDemoTree(), change 'int ROOT_ITEMS_COUNT = 10000' to try with this amount of root nodes).
+    // - 1. Use clipper with indeterminate count (items_count = INT_MAX): we need to call SeekCursorForItem() at the end once we know the count.
+    // - 2. Use SetNextItemStorageID() to specify ID used for open/close storage, making it easy to call TreeNodeGetOpen() on any arbitrary node.
+    // - 3. Linearize tree during traversal: our tree data structure makes it easy to access sibling and parents.
+    // - Unlike clipping for a regular array or grid which may be done using random access limited to visible areas,
+    //   this technique requires traversing most accessible nodes. This could be made more optimal with extra work,
+    //   but this is a decent simplicity<>speed trade-off.
+    // See https://github.com/ocornut/imgui/issues/3823 for discussions about this.
+    void DrawClippedTree(ExampleTreeNode* root_node)
+    {
+        ExampleTreeNode* node = root_node->Childs[0]; // First node
+        ImGuiListClipper clipper;
+        clipper.Begin(INT_MAX);
+        while (clipper.Step())
+            while (clipper.UserIndex < clipper.DisplayEnd && node != NULL)
+                node = DrawClippedTreeNodeAndAdvanceToNext(&clipper, node);
+
+        // Keep going to count nodes and submit final count so we have a reliable scrollbar.
+        // - One could consider caching this value and only refreshing it occasionally e.g. window is focused and an action occurs.
+        // - Incorrect but cheap approximation would be to use 'clipper_current_idx = IM_MAX(clipper_current_idx, root_node->Childs.Size)' instead.
+        // - If either of those is implemented, the general cost will approach zero when scrolling is at the top of the tree.
+        while (node != NULL)
+            node = DrawClippedTreeNodeAndAdvanceToNext(&clipper, node);
+        //clipper.UserIndex = IM_MAX(clipper.UserIndex, root_node->Childs.Size); // <-- Cheap approximation instead of while() loop above.
+        clipper.SeekCursorForItem(clipper.UserIndex);
+    }
+
+    ExampleTreeNode* DrawClippedTreeNodeAndAdvanceToNext(ImGuiListClipper* clipper, ExampleTreeNode* node)
+    {
+        if (IsNodePassingFilter(node))
+        {
+            // Draw node if within visible range
+            bool is_open = false;
+            if (clipper->UserIndex >= clipper->DisplayStart && clipper->UserIndex < clipper->DisplayEnd)
+            {
+                is_open = DrawTreeNode(node);
+            }
+            else
+            {
+                is_open = (node->Childs.Size > 0 && ImGui::TreeNodeGetOpen((ImGuiID)node->UID));
+                if (is_open)
+                    ImGui::TreePush(node->Name);
+            }
+            clipper->UserIndex++;
+
+            // Next node: recurse into childs
+            if (is_open)
+                return node->Childs[0];
+        }
+
+        // Next node: next sibling, otherwise move back to parent
+        while (node != NULL)
+        {
+            if (node->IndexInParent + 1 < node->Parent->Childs.Size)
+                return node->Parent->Childs[node->IndexInParent + 1];
+            node = node->Parent;
+            if (node->Parent == NULL)
+                break;
+            ImGui::TreePop();
+        }
+        return NULL;
+    }
+
+    // To support node with same name we incorporate node->UID into the item ID.
+    // (this would more naturally be done using PushID(node->UID) + TreeNodeEx(node->Name, tree_flags),
+    //   but it would require in DrawClippedTreeNodeAndAdvanceToNext() to add PushID() before TreePush(), and PopID() after TreePop(),
+    //   so instead we use TreeNodeEx(node->UID, tree_flags, "%s", node->Name) here)
+    bool DrawTreeNode(ExampleTreeNode* node)
     {
         ImGui::TableNextRow();
         ImGui::TableNextColumn();
-        ImGui::PushID(node->UID);
         ImGuiTreeNodeFlags tree_flags = ImGuiTreeNodeFlags_None;
-        tree_flags |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;// Standard opening mode as we are likely to want to add selection afterwards
+        tree_flags |= ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick; // Standard opening mode as we are likely to want to add selection afterwards
         tree_flags |= ImGuiTreeNodeFlags_NavLeftJumpsToParent;  // Left arrow support
         tree_flags |= ImGuiTreeNodeFlags_SpanFullWidth;         // Span full width for easier mouse reach
         tree_flags |= ImGuiTreeNodeFlags_DrawLinesToNodes;      // Always draw hierarchy outlines
         if (node == SelectedNode)
-            tree_flags |= ImGuiTreeNodeFlags_Selected;
+            tree_flags |= ImGuiTreeNodeFlags_Selected;          // Draw selection highlight
         if (node->Childs.Size == 0)
-            tree_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet;
+            tree_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_Bullet | ImGuiTreeNodeFlags_NoTreePushOnOpen; // Use _NoTreePushOnOpen + set is_open=false to avoid unnecessarily push/pop on leaves.
         if (node->DataMyBool == false)
             ImGui::PushStyleColor(ImGuiCol_Text, ImGui::GetStyle().Colors[ImGuiCol_TextDisabled]);
-        bool node_open = ImGui::TreeNodeEx("", tree_flags, "%s", node->Name);
+        ImGui::SetNextItemStorageID((ImGuiID)node->UID);        // Use node->UID as storage id
+        bool is_open = ImGui::TreeNodeEx((void*)(intptr_t)node->UID, tree_flags, "%s", node->Name);
+        if (node->Childs.Size == 0)
+            is_open = false;
         if (node->DataMyBool == false)
             ImGui::PopStyleColor();
         if (ImGui::IsItemFocused())
             SelectedNode = node;
-        if (node_open)
-        {
-            for (ExampleTreeNode* child : node->Childs)
-                DrawTreeNode(child);
-            ImGui::TreePop();
-        }
-        ImGui::PopID();
+        return is_open;
     }
 };
 
@@ -9895,7 +9995,7 @@ static void ShowExampleAppLongText(bool* p_open)
         ImGui::End();
         return;
     }
-    IMGUI_DEMO_MARKER("ShowExampleAppLongText");
+    IMGUI_DEMO_MARKER("Examples/Long text display");
 
     static int test_type = 0;
     static ImGuiTextBuffer log;
@@ -9957,7 +10057,7 @@ static void ShowExampleAppAutoResize(bool* p_open)
         ImGui::End();
         return;
     }
-    IMGUI_DEMO_MARKER("ShowExampleAppAutoResize");
+    IMGUI_DEMO_MARKER("Examples/Auto-resizing window");
 
     static int lines = 10;
     ImGui::TextUnformatted(
@@ -9978,7 +10078,6 @@ static void ShowExampleAppAutoResize(bool* p_open)
 // Note that size constraints currently don't work on a docked window (when in 'docking' branch)
 static void ShowExampleAppConstrainedResize(bool* p_open)
 {
-    IMGUI_DEMO_MARKER("ShowExampleAppConstrainedResize");
     struct CustomConstraints
     {
         // Helper functions to demonstrate programmatic constraints
@@ -10039,9 +10138,9 @@ static void ShowExampleAppConstrainedResize(bool* p_open)
     const bool window_open = ImGui::Begin("Example: Constrained Resize", p_open, window_flags);
     if (!window_padding)
         ImGui::PopStyleVar();
+    IMGUI_DEMO_MARKER("Examples/Constrained Resizing window");
     if (window_open)
     {
-        IMGUI_DEMO_MARKER("ShowExampleAppConstrainedResize");
         if (ImGui::GetIO().KeyShift)
         {
             // Display a dummy viewport (in your real app you would likely use ImageButton() to display a texture)
@@ -10107,7 +10206,7 @@ static void ShowExampleAppSimpleOverlay(bool* p_open)
     ImGui::SetNextWindowBgAlpha(0.35f); // Transparent background
     if (ImGui::Begin("Example: Simple overlay", p_open, window_flags))
     {
-        IMGUI_DEMO_MARKER("ShowExampleAppSimpleOverlay");  // Scroll up to the beginning of this function to see overlay flags
+        IMGUI_DEMO_MARKER("Examples/Simple overlay"); // Scroll up to the beginning of this function to see overlay flags
         ImGui::Text("Simple overlay\n" "(right-click to change position)");
         ImGui::Separator();
         if (ImGui::IsMousePosValid())
@@ -10147,7 +10246,7 @@ static void ShowExampleAppFullscreen(bool* p_open)
 
     if (ImGui::Begin("Example: Fullscreen window", p_open, flags))
     {
-        IMGUI_DEMO_MARKER("ShowExampleAppFullscreen");
+        IMGUI_DEMO_MARKER("Examples/Fullscreen window");
         ImGui::Checkbox("Use work area instead of main area", &use_work_area);
         ImGui::SameLine();
         HelpMarker("Main Area = entire viewport,\nWork Area = entire viewport minus sections used by the main menu bars, task bars etc.\n\nEnable the main-menu bar in Examples menu to see the difference.");
@@ -10184,13 +10283,13 @@ static void ShowExampleAppWindowTitles(bool*)
     // Using "##" to display same title but have unique identifier.
     ImGui::SetNextWindowPos(ImVec2(base_pos.x + 100, base_pos.y + 100), ImGuiCond_FirstUseEver);
     ImGui::Begin("Same title as another window##1");
-    IMGUI_DEMO_MARKER("ShowExampleAppWindowTitles - window##1");
+    IMGUI_DEMO_MARKER("Examples/Manipulating window titles##1");
     ImGui::Text("This is window 1.\nMy title is the same as window 2, but my identifier is unique.");
     ImGui::End();
 
     ImGui::SetNextWindowPos(ImVec2(base_pos.x + 100, base_pos.y + 200), ImGuiCond_FirstUseEver);
     ImGui::Begin("Same title as another window##2");
-    IMGUI_DEMO_MARKER("ShowExampleAppWindowTitles - window##2");
+    IMGUI_DEMO_MARKER("Examples/Manipulating window titles##2");;
     ImGui::Text("This is window 2.\nMy title is the same as window 1, but my identifier is unique.");
     ImGui::End();
 
@@ -10199,7 +10298,7 @@ static void ShowExampleAppWindowTitles(bool*)
     sprintf(buf, "Animated title %c %d###AnimatedTitle", "|/-\\"[(int)(ImGui::GetTime() / 0.25f) & 3], ImGui::GetFrameCount());
     ImGui::SetNextWindowPos(ImVec2(base_pos.x + 100, base_pos.y + 300), ImGuiCond_FirstUseEver);
     ImGui::Begin(buf);
-    IMGUI_DEMO_MARKER("ShowExampleAppWindowTitles - window##3");
+    IMGUI_DEMO_MARKER("Examples/Manipulating window titles##3");
     ImGui::Text("This window has a changing title.");
     ImGui::End();
 }
@@ -10224,7 +10323,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
         ImGui::End();
         return;
     }
-    IMGUI_DEMO_MARKER("ShowExampleAppCustomRendering");
+    IMGUI_DEMO_MARKER("Examples/Custom rendering");
 
     // Tip: If you do a lot of custom rendering, you probably want to use your own geometrical types and benefit of
     // overloaded operators, etc. Define IM_VEC2_CLASS_EXTRA in imconfig.h to create implicit conversions between your
@@ -10235,7 +10334,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
     {
         if (ImGui::BeginTabItem("Primitives"))
         {
-            IMGUI_DEMO_MARKER("ShowExampleAppCustomRendering - Primitives");
+            IMGUI_DEMO_MARKER("Examples/Custom rendering/Primitives");
             ImGui::PushItemWidth(-ImGui::GetFontSize() * 15);
             ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
@@ -10363,7 +10462,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
 
         if (ImGui::BeginTabItem("Canvas"))
         {
-            IMGUI_DEMO_MARKER("ShowExampleAppCustomRendering - Canvas");
+            IMGUI_DEMO_MARKER("Examples/Custom rendering/Canvas");
             static ImVector<ImVec2> points;
             static ImVec2 scrolling(0.0f, 0.0f);
             static bool opt_enable_grid = true;
@@ -10461,7 +10560,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
 
         if (ImGui::BeginTabItem("BG/FG draw lists"))
         {
-            IMGUI_DEMO_MARKER("ShowExampleAppCustomRendering - BG/FG draw lists");
+            IMGUI_DEMO_MARKER("Examples/Custom rendering/BG & FG draw lists");
             static bool draw_bg = true;
             static bool draw_fg = true;
             ImGui::Checkbox("Draw in Background draw list", &draw_bg);
@@ -10483,7 +10582,7 @@ static void ShowExampleAppCustomRendering(bool* p_open)
         // but you can also instantiate your own ImDrawListSplitter if you need to nest them.
         if (ImGui::BeginTabItem("Draw Channels"))
         {
-            IMGUI_DEMO_MARKER("ShowExampleAppCustomRendering - Draw Channels");
+            IMGUI_DEMO_MARKER("Examples/Custom rendering/Draw Channels");
             ImDrawList* draw_list = ImGui::GetWindowDrawList();
             {
                 ImGui::Text("Blue shape is drawn first: appears in back");
@@ -10899,8 +10998,7 @@ void ShowExampleAppDocuments(bool* p_open)
         ImGui::End();
         return;
     }
-
-    IMGUI_DEMO_MARKER("ShowExampleAppDocuments");
+    IMGUI_DEMO_MARKER("Examples/Documents");
 
     // Menu
     if (ImGui::BeginMenuBar())
@@ -11264,7 +11362,7 @@ struct ExampleAssetsBrowser
             ImGui::End();
             return;
         }
-        IMGUI_DEMO_MARKER("ExampleAssetsBrowser::Draw");
+        IMGUI_DEMO_MARKER("Examples/Assets Browser");
 
         // Menu bar
         if (ImGui::BeginMenuBar())

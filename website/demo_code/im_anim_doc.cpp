@@ -13,10 +13,10 @@
 #include <math.h>
 #include <stdio.h>
 
-#ifdef IMGUI_HAS_DEMO_MARKER_CALLBACK
-#define IMGUI_DEMO_MARKER(section)  do { if (GImGuiDemoMarkerCallback) GImGuiDemoMarkerCallback("im_anim_doc", __LINE__, section, GImGuiDemoMarkerCallbackUserData); } while (0)
-#else
-#define IMGUI_DEMO_MARKER(section)
+// Helper to wire demo markers located in code to an interactive browser (e.g. imgui_manual)
+#if IMGUI_VERSION_NUM >= 19263
+namespace ImGui { extern IMGUI_API void DemoMarker(const char* file, int line, const char* section); };
+#define IMGUI_DEMO_MARKER(section)  do { ImGui::DemoMarker("im_anim_doc.cpp", __LINE__, section); } while (0)
 #endif
 
 // Font compatibility helpers for ImGui 1.92+ API changes

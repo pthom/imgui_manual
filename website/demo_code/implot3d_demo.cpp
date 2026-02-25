@@ -29,12 +29,11 @@
 #include "implot3d.h"
 #include "implot3d_internal.h"
 
-#ifdef IMGUI_HAS_DEMO_MARKER_CALLBACK
-#define IMGUI_DEMO_MARKER(section)  do { if (GImGuiDemoMarkerCallback) GImGuiDemoMarkerCallback("implot3d_demo", __LINE__, section, GImGuiDemoMarkerCallbackUserData); } while (0)
-#else
-#define IMGUI_DEMO_MARKER(section)
+// Helper to wire demo markers located in code to an interactive browser (e.g. imgui_manual)
+#if IMGUI_VERSION_NUM >= 19263
+namespace ImGui { extern IMGUI_API void DemoMarker(const char* file, int line, const char* section); };
+#define IMGUI_DEMO_MARKER(section)  do { ImGui::DemoMarker("implot3d_demo.cpp", __LINE__, section); } while (0)
 #endif
-
 
 //-----------------------------------------------------------------------------
 // [SECTION] User Namespace
