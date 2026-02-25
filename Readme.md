@@ -9,4 +9,3 @@ https://github.com/pthom/imgui_bundle/tree/main/external/imgui_manual/imgui_manu
 # Old standalone version
 
 The source for the manual used to be in this repository. You can find it in the "archive_standalone" branch.
-
