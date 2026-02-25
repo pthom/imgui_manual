@@ -1,18 +1,12 @@
-# implot demo
+# imgui_manual
 
-Source for an online emscripten demo of [implot](https://github.com/epezent/implot)
+The only intent of this repository is to host imgui_manual at 
+http://pthom.github.io/imgui_manual
 
+The source for the manual in itself is now inside imgui_bundle:
+https://github.com/pthom/imgui_bundle/tree/main/external/imgui_manual/imgui_manual
 
-## Build
+# Old standalone version
 
-### Emscripten
+The source for the manual used to be in this repository. You can find it in the "archive_standalone" branch.
 
-### Desktop
-
-````
-git submodule update --init --recursive
-external/hello_imgui/tools/vcpkg_install_third_parties.py
-mkdir build
-cd build
-cmake .. -DCMAKE_TOOLCHAIN_FILE=../external/hello_imgui/vcpkg/scripts/buildsystems/vcpkg.cmake
-````
