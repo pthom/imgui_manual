@@ -33,6 +33,8 @@
 #if IMGUI_VERSION_NUM >= 19263
 namespace ImGui { extern IMGUI_API void DemoMarker(const char* file, int line, const char* section); };
 #define IMGUI_DEMO_MARKER(section)  do { ImGui::DemoMarker("implot3d_demo.cpp", __LINE__, section); } while (0)
+#else
+#define IMGUI_DEMO_MARKER(section)
 #endif
 
 //-----------------------------------------------------------------------------

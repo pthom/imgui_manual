@@ -19,6 +19,8 @@
 #if IMGUI_VERSION_NUM >= 19263
 namespace ImGui { extern IMGUI_API void DemoMarker(const char* file, int line, const char* section); };
 #define IMGUI_DEMO_MARKER(section)  do { ImGui::DemoMarker("im_anim_demo.cpp", __LINE__, section); } while (0)
+#else
+#define IMGUI_DEMO_MARKER(section)
 #endif
 
 #ifdef IM_ANIM_PRE_19200_COMPATIBILITY
